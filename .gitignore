@@ -1,0 +1,4 @@
+.ionide/
+.idea/
+bin/
+obj/
