@@ -1,5 +1,5 @@
-﻿let logs x = printfn "%A" x; x
-let xs = System.IO.File.ReadAllLines "sample.txt"
+﻿let logs x = printfn "%A" x
+let xs = System.IO.File.ReadAllLines "1.txt"
 let xxs = xs |> Seq.transpose
 let bin2dec s = System.Convert.ToInt32(s, 2)
 let countWhere a = Seq.filter a >> Seq.length
@@ -15,3 +15,27 @@ let msb2dec c xxs =
 let gamma = xxs |> msb2dec '0'
 let epsilon = xxs |> msb2dec '1'
 let power = gamma * epsilon
+
+let mostOf xs =
+    let zeroes = xs |> (countWhere (fun x -> x = '0'))
+    if zeroes > Seq.length xs / 2 then '0' else '1'
+
+let mostOfAtIndex i (xs: string array) =
+    let cx = xs |> Seq.map (fun x -> x[i])
+    mostOf cx
+
+let leastOfAtIndex i (xs: string array) =
+    if xs |> mostOfAtIndex i = '0' then '1' else '0'
+
+let mutable oxygen = xs
+let mutable co2 = xs
+for i in 0 .. Seq.length xs[0] - 1 do
+    if Seq.length oxygen > 1 then
+        let most = oxygen |> mostOfAtIndex i
+        oxygen <- oxygen |> Array.filter (fun x -> x[i] = most)
+
+    if Seq.length co2 > 1 then
+        let least = co2 |> leastOfAtIndex i
+        co2 <- co2 |> Array.filter (fun x -> x[i] = least)
+
+(bin2dec oxygen[0]) * (bin2dec co2[0]) |> logs
