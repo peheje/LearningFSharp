@@ -7,7 +7,7 @@ let countWhere a = Seq.filter a >> Seq.length
 let msb2dec c xxs =
     xxs
     |> Seq.map (countWhere (fun x -> x = c))
-    |> Seq.map (fun c -> if c > (Seq.length xs) / 2 then "0" else "1")
+    |> Seq.map (fun x -> if x > (Seq.length xs) / 2 then "0" else "1")
     |> String.concat ""
     |> bin2dec
 
