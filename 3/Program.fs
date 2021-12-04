@@ -1,5 +1,5 @@
 ﻿// Common
-let logs x = printfn "%A" x
+let log x = printfn "%A" x
 let xs = System.IO.File.ReadAllLines "1.txt"
 let bin2dec s = System.Convert.ToInt32(s, 2)
 let countWhere a = Seq.filter a >> Seq.length
@@ -15,7 +15,7 @@ let msb2dec c xxs =
 
 let gamma = xxs |> msb2dec '0'
 let epsilon = xxs |> msb2dec '1'
-let power = gamma * epsilon |> logs
+let power = gamma * epsilon |> log
 
 // Part 2
 let mostOfAtIndex i (xs: string array) =
@@ -36,4 +36,4 @@ let filterByCriteria criteria strings =
 
 let oxygen = xs |> filterByCriteria mostOfAtIndex |> bin2dec
 let co2 = xs |> filterByCriteria leastOfAtIndex |> bin2dec
-let lifeSupport = oxygen * co2 |> logs
+let lifeSupport = oxygen * co2 |> log
