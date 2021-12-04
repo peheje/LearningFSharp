@@ -16,15 +16,15 @@ let gamma = xxs |> msb2dec '0'
 let epsilon = xxs |> msb2dec '1'
 let power = gamma * epsilon
 
-let mostOf xs =
-    let zeroes = xs |> (countWhere (fun x -> x = '0'))
+// Part 2
+let mostOfAtIndex i (xs: string array) =
+    let zeroes =
+        xs
+        |> Seq.map (fun x -> x[i])
+        |> countWhere (fun x -> x = '0')
     if zeroes > Seq.length xs / 2 then '0' else '1'
 
-let mostOfAtIndex i (xs: string array) =
-    let cx = xs |> Seq.map (fun x -> x[i])
-    mostOf cx
-
-let leastOfAtIndex i (xs: string array) =
+let leastOfAtIndex i xs =
     if xs |> mostOfAtIndex i = '0' then '1' else '0'
 
 let mutable oxygen = xs
