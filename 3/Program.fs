@@ -4,7 +4,7 @@ let xxs = xs |> Seq.transpose
 let bin2dec s = System.Convert.ToInt32(s, 2)
 let countWhere a = Seq.filter a >> Seq.length
 
-// Part 2
+// Part 1
 let msb2dec c xxs =
     xxs
     |> Seq.map (countWhere (fun x -> x = c))
