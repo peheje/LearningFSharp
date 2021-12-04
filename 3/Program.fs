@@ -24,15 +24,17 @@ let mostOfAtIndex i (xs: string array) =
 let leastOfAtIndex i xs =
     if xs |> mostOfAtIndex i = '0' then '1' else '0'
 
-let mutable oxygen = xs
-let mutable co2 = xs
-for i in 0 .. Seq.length xs[0] - 1 do
-    if Seq.length oxygen > 1 then
-        let most = oxygen |> mostOfAtIndex i
-        oxygen <- oxygen |> Array.filter (fun x -> x[i] = most)
+let filterByCriteria strategy strings =
+    let rec filter index (filteredItems: string array) =
+        logs index
+        logs filteredItems
+        match Seq.length filteredItems with
+        | 1 -> filteredItems
+        | _ ->
+            let most = filteredItems |> strategy index
+            filter (index+1) (filteredItems |> Array.filter (fun x -> x[index] = most))
+    (filter 0 strings)[0]
 
-    if Seq.length co2 > 1 then
-        let least = co2 |> leastOfAtIndex i
-        co2 <- co2 |> Array.filter (fun x -> x[i] = least)
-
-(bin2dec oxygen[0]) * (bin2dec co2[0]) |> logs
+let oxygen = xs |> filterByCriteria mostOfAtIndex |> bin2dec
+let co2 = xs |> filterByCriteria leastOfAtIndex |> bin2dec
+oxygen * co2
