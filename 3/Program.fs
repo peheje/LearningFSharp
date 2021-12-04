@@ -18,10 +18,7 @@ let power = gamma * epsilon
 
 // Part 2
 let mostOfAtIndex i (xs: string array) =
-    let zeroes =
-        xs
-        |> Seq.map (fun x -> x[i])
-        |> countWhere (fun x -> x = '0')
+    let zeroes = xs |> Seq.map (fun x -> x[i]) |> countWhere (fun x -> x = '0')
     if zeroes > Seq.length xs / 2 then '0' else '1'
 
 let leastOfAtIndex i xs =
