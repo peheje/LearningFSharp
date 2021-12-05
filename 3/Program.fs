@@ -1,6 +1,6 @@
 ﻿// Common
 let log x = printfn "%A" x
-let xs = System.IO.File.ReadAllLines "1.txt"
+let xs = System.IO.File.ReadAllLines "3.txt"
 let bin2dec s = System.Convert.ToInt32(s, 2)
 let countWhere a = Seq.filter a >> Seq.length
 
