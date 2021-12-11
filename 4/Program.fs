@@ -40,5 +40,5 @@ for call in calls do
         if bingoRow || bingoCol then
             if not (bingoBoards |> Set.contains bi) then
                 bingoBoards <- bingoBoards |> Set.add bi
-                let unmarkedOnBoard = board |> Array.filter (fun c -> not c.marked) |> Array.sumBy (fun c -> c.value)
-                printfn $"Bingo on board {bi} = {unmarkedOnBoard * call}"
+                let sumOfUnmarked = board |> Array.filter (fun c -> not c.marked) |> Array.sumBy (fun c -> c.value)
+                printfn $"Bingo on board {bi} = {sumOfUnmarked * call}"
