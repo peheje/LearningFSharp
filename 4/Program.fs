@@ -1,6 +1,6 @@
 ﻿let logs x = printfn "%A" x; x
-let json s = System.Text.Json.JsonSerializer.Serialize s
-let debugs s = System.IO.File.AppendAllText("debug.json", json s); s
+let json s = System.Text.Json.JsonSerializer.Serialize(s, System.Text.Json.JsonSerializerOptions(WriteIndented = true))
+let debugs s = System.IO.File.WriteAllText("debug.json", json s); s
 let split (c: char) (s: string) = s.Split c
 let isWhitespace (s: string) = System.String.IsNullOrWhiteSpace s
 let parseRow s = s |> split ' ' |> Seq.filter (not << isWhitespace)
