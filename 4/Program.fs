@@ -1,14 +1,13 @@
 ﻿let log x = printfn "%A" x
 let logs x = printfn "%A" x; x
-let debugl x = System.IO.File.WriteAllLines("debug.txt", (x |> Seq.toArray))
 let json s = System.Text.Json.JsonSerializer.Serialize(s, System.Text.Json.JsonSerializerOptions(WriteIndented = true))
 let debugs s = System.IO.File.AppendAllText("debug.json", json s); s
-let lines = System.IO.File.ReadAllLines "sample.txt"
 let split (c: char) (s: string) = s.Split c
 let replace (a: string) (b: string) (s: string) = s.Replace(a, b)
 let isWhitespace (s: string) = System.String.IsNullOrWhiteSpace s
 let countWhere a = Seq.filter a >> Seq.length
 
+let lines = System.IO.File.ReadAllLines "sample.txt"
 type Cell = { value: int; mutable marked: bool; col: int; row: int; board: int }
 
 let calls = lines |> Seq.head |> split ',' |> Seq.map int
@@ -48,7 +47,7 @@ for call in calls do
 
         if bingoRow || bingoCol then
             let unmarkedOnBoard = board |> Seq.filter (fun c -> not c.marked) |> Seq.sumBy (fun c -> c.value)
-            printfn $"bingo ${unmarkedOnBoard * call}"
+            printfn $"bingo {unmarkedOnBoard * call}"
             failwith "end"
 
 
