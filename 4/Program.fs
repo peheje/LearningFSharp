@@ -1,27 +1,20 @@
-﻿let log x = printfn "%A" x
-let logs x = printfn "%A" x; x
+﻿let logs x = printfn "%A" x; x
 let json s = System.Text.Json.JsonSerializer.Serialize(s, System.Text.Json.JsonSerializerOptions(WriteIndented = true))
 let debugs s = System.IO.File.AppendAllText("debug.json", json s); s
 let split (c: char) (s: string) = s.Split c
-let replace (a: string) (b: string) (s: string) = s.Replace(a, b)
 let isWhitespace (s: string) = System.String.IsNullOrWhiteSpace s
-let countWhere a = Seq.filter a >> Seq.length
+let parseRow s = s |> split ' ' |> Seq.filter (not << isWhitespace)
 
-let lines = System.IO.File.ReadAllLines "sample.txt"
 type Cell = { value: int; mutable marked: bool; col: int; row: int; board: int }
 
+let lines = System.IO.File.ReadAllLines "sample.txt"
 let calls = lines |> Seq.head |> split ',' |> Seq.map int
-
-let parseBingoRow s =
-    s 
-    |> split ' '
-    |> Seq.filter (not << isWhitespace)
 
 let boardsList = 
     lines
     |> Seq.filter (not << Seq.isEmpty)
     |> Seq.skip 1
-    |> Seq.map parseBingoRow
+    |> Seq.map parseRow
     |> Seq.chunkBySize 5
 
 let cells = [
@@ -49,5 +42,3 @@ for call in calls do
             let unmarkedOnBoard = board |> Seq.filter (fun c -> not c.marked) |> Seq.sumBy (fun c -> c.value)
             printfn $"bingo {unmarkedOnBoard * call}"
             failwith "end"
-
-
