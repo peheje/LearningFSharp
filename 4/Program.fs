@@ -18,11 +18,12 @@ let boardsList =
     |> Array.map parseRow
     |> Array.chunkBySize size
 
-let cells = 
-    [|for (bi, board) in boardsList |> Array.indexed do
+let cells = [|
+    for (bi, board) in boardsList |> Array.indexed do
         for (ri, row) in board |> Array.indexed do
             for (ci, value) in row |> Array.indexed do
-                {value = int value; marked = false; col = ci; row = ri; board = bi}|]
+                {value = int value; marked = false; col = ci; row = ri; board = bi}
+    |]
 
 let boards = cells |> Array.groupBy (fun c -> c.board) |> Array.map (fun t -> snd t)
 
