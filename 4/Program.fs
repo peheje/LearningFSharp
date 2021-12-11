@@ -27,16 +27,18 @@ let cells = [
 
 let boards = cells |> Seq.groupBy (fun c -> c.board) |> Seq.map (fun t -> snd t)
 
+let mutable bingoBoards = Set.empty
 for call in calls do
     for cell in cells do
         if cell.value = call then cell.marked <- true
 
-    for board in boards do
+    for (bi, board) in boards |> Seq.indexed do
         let marked = board |> Seq.filter (fun c -> c.marked)
         let bingoRow = marked |> Seq.groupBy (fun c -> c.row) |> Seq.exists (fun g -> ((snd g) |> Seq.length) = size)
         let bingoCol = marked |> Seq.groupBy (fun c -> c.col) |> Seq.exists (fun g -> ((snd g) |> Seq.length) = size)
 
         if bingoRow || bingoCol then
-            let unmarkedOnBoard = board |> Seq.filter (fun c -> not c.marked) |> Seq.sumBy (fun c -> c.value)
-            printfn $"bingo {unmarkedOnBoard * call}"
-            failwith "end"
+            if not (bingoBoards |> Set.contains bi) then
+                bingoBoards <- bingoBoards |> Set.add bi
+                let unmarkedOnBoard = board |> Seq.filter (fun c -> not c.marked) |> Seq.sumBy (fun c -> c.value)
+                printfn $"Bingo on board {bi} = {unmarkedOnBoard * call}"
