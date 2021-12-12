@@ -26,9 +26,13 @@ let trajectory line =
     |]
 
 let lines =
-    System.IO.File.ReadAllLines "sample.txt"
+    System.IO.File.ReadAllLines "5.txt"
     |> Array.map (split " -> ")
     |> Array.map toLine
     |> Array.filter isHorizontalOrVertical
     |> Array.map trajectory
+    |> Array.collect id
+    |> Array.countBy id
+    |> Array.filter (fun v -> snd v >= 2)
+    |> Array.length
     |> debugs
