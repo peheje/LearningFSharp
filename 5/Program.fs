@@ -10,8 +10,9 @@ let toCoordinate str =
     let ints = str |> split "," |> Array.map int
     {x = ints[0]; y = ints[1]}
 
-let toLine (xs: string array) =
-    {start = toCoordinate(xs[0]); stop = toCoordinate(xs[1])}
+let toLine s =
+    let ss = s |> (split " -> ")
+    {start = toCoordinate(ss[0]); stop = toCoordinate(ss[1])}
 
 let isHorizontalOrVertical line =
     line.start.x = line.stop.x || line.start.y = line.stop.y
@@ -27,7 +28,6 @@ let trajectory line =
 
 let lines =
     System.IO.File.ReadAllLines "5.txt"
-    |> Array.map (split " -> ")
     |> Array.map toLine
     |> Array.filter isHorizontalOrVertical
     |> Array.map trajectory
