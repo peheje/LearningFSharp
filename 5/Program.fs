@@ -22,7 +22,7 @@ let trajectory line =
     [|
         for x in line.start.x .. xstep .. line.stop.x do
             for y in line.start.y .. ystep ..line.stop.y do
-                { x = x; y = y }
+                {x = x; y = y}
     |]
 
 let lines =
