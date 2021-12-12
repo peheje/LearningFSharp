@@ -16,9 +16,24 @@ let toLine (xs: string array) =
 let isHorizontalOrVertical line =
     line.start.x = line.stop.x || line.start.y = line.stop.y
 
+let verticalTrajectory line =
+    let step = if line.start.y > line.stop.y then -1 else 1
+    [for y in line.start.y .. step .. line.stop.y -> { x = line.start.x; y = y }]
+
+let horizontalTrajectory line =
+    let step = if line.start.x > line.stop.x then -1 else 1
+    [for x in line.start.x .. step .. line.stop.x -> { x = x; y = line.start.y }]
+
+let trajectory line =
+    match line with
+    | l when l.start.x = l.stop.x -> verticalTrajectory line
+    | l when l.start.y = l.stop.y -> horizontalTrajectory line
+    | _ -> failwith "only horizontal and vertical lines are supported"
+
 let lines =
     System.IO.File.ReadAllLines "sample.txt"
     |> Array.map (split " -> ")
     |> Array.map toLine
     |> Array.filter isHorizontalOrVertical
+    |> Array.map trajectory
     |> debugs
