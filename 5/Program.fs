@@ -10,9 +10,15 @@ let toCoordinate str =
     let ints = str |> split "," |> Array.map int
     {x = ints[0]; y = ints[1]}
 
+let toLine (xs: string array) =
+    {start = toCoordinate(xs[0]); stop = toCoordinate(xs[1])}
+
+let isHorizontalOrVertical line =
+    line.start.x = line.stop.x || line.start.y = line.stop.y
+
 let lines =
     System.IO.File.ReadAllLines "sample.txt"
     |> Array.map (split " -> ")
-    |> Array.map (fun pair -> pair |> Array.map toCoordinate)
-    |> Array.map (fun pair -> {start = pair[0]; stop = pair[1]})
+    |> Array.map toLine
+    |> Array.filter isHorizontalOrVertical
     |> debugs
