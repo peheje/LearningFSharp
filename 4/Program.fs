@@ -25,19 +25,20 @@ let cells = [|
                 {value = int value; marked = false; col = ci; row = ri; board = bi}
     |]
 
+let hasBingo board  =
+    let bingo selector xs = xs |> Array.map selector |> Array.countBy id |> Array.exists (fun x -> snd x = size)
+    let marked = board |> Array.filter (fun c -> c.marked)
+    marked |> bingo (fun c -> c.row) || marked |> bingo (fun c -> c.col)
+
 let boards = cells |> Array.groupBy (fun c -> c.board) |> Array.map (fun t -> snd t)
 
 let mutable bingoBoards = Set.empty
 for call in calls do
-    for cell in cells do
-        if cell.value = call then cell.marked <- true
+    
+    for cell in cells do if cell.value = call then cell.marked <- true
 
     for (bi, board) in boards |> Array.indexed do
-        let marked = board |> Array.filter (fun c -> c.marked)
-        let bingoRow = marked |> Array.groupBy (fun c -> c.row) |> Array.exists (fun g -> ((snd g) |> Array.length) = size)
-        let bingoCol = marked |> Array.groupBy (fun c -> c.col) |> Array.exists (fun g -> ((snd g) |> Array.length) = size)
-
-        if bingoRow || bingoCol then
+        if board |> hasBingo then
             if not (bingoBoards |> Set.contains bi) then
                 bingoBoards <- bingoBoards |> Set.add bi
                 let sumOfUnmarked = board |> Array.filter (fun c -> not c.marked) |> Array.sumBy (fun c -> c.value)
