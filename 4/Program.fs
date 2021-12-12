@@ -34,12 +34,9 @@ let boards = cells |> Array.groupBy (fun c -> c.board) |> Array.map (fun t -> sn
 
 let mutable bingoBoards = Set.empty
 for call in calls do
-    
     for cell in cells do if cell.value = call then cell.marked <- true
-
-    for (bi, board) in boards |> Array.indexed do
-        if board |> hasBingo then
-            if not (bingoBoards |> Set.contains bi) then
-                bingoBoards <- bingoBoards |> Set.add bi
-                let sumOfUnmarked = board |> Array.filter (fun c -> not c.marked) |> Array.sumBy (fun c -> c.value)
-                printfn $"Bingo on board {bi} = {sumOfUnmarked * call}"
+    for board in boards |> Array.filter hasBingo do
+        if not (bingoBoards |> Set.contains board) then
+            bingoBoards <- bingoBoards |> Set.add board
+            let sumOfUnmarked = board |> Array.filter (fun c -> not c.marked) |> Array.sumBy (fun c -> c.value)
+            printfn $"Bingo on board {board[0].board} = {sumOfUnmarked * call}"
