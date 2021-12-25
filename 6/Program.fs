@@ -1,33 +1,27 @@
 ﻿let log x = printfn $"%A{x}"
 let split c s = (s: string).Split(c: char)
-let input = "2,1,1,1,1,1,1,5,1,1,1,1,5,1,1,3,5,1,1,3,1,1,3,1,4,4,4,5,1,1,1,3,1,3,1,1,2,2,1,1,1,5,1,1,1,5,2,5,1,1,2,1,3,3,5,1,1,4,1,1,3,1,1,1,1,1,1,1,1,1,1,1,1,4,1,5,1,2,1,1,1,1,5,1,1,1,1,1,5,1,1,1,4,5,1,1,3,4,1,1,1,3,5,1,1,1,2,1,1,4,1,4,1,2,1,1,2,1,5,1,1,1,5,1,2,2,1,1,1,5,1,2,3,1,1,1,5,3,2,1,1,3,1,1,3,1,3,1,1,1,5,1,1,1,1,1,1,1,3,1,1,1,1,3,1,1,4,1,1,3,2,1,2,1,1,2,2,1,2,1,1,1,4,1,2,4,1,1,4,4,1,1,1,1,1,4,1,1,1,2,1,1,2,1,5,1,1,1,1,1,5,1,3,1,1,2,3,4,4,1,1,1,3,2,4,4,1,1,3,5,1,1,1,1,4,1,1,1,1,1,5,3,1,5,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,5,1,1,1,1,1,1,1,1,5,1,4,4,1,1,1,1,1,1,1,1,3,1,3,1,4,1,1,2,2,2,1,1,2,1,1"
+let countWhere predicate = Seq.filter predicate >> Seq.length
 
-let count =
-    input
+let input =
+    "2,1,1,1,1,1,1,5,1,1,1,1,5,1,1,3,5,1,1,3,1,1,3,1,4,4,4,5,1,1,1,3,1,3,1,1,2,2,1,1,1,5,1,1,1,5,2,5,1,1,2,1,3,3,5,1,1,4,1,1,3,1,1,1,1,1,1,1,1,1,1,1,1,4,1,5,1,2,1,1,1,1,5,1,1,1,1,1,5,1,1,1,4,5,1,1,3,4,1,1,1,3,5,1,1,1,2,1,1,4,1,4,1,2,1,1,2,1,5,1,1,1,5,1,2,2,1,1,1,5,1,2,3,1,1,1,5,3,2,1,1,3,1,1,3,1,3,1,1,1,5,1,1,1,1,1,1,1,3,1,1,1,1,3,1,1,4,1,1,3,2,1,2,1,1,2,2,1,2,1,1,1,4,1,2,4,1,1,4,4,1,1,1,1,1,4,1,1,1,2,1,1,2,1,5,1,1,1,1,1,5,1,3,1,1,2,3,4,4,1,1,1,3,2,4,4,1,1,3,5,1,1,1,1,4,1,1,1,1,1,5,3,1,5,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,5,1,1,1,1,1,1,1,1,5,1,4,4,1,1,1,1,1,1,1,1,3,1,3,1,4,1,1,2,2,2,1,1,2,1,1"
     |> split ','
-    |> Array.map int
-    |> Array.countBy id
-    |> Map.ofArray
+    |> Seq.map int64
 
-let mutable state =
-    [| for i in 0 .. 8 ->
-          match count |> Map.tryFind i with
-          | Some v -> int64 v
-          | _ -> 0 |]
+let step xs =
+    xs |> List.mapi (fun i _ ->
+        match i with
+        | 6 -> xs[7] + xs[0]    // those with 7 days left now has 6 days left plus those who will procreate and reset back to 6 
+        | 8 -> xs[0]            // offspring of those who procreate
+        | _ -> xs[i + 1])
 
-let rotate l =
-    match l |> Array.length with
-    | 0 -> l
-    | _ ->
-        let first = l[0]
-        let removed = l |> Array.removeAt 0
-        Array.append removed [|first|]
+let rec next xs = seq {         // instead of recursive function with state, plays nicely when number of iterations is given
+    yield xs
+    yield! xs |> step |> next
+}
 
-for i in 1..256 do
-    log i
-    log state
-    let reproducing = state[0]
-    state <- state |> rotate
-    state[6] <- state[6] + reproducing
-    
-state |> Array.sum |> log
+[0..8]
+    |> List.map (fun i -> input |> countWhere (fun x -> x = i) |> int64)
+    |> next
+    |> Seq.item 256
+    |> List.sum
+    |> log
