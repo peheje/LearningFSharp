@@ -33,17 +33,33 @@ let deduce (patterns:string array) =
     let hasInCommonWith b n a =
         a |> Seq.filter (fun c -> b |> Seq.contains c) |> Seq.length = n
 
-    let five = hasLength 5 |> Seq.find (hasInCommonWith four 3)
+    let three = hasLength 5 |> Seq.filter (hasInCommonWith one 2) |> Seq.exactlyOne
 
-    let zero = hasLength 6 |> Seq.find (hasInCommonWith five 4)
+    let nine = hasLength 6 |> Seq.filter (hasInCommonWith three 5) |> Seq.exactlyOne
 
-    let two = "todo"
+    let five =
+        hasLength 5 
+        |> Seq.filter (hasInCommonWith seven 2)
+        |> Seq.filter (hasInCommonWith nine 5)
+        |> Seq.exactlyOne
 
-    let three = "todo"
+    let zero =
+        hasLength 6
+        |> Seq.filter (hasInCommonWith four 3)
+        |> Seq.filter (hasInCommonWith seven 3)
+        |> Seq.exactlyOne
 
-    let six = "todo"
+    let two =
+        hasLength 5
+        |> Seq.filter (hasInCommonWith three 4)
+        |> Seq.filter (hasInCommonWith five 3)
+        |> Seq.exactlyOne
 
-    let nine = "todo"
+    let six =
+        hasLength 6
+        |> Seq.filter (hasInCommonWith seven 2)
+        |> Seq.filter (hasInCommonWith nine 5)
+        |> Seq.exactlyOne
 
     [
         (0, zero);
