@@ -15,7 +15,7 @@ let parsedInput = input |> Array.map parse
 // Part 1
 let part1 =
     parsedInput
-    |> Array.map (fun (_, b) -> b)
+    |> Array.map snd
     |> Array.collect id
     |> Array.map (fun x -> x |> String.length)
     |> Array.filter (fun c -> [|2;4;3;7|] |> Array.contains c)
