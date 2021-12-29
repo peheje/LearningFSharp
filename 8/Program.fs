@@ -17,7 +17,7 @@ let part1 =
     |> logs
 
 // Part 2
-let deduce (patterns:string array) =
+let deduce patterns =
 
     let hasUniqueLength n =
         patterns |> Seq.find (fun pattern -> pattern |> Seq.length = n)
