@@ -1,15 +1,21 @@
 ﻿let logs x = printfn "%A" x; x
 let json s = System.Text.Json.JsonSerializer.Serialize(s, System.Text.Json.JsonSerializerOptions(WriteIndented = true))
 let debugs s = System.IO.File.WriteAllText("debug.json", json s); s
-
 let split c a = (a:string).Split(c:string)
+let sorted (s: string) = s |> Seq.sort |> Seq.map string |> String.concat ""
 
 let input = System.IO.File.ReadAllLines "8.txt"
 
+let parse line =
+    let splitted = line |> split " | " |> Array.map (fun x -> x |> split " " |> Array.map sorted)
+    (splitted[0], splitted[1])
+
+let parsedInput = input |> Array.map parse
+
 // Part 1
 let part1 =
-    input
-    |> Array.map (fun x -> x |> split " | " |> Array.item 1 |> split " ")
+    parsedInput
+    |> Array.map (fun (_, b) -> b)
     |> Array.collect id
     |> Array.map (fun x -> x |> String.length)
     |> Array.filter (fun c -> [|2;4;3;7|] |> Array.contains c)
@@ -17,7 +23,7 @@ let part1 =
     |> logs
 
 // Part 2
-let deduce patterns =
+let deduce (patterns: string array) =
 
     let hasUniqueLength n =
         patterns |> Seq.find (fun pattern -> pattern |> Seq.length = n)
@@ -61,22 +67,29 @@ let deduce patterns =
         |> Seq.filter (hasInCommonWith nine 5)
         |> Seq.exactlyOne
 
-    [
-        (0, zero);
-        (1, one);
-        (2, two);
-        (3, three);
-        (4, four);
-        (5, five);
-        (6, six);
-        (7, seven);
-        (8, eight);
-        (9, nine);
-    ]
+    [|
+        (zero, 0);
+        (one, 1);
+        (two, 2);
+        (three, 3);
+        (four, 4);
+        (five, 5);
+        (six, 6);
+        (seven, 7);
+        (eight, 8);
+        (nine, 9);
+    |] |> Array.map (fun (letters, number) -> (letters |> sorted, number))
+
+let decode mappings code =
+    let map = mappings |> Map.ofArray 
+    code |> Array.map (fun x -> map |> Map.find x)
+
+let intArrayToNumber xs =
+    xs |> Array.map string |> String.concat "" |> int
 
 let part2 =
-    input
-    |> Array.map (fun x -> x |> split " | " |> Array.item 0 |> split " ")
-    |> Array.map deduce
+    parsedInput
+    |> Array.map (fun (a, b) -> (deduce a, b))
+    |> Array.map (fun (a, b) -> decode a b)
+    |> Array.map intArrayToNumber
     |> debugs
-
