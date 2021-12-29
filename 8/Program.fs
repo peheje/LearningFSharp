@@ -1,5 +1,5 @@
 ﻿let json s = System.Text.Json.JsonSerializer.Serialize(s, System.Text.Json.JsonSerializerOptions(WriteIndented = true))
-let debugs s = System.IO.File.WriteAllText("debug1.json", json s); s
+let debugs s = System.IO.File.WriteAllText("debug.json", json s); s
 
 let numberToSegmentCount = Map [
     (0, 6); (1, 2); (2, 5); (3, 5); (4, 4); (5, 5); (6, 6); (7, 3); (8, 7); (9, 6)
@@ -29,6 +29,7 @@ let split c a = (a:string).Split(c:string)
 let input = System.IO.File.ReadAllLines "sample.txt"
 
 // Part 1
+
 let part1 =
     input
     |> Array.map (fun x -> x |> split " | " |> Array.item 1 |> split " ")
@@ -54,6 +55,11 @@ let exclusivePairwise xs ys =
     }
     xs |> rotator |> Seq.map (fun xs -> xs |> Seq.zip ys) |> Seq.take (xs |> Seq.length)
 
+let rec keepFiltering predicate xs = seq {
+    yield xs
+    yield! xs |> predicate |> keepFiltering predicate
+}
+
 let mapper xs =
     let segments = 
         xs
@@ -61,13 +67,12 @@ let mapper xs =
         |> Array.map (fun (l, x) -> (lengthToNumberOrUnknown l, x))
         |> Array.map (fun (n, s) -> {number=n; source=s})
     
-    let known =
+    let knowns =
         segments
         |> Array.filter (fun wire -> wire.number <> unknownSegment)
         |> Array.map (fun wire ->
-            exclusivePairwise segmentMap[wire.number] (wire.source |> Seq.toArray)
+            exclusivePairwise segmentMap[wire.number] wire.source
         )
-        |> Seq.collect id
         |> debugs
 
     segments
@@ -76,4 +81,5 @@ let part2 =
     input
     |> Array.map (fun x -> x |> split " | " |> Array.item 0 |> split " ")
     |> Array.map mapper
+
 
