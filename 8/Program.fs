@@ -1,4 +1,5 @@
-﻿let json s = System.Text.Json.JsonSerializer.Serialize(s, System.Text.Json.JsonSerializerOptions(WriteIndented = true))
+﻿let logs x = printfn "%A" x; x
+let json s = System.Text.Json.JsonSerializer.Serialize(s, System.Text.Json.JsonSerializerOptions(WriteIndented = true))
 let debugs s = System.IO.File.WriteAllText("debug.json", json s); s
 
 let numberToSegmentCount = Map [
@@ -39,17 +40,44 @@ let part1 =
     |> Array.length
 
 // Part 2
+
+let exclusivePairwise xs ys =
+    let rotate xs = Seq.append (xs |> Seq.removeAt 0) [(xs |> Seq.item 0)]
+    let rec rotator xs = seq {
+        yield xs
+        yield! xs |> rotate |> rotator
+    }
+    xs |> rotator |> Seq.map (fun xs -> xs |> Seq.zip ys) |> Seq.take (xs |> Seq.length)
+
 let mapper xs =
     let segments = 
         xs
         |> Array.map (fun x -> (x |> String.length, x))
         |> Array.map (fun (l, x) -> (uniqueSegmentCountToNumber |> Map.tryFind l, x))
         |> Array.map (fun (n, x) -> (n, x, if Option.isSome n then segmentMap[n.Value] else [||]))
+        |> Array.map (fun (n, x, s) -> (n, x, exclusivePairwise x s))
     
     let (knowns, unknowns) =
         segments
         |> Array.partition (fun (n, _, _) -> Option.isSome n)
-        |> debugs
+
+    let rules =
+        knowns
+        |> Seq.map (fun (n, x, s) -> s)
+
+    let flattenedRules = rules |> Seq.collect id |> Seq.rev
+
+    let mutable rulesLeft = flattenedRules
+
+    for rule in flattenedRules do
+        for (number, character) in rule do
+            rulesLeft <- rulesLeft |> Seq.filter (fun xs -> 
+                xs |> Seq.exists (fun (i, c) -> i = number && c <> character)
+            )
+
+        logs rulesLeft
+
+
 
     segments
 
