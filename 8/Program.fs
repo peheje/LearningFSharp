@@ -24,61 +24,42 @@ let part1 =
 
 // Part 2
 let deduce (patterns: string array) =
+    let filterLength n = patterns |> Seq.filter (fun x -> x |> Seq.length = n)
+    let hasInCommonWith b n a = a |> Seq.filter (fun c -> b |> Seq.contains c) |> Seq.length = n
 
-    let hasUniqueLength n =
-        patterns |> Seq.find (fun pattern -> pattern |> Seq.length = n)
-
-    let one = hasUniqueLength 2
-    let four = hasUniqueLength 4
-    let seven = hasUniqueLength 3
-    let eight = hasUniqueLength 7
-
-    let hasLength n =
-        patterns |> Seq.filter (fun pattern -> pattern |> Seq.length = n)
-
-    let hasInCommonWith b n a =
-        a |> Seq.filter (fun c -> b |> Seq.contains c) |> Seq.length = n
-
-    let three = hasLength 5 |> Seq.filter (hasInCommonWith one 2) |> Seq.exactlyOne
-
-    let nine = hasLength 6 |> Seq.filter (hasInCommonWith three 5) |> Seq.exactlyOne
+    let one = filterLength 2 |> Seq.exactlyOne
+    let four = filterLength 4 |> Seq.exactlyOne
+    let seven = filterLength 3 |> Seq.exactlyOne
+    let eight = filterLength 7 |> Seq.exactlyOne
+    let three = filterLength 5 |> Seq.filter (hasInCommonWith one 2) |> Seq.exactlyOne
+    let nine = filterLength 6 |> Seq.filter (hasInCommonWith three 5) |> Seq.exactlyOne
 
     let five =
-        hasLength 5 
+        filterLength 5 
         |> Seq.filter (hasInCommonWith seven 2)
         |> Seq.filter (hasInCommonWith nine 5)
         |> Seq.exactlyOne
 
     let zero =
-        hasLength 6
+        filterLength 6
         |> Seq.filter (hasInCommonWith four 3)
         |> Seq.filter (hasInCommonWith seven 3)
         |> Seq.exactlyOne
 
     let two =
-        hasLength 5
+        filterLength 5
         |> Seq.filter (hasInCommonWith three 4)
         |> Seq.filter (hasInCommonWith five 3)
         |> Seq.exactlyOne
 
     let six =
-        hasLength 6
+        filterLength 6
         |> Seq.filter (hasInCommonWith seven 2)
         |> Seq.filter (hasInCommonWith nine 5)
         |> Seq.exactlyOne
 
-    [|
-        (zero, 0);
-        (one, 1);
-        (two, 2);
-        (three, 3);
-        (four, 4);
-        (five, 5);
-        (six, 6);
-        (seven, 7);
-        (eight, 8);
-        (nine, 9);
-    |] |> Array.map (fun (letters, number) -> (letters |> sorted, number))
+    [| zero; one; two; three; four; five; six; seven; eight; nine |]
+        |> Array.mapi (fun i x -> (x |> sorted, i))
 
 let decode mappings code =
     let map = mappings |> Map.ofArray 
@@ -92,4 +73,5 @@ let part2 =
     |> Array.map (fun (a, b) -> (deduce a, b))
     |> Array.map (fun (a, b) -> decode a b)
     |> Array.map intArrayToNumber
-    |> debugs
+    |> Array.sum
+    |> logs
