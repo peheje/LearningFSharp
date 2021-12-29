@@ -9,27 +9,6 @@ let uniqueSegmentCountToNumber = Map [
     (2, 1); (4, 4); (3, 7); (7, 8)
 ]
 
-let uniqueSegmentCounts = uniqueSegmentCountToNumber |> Map.keys |> Seq.toArray
-
-let split c a = (a:string).Split(c:string)
-
-let input = System.IO.File.ReadAllLines "sample.txt"
-
-let part1 =
-    input
-    |> Array.map (fun x -> x |> split " | " |> Array.item 1 |> split " ")
-    |> Array.collect id
-    |> Array.map (fun x -> x |> String.length)
-    |> Array.filter (fun c -> uniqueSegmentCounts |> Array.contains c)
-    |> Array.length
-
-let unknownSegment = -1
-
-let lengthToNumberOrUnknown length =
-    uniqueSegmentCountToNumber |> Map.tryFind length |> Option.defaultValue unknownSegment
-
-type Wire = {number: int; source: string}
-
 let segmentMap = [|
     [|1;2;3;5;6;7|];
     [|3;6|];
@@ -43,6 +22,38 @@ let segmentMap = [|
     [|1;2;3;4;6;7|]
 |]
 
+let uniqueSegmentCounts = uniqueSegmentCountToNumber |> Map.keys |> Seq.toArray
+
+let split c a = (a:string).Split(c:string)
+
+let input = System.IO.File.ReadAllLines "sample.txt"
+
+// Part 1
+let part1 =
+    input
+    |> Array.map (fun x -> x |> split " | " |> Array.item 1 |> split " ")
+    |> Array.collect id
+    |> Array.map (fun x -> x |> String.length)
+    |> Array.filter (fun c -> uniqueSegmentCounts |> Array.contains c)
+    |> Array.length
+
+
+// Part 2
+let unknownSegment = -1
+
+let lengthToNumberOrUnknown length =
+    uniqueSegmentCountToNumber |> Map.tryFind length |> Option.defaultValue unknownSegment
+
+type Wire = {number: int; source: string}
+
+let exclusivePairwise xs ys =
+    let rotate xs = Seq.append (xs |> Seq.removeAt 0) [(xs |> Seq.item 0)]
+    let rec rotator xs = seq {
+        yield xs
+        yield! xs |> rotate |> rotator
+    }
+    xs |> rotator |> Seq.map (fun xs -> xs |> Seq.zip ys) |> Seq.take (xs |> Seq.length)
+
 let mapper xs =
     let segments = 
         xs
@@ -54,8 +65,9 @@ let mapper xs =
         segments
         |> Array.filter (fun wire -> wire.number <> unknownSegment)
         |> Array.map (fun wire ->
-            Array.allPairs segmentMap[wire.number] (wire.source |> Seq.toArray)
+            exclusivePairwise segmentMap[wire.number] (wire.source |> Seq.toArray)
         )
+        |> Seq.collect id
         |> debugs
 
     segments
@@ -65,19 +77,3 @@ let part2 =
     |> Array.map (fun x -> x |> split " | " |> Array.item 0 |> split " ")
     |> Array.map mapper
 
-let a1 = ['a'; 'b']
-let b1 = [3; 6]
-
-let exclusivePairwise xs ys =
-    let rotate xs = Seq.append (xs |> Seq.removeAt 0) [(xs |> Seq.item 0)]
-    let rec rotator xs = seq {
-        yield xs
-        yield! xs |> rotate |> rotator
-    }
-    xs |> rotator |> Seq.map (fun x -> x |> Seq.zip ys) |> Seq.take (xs |> Seq.length)
-
-exclusivePairwise a1 b1
-
-let pairs = List.allPairs a b
-
-let res = [[('a', 3); ('b', 6)]; [('a', 6); ('b', 3)]]

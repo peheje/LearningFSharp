@@ -1,322 +1,346 @@
 [
   [
     {
-      "Item1": 1,
-      "Item2": "a"
+      "Item1": "a",
+      "Item2": 1
     },
     {
-      "Item1": 1,
-      "Item2": "c"
+      "Item1": "c",
+      "Item2": 2
     },
     {
-      "Item1": 1,
-      "Item2": "e"
+      "Item1": "e",
+      "Item2": 3
     },
     {
-      "Item1": 1,
-      "Item2": "d"
+      "Item1": "d",
+      "Item2": 4
     },
     {
-      "Item1": 1,
-      "Item2": "g"
+      "Item1": "g",
+      "Item2": 5
     },
     {
-      "Item1": 1,
-      "Item2": "f"
+      "Item1": "f",
+      "Item2": 6
     },
     {
-      "Item1": 1,
-      "Item2": "b"
-    },
-    {
-      "Item1": 2,
-      "Item2": "a"
-    },
-    {
-      "Item1": 2,
-      "Item2": "c"
-    },
-    {
-      "Item1": 2,
-      "Item2": "e"
-    },
-    {
-      "Item1": 2,
-      "Item2": "d"
-    },
-    {
-      "Item1": 2,
-      "Item2": "g"
-    },
-    {
-      "Item1": 2,
-      "Item2": "f"
-    },
-    {
-      "Item1": 2,
-      "Item2": "b"
-    },
-    {
-      "Item1": 3,
-      "Item2": "a"
-    },
-    {
-      "Item1": 3,
-      "Item2": "c"
-    },
-    {
-      "Item1": 3,
-      "Item2": "e"
-    },
-    {
-      "Item1": 3,
-      "Item2": "d"
-    },
-    {
-      "Item1": 3,
-      "Item2": "g"
-    },
-    {
-      "Item1": 3,
-      "Item2": "f"
-    },
-    {
-      "Item1": 3,
-      "Item2": "b"
-    },
-    {
-      "Item1": 4,
-      "Item2": "a"
-    },
-    {
-      "Item1": 4,
-      "Item2": "c"
-    },
-    {
-      "Item1": 4,
-      "Item2": "e"
-    },
-    {
-      "Item1": 4,
-      "Item2": "d"
-    },
-    {
-      "Item1": 4,
-      "Item2": "g"
-    },
-    {
-      "Item1": 4,
-      "Item2": "f"
-    },
-    {
-      "Item1": 4,
-      "Item2": "b"
-    },
-    {
-      "Item1": 5,
-      "Item2": "a"
-    },
-    {
-      "Item1": 5,
-      "Item2": "c"
-    },
-    {
-      "Item1": 5,
-      "Item2": "e"
-    },
-    {
-      "Item1": 5,
-      "Item2": "d"
-    },
-    {
-      "Item1": 5,
-      "Item2": "g"
-    },
-    {
-      "Item1": 5,
-      "Item2": "f"
-    },
-    {
-      "Item1": 5,
-      "Item2": "b"
-    },
-    {
-      "Item1": 6,
-      "Item2": "a"
-    },
-    {
-      "Item1": 6,
-      "Item2": "c"
-    },
-    {
-      "Item1": 6,
-      "Item2": "e"
-    },
-    {
-      "Item1": 6,
-      "Item2": "d"
-    },
-    {
-      "Item1": 6,
-      "Item2": "g"
-    },
-    {
-      "Item1": 6,
-      "Item2": "f"
-    },
-    {
-      "Item1": 6,
-      "Item2": "b"
-    },
-    {
-      "Item1": 7,
-      "Item2": "a"
-    },
-    {
-      "Item1": 7,
-      "Item2": "c"
-    },
-    {
-      "Item1": 7,
-      "Item2": "e"
-    },
-    {
-      "Item1": 7,
-      "Item2": "d"
-    },
-    {
-      "Item1": 7,
-      "Item2": "g"
-    },
-    {
-      "Item1": 7,
-      "Item2": "f"
-    },
-    {
-      "Item1": 7,
-      "Item2": "b"
+      "Item1": "b",
+      "Item2": 7
     }
   ],
   [
     {
-      "Item1": 1,
-      "Item2": "d"
+      "Item1": "a",
+      "Item2": 2
     },
     {
-      "Item1": 1,
-      "Item2": "a"
+      "Item1": "c",
+      "Item2": 3
     },
     {
-      "Item1": 1,
-      "Item2": "b"
+      "Item1": "e",
+      "Item2": 4
     },
     {
-      "Item1": 3,
-      "Item2": "d"
+      "Item1": "d",
+      "Item2": 5
     },
     {
-      "Item1": 3,
-      "Item2": "a"
+      "Item1": "g",
+      "Item2": 6
     },
     {
-      "Item1": 3,
-      "Item2": "b"
+      "Item1": "f",
+      "Item2": 7
     },
     {
-      "Item1": 6,
-      "Item2": "d"
-    },
-    {
-      "Item1": 6,
-      "Item2": "a"
-    },
-    {
-      "Item1": 6,
-      "Item2": "b"
+      "Item1": "b",
+      "Item2": 1
     }
   ],
   [
     {
-      "Item1": 2,
-      "Item2": "e"
+      "Item1": "a",
+      "Item2": 3
     },
     {
-      "Item1": 2,
-      "Item2": "a"
+      "Item1": "c",
+      "Item2": 4
     },
     {
-      "Item1": 2,
-      "Item2": "f"
+      "Item1": "e",
+      "Item2": 5
     },
     {
-      "Item1": 2,
-      "Item2": "b"
+      "Item1": "d",
+      "Item2": 6
     },
     {
-      "Item1": 3,
-      "Item2": "e"
+      "Item1": "g",
+      "Item2": 7
     },
     {
-      "Item1": 3,
-      "Item2": "a"
+      "Item1": "f",
+      "Item2": 1
     },
     {
-      "Item1": 3,
-      "Item2": "f"
-    },
-    {
-      "Item1": 3,
-      "Item2": "b"
-    },
-    {
-      "Item1": 4,
-      "Item2": "e"
-    },
-    {
-      "Item1": 4,
-      "Item2": "a"
-    },
-    {
-      "Item1": 4,
-      "Item2": "f"
-    },
-    {
-      "Item1": 4,
-      "Item2": "b"
-    },
-    {
-      "Item1": 6,
-      "Item2": "e"
-    },
-    {
-      "Item1": 6,
-      "Item2": "a"
-    },
-    {
-      "Item1": 6,
-      "Item2": "f"
-    },
-    {
-      "Item1": 6,
-      "Item2": "b"
+      "Item1": "b",
+      "Item2": 2
     }
   ],
   [
     {
-      "Item1": 3,
-      "Item2": "a"
+      "Item1": "a",
+      "Item2": 4
     },
     {
-      "Item1": 3,
-      "Item2": "b"
+      "Item1": "c",
+      "Item2": 5
     },
     {
-      "Item1": 6,
-      "Item2": "a"
+      "Item1": "e",
+      "Item2": 6
     },
     {
-      "Item1": 6,
-      "Item2": "b"
+      "Item1": "d",
+      "Item2": 7
+    },
+    {
+      "Item1": "g",
+      "Item2": 1
+    },
+    {
+      "Item1": "f",
+      "Item2": 2
+    },
+    {
+      "Item1": "b",
+      "Item2": 3
+    }
+  ],
+  [
+    {
+      "Item1": "a",
+      "Item2": 5
+    },
+    {
+      "Item1": "c",
+      "Item2": 6
+    },
+    {
+      "Item1": "e",
+      "Item2": 7
+    },
+    {
+      "Item1": "d",
+      "Item2": 1
+    },
+    {
+      "Item1": "g",
+      "Item2": 2
+    },
+    {
+      "Item1": "f",
+      "Item2": 3
+    },
+    {
+      "Item1": "b",
+      "Item2": 4
+    }
+  ],
+  [
+    {
+      "Item1": "a",
+      "Item2": 6
+    },
+    {
+      "Item1": "c",
+      "Item2": 7
+    },
+    {
+      "Item1": "e",
+      "Item2": 1
+    },
+    {
+      "Item1": "d",
+      "Item2": 2
+    },
+    {
+      "Item1": "g",
+      "Item2": 3
+    },
+    {
+      "Item1": "f",
+      "Item2": 4
+    },
+    {
+      "Item1": "b",
+      "Item2": 5
+    }
+  ],
+  [
+    {
+      "Item1": "a",
+      "Item2": 7
+    },
+    {
+      "Item1": "c",
+      "Item2": 1
+    },
+    {
+      "Item1": "e",
+      "Item2": 2
+    },
+    {
+      "Item1": "d",
+      "Item2": 3
+    },
+    {
+      "Item1": "g",
+      "Item2": 4
+    },
+    {
+      "Item1": "f",
+      "Item2": 5
+    },
+    {
+      "Item1": "b",
+      "Item2": 6
+    }
+  ],
+  [
+    {
+      "Item1": "d",
+      "Item2": 1
+    },
+    {
+      "Item1": "a",
+      "Item2": 3
+    },
+    {
+      "Item1": "b",
+      "Item2": 6
+    }
+  ],
+  [
+    {
+      "Item1": "d",
+      "Item2": 3
+    },
+    {
+      "Item1": "a",
+      "Item2": 6
+    },
+    {
+      "Item1": "b",
+      "Item2": 1
+    }
+  ],
+  [
+    {
+      "Item1": "d",
+      "Item2": 6
+    },
+    {
+      "Item1": "a",
+      "Item2": 1
+    },
+    {
+      "Item1": "b",
+      "Item2": 3
+    }
+  ],
+  [
+    {
+      "Item1": "e",
+      "Item2": 2
+    },
+    {
+      "Item1": "a",
+      "Item2": 3
+    },
+    {
+      "Item1": "f",
+      "Item2": 4
+    },
+    {
+      "Item1": "b",
+      "Item2": 6
+    }
+  ],
+  [
+    {
+      "Item1": "e",
+      "Item2": 3
+    },
+    {
+      "Item1": "a",
+      "Item2": 4
+    },
+    {
+      "Item1": "f",
+      "Item2": 6
+    },
+    {
+      "Item1": "b",
+      "Item2": 2
+    }
+  ],
+  [
+    {
+      "Item1": "e",
+      "Item2": 4
+    },
+    {
+      "Item1": "a",
+      "Item2": 6
+    },
+    {
+      "Item1": "f",
+      "Item2": 2
+    },
+    {
+      "Item1": "b",
+      "Item2": 3
+    }
+  ],
+  [
+    {
+      "Item1": "e",
+      "Item2": 6
+    },
+    {
+      "Item1": "a",
+      "Item2": 2
+    },
+    {
+      "Item1": "f",
+      "Item2": 3
+    },
+    {
+      "Item1": "b",
+      "Item2": 4
+    }
+  ],
+  [
+    {
+      "Item1": "a",
+      "Item2": 3
+    },
+    {
+      "Item1": "b",
+      "Item2": 6
+    }
+  ],
+  [
+    {
+      "Item1": "a",
+      "Item2": 6
+    },
+    {
+      "Item1": "b",
+      "Item2": 3
     }
   ]
 ]
