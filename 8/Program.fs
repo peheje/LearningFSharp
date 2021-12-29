@@ -28,7 +28,7 @@ let unknownSegment = -1
 let lengthToNumberOrUnknown length =
     uniqueSegmentCountToNumber |> Map.tryFind length |> Option.defaultValue unknownSegment
 
-type Wire = {number: int; length: int; source: string}
+type Wire = {number: int; source: string}
 
 let segmentMap = [|
     [|1;2;3;5;6;7|];
@@ -47,18 +47,15 @@ let mapper xs =
     let segments = 
         xs
         |> Array.map (fun x -> (x |> String.length, x))
-        |> Array.map (fun (l, x) -> (lengthToNumberOrUnknown l, l, x))
-        |> Array.map (fun (n, l, s) -> {number=n; length=l; source=s})
-        |> Array.sortBy (fun wire -> wire.length)
+        |> Array.map (fun (l, x) -> (lengthToNumberOrUnknown l, x))
+        |> Array.map (fun (n, s) -> {number=n; source=s})
     
     let known =
         segments
         |> Array.filter (fun wire -> wire.number <> unknownSegment)
-        |> Array.map (fun wire -> 
-            Array.allPairs (wire.source |> Seq.toArray) segmentMap[wire.number]
+        |> Array.map (fun wire ->
+            Array.allPairs segmentMap[wire.number] (wire.source |> Seq.toArray)
         )
-        |> Array.collect id
-        |> Array.groupBy (fun (segmentNumber, number) -> number)
         |> debugs
 
     segments
@@ -68,3 +65,18 @@ let part2 =
     |> Array.map (fun x -> x |> split " | " |> Array.item 0 |> split " ")
     |> Array.map mapper
 
+let a = ['a'; 'b']
+let b = [3; 6]
+
+let rotate xs = Seq.append (xs |> Seq.removeAt 0) [(xs |> Seq.item 0)]
+
+rotate a
+
+List.zip a b
+
+[for _ in 1..a |> List.length -> Seq.zip (a |> rotate) b]
+
+
+let pairs = List.allPairs a b
+
+let res = [[('a', 3); ('b', 6)]; [('a', 6); ('b', 3)]]
