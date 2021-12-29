@@ -65,17 +65,18 @@ let part2 =
     |> Array.map (fun x -> x |> split " | " |> Array.item 0 |> split " ")
     |> Array.map mapper
 
-let a = ['a'; 'b']
-let b = [3; 6]
+let a1 = ['a'; 'b']
+let b1 = [3; 6]
 
-let rotate xs = Seq.append (xs |> Seq.removeAt 0) [(xs |> Seq.item 0)]
+let exclusivePairwise xs ys =
+    let rotate xs = Seq.append (xs |> Seq.removeAt 0) [(xs |> Seq.item 0)]
+    let rec rotator xs = seq {
+        yield xs
+        yield! xs |> rotate |> rotator
+    }
+    xs |> rotator |> Seq.map (fun x -> x |> Seq.zip ys) |> Seq.take (xs |> Seq.length)
 
-rotate a
-
-List.zip a b
-
-[for _ in 1..a |> List.length -> Seq.zip (a |> rotate) b]
-
+exclusivePairwise a1 b1
 
 let pairs = List.allPairs a b
 
