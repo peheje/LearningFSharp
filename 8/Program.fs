@@ -23,7 +23,7 @@ let part1 =
     |> logs
 
 // Part 2
-let deduce (patterns: string array) =
+let deduce patterns =
     let filterLength n = patterns |> Seq.filter (fun x -> x |> Seq.length = n)
     let hasInCommonWith b n a = a |> Seq.filter (fun c -> b |> Seq.contains c) |> Seq.length = n
 
