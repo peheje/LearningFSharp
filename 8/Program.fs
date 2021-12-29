@@ -38,41 +38,17 @@ let part1 =
     |> Array.filter (fun c -> uniqueSegmentCounts |> Array.contains c)
     |> Array.length
 
-
 // Part 2
-let unknownSegment = -1
-
-let lengthToNumberOrUnknown length =
-    uniqueSegmentCountToNumber |> Map.tryFind length |> Option.defaultValue unknownSegment
-
-type Wire = {number: int; source: string}
-
-let exclusivePairwise xs ys =
-    let rotate xs = Seq.append (xs |> Seq.removeAt 0) [(xs |> Seq.item 0)]
-    let rec rotator xs = seq {
-        yield xs
-        yield! xs |> rotate |> rotator
-    }
-    xs |> rotator |> Seq.map (fun xs -> xs |> Seq.zip ys) |> Seq.take (xs |> Seq.length)
-
-let rec keepFiltering predicate xs = seq {
-    yield xs
-    yield! xs |> predicate |> keepFiltering predicate
-}
-
 let mapper xs =
     let segments = 
         xs
         |> Array.map (fun x -> (x |> String.length, x))
-        |> Array.map (fun (l, x) -> (lengthToNumberOrUnknown l, x))
-        |> Array.map (fun (n, s) -> {number=n; source=s})
+        |> Array.map (fun (l, x) -> (uniqueSegmentCountToNumber |> Map.tryFind l, x))
+        |> Array.map (fun (n, x) -> (n, x, if Option.isSome n then segmentMap[n.Value] else [||]))
     
-    let knowns =
+    let (knowns, unknowns) =
         segments
-        |> Array.filter (fun wire -> wire.number <> unknownSegment)
-        |> Array.map (fun wire ->
-            exclusivePairwise segmentMap[wire.number] wire.source
-        )
+        |> Array.partition (fun (n, _, _) -> Option.isSome n)
         |> debugs
 
     segments
@@ -81,5 +57,4 @@ let part2 =
     input
     |> Array.map (fun x -> x |> split " | " |> Array.item 0 |> split " ")
     |> Array.map mapper
-
 
