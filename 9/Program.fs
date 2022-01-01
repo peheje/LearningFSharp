@@ -16,12 +16,9 @@ let below row col = get (row+1) col
 let above row col = get (row-1) col
 let surrounding row col = [left row col; right row col; below row col; above row col]
 
-// Todo non mutable
-let mutable risk = 0
-for ri in 0..rows do
-    for ci in 0..columns do
-        let current = get ri ci
-        if surrounding ri ci |> Seq.forall (fun x -> x > current) then
-            risk <- risk + current + 1
-
-logs risk
+[for (ri, ci) in Seq.allPairs [0..rows] [0..columns] do
+    let cur = get ri ci
+    let neighbors = surrounding ri ci
+    if neighbors |> Seq.forall (fun x -> x > cur) then cur + 1
+]
+|> Seq.sum |> logs
