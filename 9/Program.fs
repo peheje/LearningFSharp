@@ -10,11 +10,12 @@ let rows = Array.length data
 let columns = Array.length data[0]
 let indexOk row col = row >= 0 && col >= 0 && row < rows && col < columns
 let get row col = if indexOk row col then data[row][col] else 100
-let left row col = get row (col-1)
-let right row col = get row (col+1)
-let below row col = get (row+1) col
-let above row col = get (row-1) col
-let surrounding row col = [left row col; right row col; below row col; above row col]
+let surrounding row col =
+    let left = get row (col-1)
+    let right = get row (col+1)
+    let below = get (row+1) col
+    let above = get (row-1) col
+    [left; right; below; above]
 
 [for (ri, ci) in Seq.allPairs [0..rows] [0..columns] do
     let cur = get ri ci
