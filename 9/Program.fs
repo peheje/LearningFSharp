@@ -3,7 +3,7 @@ let replace a b s = (s:string).Replace((a:string), (b:string))
 let parseRow row = row |> Seq.toArray |> Array.map (int << string)
 
 let data =
-    System.IO.File.ReadAllLines "sample.txt"
+    System.IO.File.ReadAllLines "data.txt"
     |> Array.map parseRow
 
 // Part 1
@@ -26,14 +26,14 @@ let risk row col =
     if neighborsValue row col |> Seq.forall (fun x -> x > c) then c + 1
     else 0
 
-Seq.allPairs [0..rows] [0..columns]
+Seq.allPairs [0..rows-1] [0..columns-1]
 |> Seq.fold (fun acc (row, col) -> acc + risk row col) 0
 |> logs
 
 // Part 2
-let noGroup = -1
+let noGroup = (-1, -1)
 let wall = 9
-type Cell = {value: int; row: int; col: int; mutable group: int}
+type Cell = {value: int; row: int; col: int; mutable group: int * int }
 let newCell v row col = {value = v; row = row; col = col; group = noGroup}
 
 let mutable map =
@@ -55,4 +55,15 @@ let rec visit group cell =
         |> Seq.filter nonGroupedCell
         |> Seq.iter (visit group)
 
+Seq.allPairs [0..rows-1] [0..columns-1]
+|> Seq.iter (fun (ri, ci) -> visit (ri, ci) ((getCell ri ci) |> Option.get))
 
+map
+|> Array.collect id
+|> Array.filter (fun c -> c.value <> wall)
+|> Array.countBy (fun c -> c.group)
+|> Array.map snd
+|> Seq.sortByDescending id
+|> Seq.take 3
+|> Seq.fold (*) 1
+|> logs
