@@ -3,7 +3,7 @@ let replace a b s = (s:string).Replace((a:string), (b:string))
 let parseRow row = row |> Seq.toArray |> Array.map (int << string)
 
 let data =
-    System.IO.File.ReadAllLines "sample.txt"
+    System.IO.File.ReadAllLines "data.txt"
     |> Array.map parseRow
 
 let rows = Array.length data
@@ -23,5 +23,5 @@ let risk ri ci =
     else 0
 
 Seq.allPairs [0..rows] [0..columns]
-|> Seq.fold (fun sum (row, column) -> sum + risk row column) 0
+|> Seq.fold (fun acc (row, column) -> acc + risk row column) 0
 |> logs
