@@ -11,7 +11,7 @@ let rec loop stack xs =
             loop (x::stack) rest
         else
             match stack with
-            | [] -> loop stack rest
+            | [] -> Some x
             | s::sx -> if reverse s = x then loop sx rest else Some x
 
 let findUnexpected xs = loop List.empty (xs |> Seq.toList)
