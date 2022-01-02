@@ -1,6 +1,6 @@
 ﻿let log x = printfn "%A" x
-let isStarter c = ['['; '('; '{'; '<'] |> Seq.contains c
 let reverse c = match c with | '[' -> ']' | '(' -> ')' | '{' -> '}' | '<' -> '>' | _ -> failwith "unknown character"
+let isStarter c = ['['; '('; '{'; '<'] |> Seq.contains c
 
 let rec loop stack xs =
     match xs with
@@ -11,8 +11,7 @@ let rec loop stack xs =
         else
             match stack with
             | [] -> loop stack rest
-            | s::sx -> if reverse s <> x then Some x else loop sx rest
-
+            | s::sx -> if reverse s = x then loop sx rest else Some x
 
 let findUnexpected xs = loop List.empty (xs |> Seq.toList)
 
