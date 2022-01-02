@@ -17,11 +17,11 @@ let neighbors row col =
     let above = get (row-1) col
     [left; right; below; above]
 
-let risk ri ci =
-    let c = get ri ci
-    if neighbors ri ci |> Seq.forall (fun x -> x > c) then c + 1
+let risk row col =
+    let c = get row col
+    if neighbors row col |> Seq.forall (fun x -> x > c) then c + 1
     else 0
 
 Seq.allPairs [0..rows] [0..columns]
-|> Seq.fold (fun acc (row, column) -> acc + risk row column) 0
+|> Seq.fold (fun acc (row, col) -> acc + risk row col) 0
 |> logs
