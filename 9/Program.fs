@@ -10,7 +10,7 @@ let data =
 let rows = Array.length data
 let columns = Array.length data[0]
 let indexOk row col = row >= 0 && col >= 0 && row < rows && col < columns
-let getValue row col = if indexOk row col then data[row][col] else 100
+let getValue row col = if indexOk row col then Some (data[row][col]) else None
 
 let neighbors row col getter =
     let left = getter row (col-1)
@@ -22,8 +22,8 @@ let neighbors row col getter =
 let neighborsValue row col = neighbors row col getValue
 
 let risk row col =
-    let c = getValue row col
-    if neighborsValue row col |> Seq.forall (fun x -> x > c) then c + 1
+    let c = getValue row col |> Option.get
+    if neighborsValue row col |> Seq.choose id |> Seq.forall (fun x -> x > c) then c + 1
     else 0
 
 let allCells = Seq.allPairs [0..rows-1] [0..columns-1]
