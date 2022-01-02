@@ -36,9 +36,7 @@ allCells
 type Cell = {value: int; row: int; col: int; mutable group: (int * int) option}
 let newCell value row col = {value = value; row = row; col = col; group = None}
 
-let mutable map =
-    data
-    |> Array.mapi (fun ri row -> row |> Array.mapi (fun ci v -> newCell v ri ci))
+let map = data |> Array.mapi (fun ri row -> row |> Array.mapi (fun ci v -> newCell v ri ci))
 
 let getCell row col = if indexOk row col then Some (map[row][col]) else None
 
