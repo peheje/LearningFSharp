@@ -31,10 +31,8 @@ Seq.allPairs [0..rows-1] [0..columns-1]
 |> logs
 
 // Part 2
-let noGroup = (-1, -1)
-let wall = 9
-type Cell = {value: int; row: int; col: int; mutable group: int * int }
-let newCell v row col = {value = v; row = row; col = col; group = noGroup}
+type Cell = {value: int; row: int; col: int; mutable group: (int * int) option}
+let newCell value row col = {value = value; row = row; col = col; group = None}
 
 let mutable map =
     data
@@ -42,25 +40,26 @@ let mutable map =
 
 let getCell row col = if indexOk row col then Some (map[row][col]) else None
 
-let neighborsCell row col = neighbors row col getCell |> Seq.choose id
+let neighborsCell row col =
+    neighbors row col getCell
+    |> Seq.choose id
 
-let nonGroupedCell cell = cell.value <> wall && cell.group = noGroup
+let notWall cell = cell.value <> 9
+
+let notGrouped cell = cell.group = None
 
 let rec visit group cell =
-    if cell |> nonGroupedCell then
-
+    if notWall cell && notGrouped cell then
         cell.group <- group
-
         neighborsCell cell.row cell.col
-        |> Seq.filter nonGroupedCell
         |> Seq.iter (visit group)
 
 Seq.allPairs [0..rows-1] [0..columns-1]
-|> Seq.iter (fun (ri, ci) -> visit (ri, ci) ((getCell ri ci) |> Option.get))
+|> Seq.iter (fun (ri, ci) -> visit (Some (ri, ci)) ((getCell ri ci) |> Option.get))
 
 map
 |> Array.collect id
-|> Array.filter (fun c -> c.value <> wall)
+|> Array.filter notWall
 |> Array.countBy (fun c -> c.group)
 |> Array.map snd
 |> Seq.sortByDescending id
