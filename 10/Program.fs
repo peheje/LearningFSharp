@@ -8,11 +8,11 @@ let rec loop stack xs =
     | [] -> None
     | x::rest ->
         if isStarter x then
-            loop (x::stack) rest
+            loop (reverse x::stack) rest
         else
             match stack with
             | [] -> Some x
-            | s::sx -> if reverse s = x then loop sx rest else Some x
+            | s::sx -> if s = x then loop sx rest else Some x
 
 let findUnexpected xs = loop List.empty (xs |> Seq.toList)
 
