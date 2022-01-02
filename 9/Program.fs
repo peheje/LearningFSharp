@@ -26,7 +26,9 @@ let risk row col =
     if neighborsValue row col |> Seq.forall (fun x -> x > c) then c + 1
     else 0
 
-Seq.allPairs [0..rows-1] [0..columns-1]
+let allCells = Seq.allPairs [0..rows-1] [0..columns-1]
+
+allCells
 |> Seq.fold (fun acc (row, col) -> acc + risk row col) 0
 |> logs
 
@@ -45,24 +47,23 @@ let neighborsCell row col =
     |> Seq.choose id
 
 let notWall cell = cell.value <> 9
-
 let notGrouped cell = cell.group = None
 
-let rec visit group cell =
+let rec mark group cell =
     if notWall cell && notGrouped cell then
-        cell.group <- group
+        cell.group <- Some group
         neighborsCell cell.row cell.col
-        |> Seq.iter (visit group)
+        |> Seq.iter (mark group)
 
-Seq.allPairs [0..rows-1] [0..columns-1]
-|> Seq.iter (fun (ri, ci) -> visit (Some (ri, ci)) ((getCell ri ci) |> Option.get))
+allCells
+|> Seq.iter (fun (row, col) -> mark (row, col) (map[row][col]))
 
 map
 |> Array.collect id
 |> Array.filter notWall
 |> Array.countBy (fun c -> c.group)
 |> Array.map snd
-|> Seq.sortByDescending id
-|> Seq.take 3
-|> Seq.fold (*) 1
+|> Array.sortByDescending id
+|> Array.take 3
+|> Array.fold (*) 1
 |> logs
