@@ -1,18 +1,22 @@
 ﻿let log x = printfn "%A" x
+let isStarter c = ['['; '('; '{'; '<'] |> Seq.contains c
+let reverse c = match c with | '[' -> ']' | '(' -> ')' | '{' -> '}' | '<' -> '>' | _ -> failwith "unknown character"
 
-let remove a s = (s:string).Replace(a, "")
-let s = "(((((((((())))))))))"
-
-let opposite = Map [('{', '}'); ('<', '>'); ('[', ']'); ('(', ')')]
-let opposite2 = Seq.zip (opposite |> Map.values) (opposite |> Map.keys) |> Map.ofSeq
-
-let isCloser c = "})]>" |> Seq.contains c
-let isOpener c = not (isCloser c)
-
-let corrupted
-let mutable ms = s
-for i in 0 .. Seq.length s do
-    ms <- ms |> remove "()"
+let rec loop stack xs =
+    match xs with
+    | [] -> None
+    | x::rest ->
+        if isStarter x then
+            loop (x::stack) rest
+        else
+            match stack with
+            | [] -> loop stack rest
+            | s::sx -> if reverse s <> x then Some x else loop sx rest
 
 
-log ms
+let findUnexpected xs = loop List.empty (xs |> Seq.toList)
+
+findUnexpected "[<>({}){}[([])<>]]" |> log
+findUnexpected "(((((((((())))))))))" |> log
+findUnexpected "{([(<{}[<>[]}>{[]{[(<()>" |> log
+findUnexpected "[[<[([]))<([[{}[[()]]]" |> log
