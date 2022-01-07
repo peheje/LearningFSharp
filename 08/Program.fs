@@ -7,7 +7,7 @@ let sorted (s: string) = s |> Seq.sort |> Seq.map string |> String.concat ""
 let input = System.IO.File.ReadAllLines "8.txt"
 
 let parse line =
-    let splitted = line |> split " | " |> Array.map (fun x -> x |> split " " |> Array.map sorted)
+    let splitted = line |> split " | " |> Array.map (split " " >> Array.map sorted)
     (splitted[0], splitted[1])
 
 let parsedInput = input |> Array.map parse
@@ -17,7 +17,7 @@ let part1 =
     parsedInput
     |> Array.map snd
     |> Array.collect id
-    |> Array.map (fun x -> x |> String.length)
+    |> Array.map String.length
     |> Array.filter (fun c -> [|2;4;3;7|] |> Array.contains c)
     |> Array.length
     |> logs
