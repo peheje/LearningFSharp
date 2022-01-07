@@ -30,7 +30,7 @@ let hasBingo board  =
     let marked = board |> Array.filter (fun c -> c.marked)
     marked |> bingo (fun c -> c.row) || marked |> bingo (fun c -> c.col)
 
-let boards = cells |> Array.groupBy (fun c -> c.board) |> Array.map (fun t -> snd t)
+let boards = cells |> Array.groupBy (fun c -> c.board) |> Array.map snd
 
 let mutable bingoBoards = Set.empty
 for call in calls do
