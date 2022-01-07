@@ -16,7 +16,7 @@ let findUnexpected xs =
                 | s::sx -> if s = x then loop sx rest else (Some x, stack)
     loop List.empty (xs |> Seq.toList)
 
-let input = System.IO.File.ReadAllLines "sample.txt"
+let input = System.IO.File.ReadAllLines "data.txt"
 
 // Part 1
 let part1 = 
@@ -28,12 +28,12 @@ let part1 =
     |> logs
 
 // Part 2
-let point2 c = match c with | ')' -> 1 | ']' -> 2 | '}' -> 3 | '>' -> 4 | _ -> failwith "unknown"
+let point2 c = (match c with | ')' -> 1 | ']' -> 2 | '}' -> 3 | '>' -> 4 | _ -> failwith "unknown") |> uint64
 
 let score xs =
     xs
     |> Seq.map point2
-    |> Seq.fold (fun acc x -> acc * 5 + x) 0
+    |> Seq.fold (fun acc x -> acc * 5UL + x) 0UL
 
 let part2 =
     input
