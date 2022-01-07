@@ -30,7 +30,7 @@ let trajectory line =
     else
         let xs = [| for x in line.start.x .. xstep ..line.stop.x -> x |]
         let ys = [| for y in line.start.y .. ystep ..line.stop.y -> y |]
-        Array.zip xs ys |> Array.map (fun v -> {x = fst v; y = snd v})
+        Array.zip xs ys |> Array.map (fun (x, y) -> {x = x; y = y})
 
 let lines =
     System.IO.File.ReadAllLines "5.txt"
@@ -41,7 +41,7 @@ let solve lines =
     |> Array.map trajectory
     |> Array.collect id
     |> Array.countBy id
-    |> Array.filter (fun v -> snd v >= 2)
+    |> Array.filter (fun (_, count) -> count >= 2)
     |> Array.length
 
 let ans1 =
