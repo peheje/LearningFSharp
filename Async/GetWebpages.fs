@@ -41,7 +41,7 @@ let private mapOptionalAsync f asyncItem =
     }
 
 let run () =
-    printfn "start getWebpages"
+    printfn "running GetWebpages"
 
     async {
         let! urls = readUrlsList ()

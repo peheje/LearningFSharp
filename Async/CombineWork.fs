@@ -25,6 +25,7 @@ let private work3 a =
 let private muchWork = [ work1 10 30; work2 10 30 ] |> Seq.map work3 |> Async.Parallel
 
 let run () =
+    printfn "running CombineWork"
     async {
         let! result = muchWork
         printfn "%A" result
