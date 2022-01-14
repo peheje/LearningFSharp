@@ -31,14 +31,18 @@ let private readUrlsList () =
         return! IO.File.ReadAllLinesAsync (path) |> Async.AwaitTask
     }
 
-let private mapOptionalAsync f asyncItem =
-    async {
-        match! asyncItem with
-        | Some x ->
-            let! result = f x
-            return Some result
-        | None -> return None
-    }
+module AsyncSeq =
+
+    let mapOptional f xs =
+        xs
+        |> Seq.map (fun x ->
+            async {
+                match! x with
+                | None -> return None
+                | Some x ->
+                    let! result = f x
+                    return Some result
+            })
 
 let run () =
     printfn "running GetWebpages"
@@ -49,7 +53,7 @@ let run () =
         do!
             urls
             |> Seq.map getUrl
-            |> Seq.map (mapOptionalAsync dump)
+            |> AsyncSeq.mapOptional dump
             |> Async.Parallel
             |> Async.Ignore
     }
