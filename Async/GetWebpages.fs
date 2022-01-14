@@ -35,8 +35,8 @@ module Option =
             async {
                 match! x with
                 | None -> return None
-                | Some x ->
-                    let! result = f x
+                | Some v ->
+                    let! result = f v
                     return Some result
             }
 
