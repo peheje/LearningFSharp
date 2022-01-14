@@ -1,20 +1,20 @@
-module Learning.CombiningWork
+module Learning.CombineWork
 
-let work1 a b =
+let private work1 a b =
     async {
         printfn "work1"
         do! Async.Sleep 2000
         return a + b
     }
 
-let work2 a b =
+let private work2 a b =
     async {
         printfn "work2"
         do! Async.Sleep 2000
         return a * b
     }
 
-let work3 a =
+let private work3 a =
     async {
         printfn "work3"
         let! res = a
@@ -22,13 +22,11 @@ let work3 a =
         return res * 2
     }
 
-let muchWork =
-    [ work1 10 30; work2 10 30 ]
-    |> Seq.map work3
-    |> Async.Parallel
+let private muchWork = [ work1 10 30; work2 10 30 ] |> Seq.map work3 |> Async.Parallel
 
-async {
-    let! result = muchWork
-    printfn "%A" result
-}
-|> Async.RunSynchronously
+let run () =
+    async {
+        let! result = muchWork
+        printfn "%A" result
+    }
+    |> Async.RunSynchronously

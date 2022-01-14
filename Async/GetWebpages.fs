@@ -2,18 +2,18 @@
 
 open System
 
-let dump data =
+let private dump data =
     async {
         let path = $"dump/{Guid.NewGuid ()}.txt"
         do! IO.File.WriteAllTextAsync (path, data) |> Async.AwaitTask
     }
 
-let limitString maxLength s =
+let private limitString maxLength s =
     let lastIndex = (s |> String.length) - 1
     let limit = min lastIndex maxLength
     s.Substring (0, limit)
 
-let getUrl url =
+let private getUrl url =
     async {
         try
             let! response = FSharp.Data.Http.AsyncRequestString (url, timeout = 5000)
@@ -25,13 +25,13 @@ let getUrl url =
             return None
     }
 
-let readUrlsList () =
+let private readUrlsList () =
     async {
         let path = "urls.txt"
         return! IO.File.ReadAllLinesAsync (path) |> Async.AwaitTask
     }
 
-let mapOptionalAsync f asyncItem =
+let private mapOptionalAsync f asyncItem =
     async {
         match! asyncItem with
         | Some x ->
@@ -40,16 +40,17 @@ let mapOptionalAsync f asyncItem =
         | None -> return None
     }
 
-printfn "start"
+let run () =
+    printfn "start getWebpages"
 
-async {
-    let! urls = readUrlsList ()
+    async {
+        let! urls = readUrlsList ()
 
-    do!
-        urls
-        |> Seq.map getUrl
-        |> Seq.map (mapOptionalAsync dump)
-        |> Async.Parallel
-        |> Async.Ignore
-}
-|> Async.RunSynchronously
+        do!
+            urls
+            |> Seq.map getUrl
+            |> Seq.map (mapOptionalAsync dump)
+            |> Async.Parallel
+            |> Async.Ignore
+    }
+    |> Async.RunSynchronously
