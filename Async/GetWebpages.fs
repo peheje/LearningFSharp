@@ -4,8 +4,10 @@ open System
 
 let private dump data =
     async {
+        let sw = Diagnostics.Stopwatch.StartNew ()
         let path = $"dump/{Guid.NewGuid ()}.txt"
         do! IO.File.WriteAllTextAsync (path, data) |> Async.AwaitTask
+        return int sw.ElapsedMilliseconds
     }
 
 let private dumpSync data =
@@ -15,7 +17,7 @@ let private dumpSync data =
 let private getUrl url =
     async {
         try
-            let! response = FSharp.Data.Http.AsyncRequestString (url, timeout = 5000)
+            let! response = FSharp.Data.Http.AsyncRequestString (url, timeout = 10000)
             return Some response
         with
         | _ ->
@@ -47,6 +49,18 @@ module Option =
                 | Some x -> return Some (f x)
             }
 
+let bind f x =
+    match x with | None -> None | Some v -> f v
+
+let printList1 xs =
+    async {
+        let! xs = xs
+        xs |> Array.choose id |> Array.map (printfn "%ims") |> ignore
+    }
+
+let printList xs =
+    xs |> Seq.toArray |> Array.map (Option.Async.bind (printfn "%ims"))
+
 let run () =
     printfn "running GetWebpages"
 
@@ -58,6 +72,7 @@ let run () =
             |> Seq.map getUrl
             |> Seq.map (Option.Async.bindAsync dump)
             // |> Seq.map (Option.Async.bind dumpSync)
+            |> printList
             |> Async.Parallel
             |> Async.Ignore
     }
