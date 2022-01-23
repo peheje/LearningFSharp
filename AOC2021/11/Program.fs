@@ -1,81 +1,64 @@
 ﻿let logs x = printfn "%A" x; x
-let dumps x =
-    let options = System.Text.Json.JsonSerializerOptions(WriteIndented = true)
-    let json = System.Text.Json.JsonSerializer.Serialize(x, options)
-    System.IO.File.WriteAllText("dump.json", json)
-    x
 let rows = System.IO.File.ReadAllLines "data.txt"
 let split s = [|for c in s -> int (string c)|]
 let cells = rows |> Array.map split
 let lastIndex = Array.length cells - 1
 
-type Coordinate = { row: int; col: int }
+let map f xxs =
+    xxs |> Array.map (fun xs -> xs |> Array.map f)
+
+let print xxs =
+    let printable = xxs |> map string |> Seq.map (fun xs -> xs |> String.concat "")
+    System.IO.File.WriteAllLines("output.txt", printable)
+
+type Octo = { mutable value: int; mutable flashed: bool }
+
+let printOctie octie =
+    octie |> map (fun o -> o.value) |> print
+
+let maxMin x = [|max 0 (x - 1)..min lastIndex (x + 1)|]
 
 let validNeighborIndexes row col =
-    let minRow = max 0 (row - 1)
-    let maxRow = min lastIndex (row + 1)
-    let minCol = max 0 (col - 1)
-    let maxCol = min lastIndex (col + 1)
-    let rowIndexes = [|for ri in minRow..maxRow -> ri|]
-    let colIndexes = [|for ci in minCol..maxCol -> ci|]
-    Array.allPairs rowIndexes colIndexes
+    Array.allPairs (maxMin row) (maxMin col)
     |> Array.filter ((<>) (row, col))
-    |> Array.map (fun (ri, ci) -> { row = ri; col = ci })
 
-type Octopus = { value: int; flashes: int; flashed: bool; coordinate: Coordinate; surrounding: Coordinate array }
+let increase o =
+    o.value <- o.value + 1
+    o
 
-let toOctopus value ri ci =
-    {value = value
-     flashes = 0
-     flashed = false
-     coordinate = { row = ri; col = ci }
-     surrounding = validNeighborIndexes ri ci}
+let octies = cells |> map (fun v -> { value = v; flashed = false })
 
-let increment octopus =
-    { octopus with value = octopus.value + 1 }
+let rec keepFlashing (octie: Octo array array): Octo array array =
+    for r = 0 to (octie |> Array.length) - 1 do  
+        for c = 0 to (cells[0] |> Array.length) - 1 do
+            let current = (octie[r][c])
 
-let flash octopus =
-    { octopus with value = 0; flashes = octopus.flashes + 1; flashed = true }
+            if current.value > 9 && not current.flashed then
+                current.flashed <- true
 
-let getAffectedByFlash octi =
-     octi
-    |> Array.filter (fun octopus -> octopus.value > 9 && not octopus.flashed)
-    |> Array.map (fun x -> x.surrounding)
-    |> Array.collect id
+                let neighbors = validNeighborIndexes r c
+                for (nr, nc) in neighbors do
+                    let neighbor = (octies[nr][nc])
+                    neighbor.value <- neighbor.value + 1
+                    keepFlashing octie |> ignore
+    octie
 
-let rec step octi = seq {
-    yield octi
+let step = 100
 
-    // Increase energy level by 1 for all
-    let mutable next = octi |> Array.map increment
+let mutable flashes = 0
 
-    let mutable affectedByFlash = next |> getAffectedByFlash
+for i = 0 to step - 1 do
+    octies |> map increase |> ignore
+    octies |> keepFlashing |> ignore
 
-    while not (affectedByFlash |> Seq.isEmpty) do
-        for affected in affectedByFlash do
-            let affectedOctopus, rest =
-                next |> Array.partition (fun octopus -> octopus.coordinate = affected && not octopus.flashed)
+    for row in octies do
+        for o in row do
+            if o.flashed then flashes <- flashes + 1 
 
-            let incremented = affectedOctopus |> Array.map flash
-            next <- Array.concat [|incremented; rest|]
+    octies |> map (fun o ->
+        if o.flashed then o.value <- 0
+        o.flashed <- false
+    ) |> ignore
 
-    affectedByFlash <- next |> getAffectedByFlash
-
-    let didFlash, rest =
-        next |> Array.partition (fun octopus -> octopus.flashed)
-
-    let reset = didFlash |> Array.map flash
-    next <- Array.concat [|reset; rest|]
-
-    yield! next |> step
-}
-
-let octi =
-    cells
-    |> Array.mapi (fun ri xs -> xs |> Array.mapi (fun ci v -> toOctopus v ri ci))
-    |> Array.collect id
-    |> step
-    |> Seq.item 100
-    |> Seq.map (fun x -> x.flashes)
-    |> Seq.sum
-    |> dumps
+printOctie octies
+logs flashes
