@@ -8,7 +8,7 @@ let map f xxs =
     xxs |> Array.map (fun xs -> xs |> Array.map f)
 
 let mapic c f xxs =
-    xxs |> Array.mapi (fun ri xs -> xs |> Array.mapi (fun ci x -> if c x ri ci then f x ri ci else x))
+    xxs |> Array.map (fun xs -> xs |> Array.map (fun x -> if c x then f x else x))
 
 let maxMin x = [|max 0 (x - 1)..min lastIndex (x + 1)|]
 
@@ -36,7 +36,7 @@ let rec flashing xxs =
     else
         xxs
 
-let reset xxs = xxs |> mapic (fun x _ _ -> x > 9 || x = -1) (fun _ _ _-> 0)
+let reset xxs = xxs |> mapic (fun x -> x > 9 || x = -1) (fun _ -> 0)
 
 let step = increment >> flashing >> reset
 
