@@ -1,64 +1,71 @@
 ﻿let logs x = printfn "%A" x; x
-let rows = System.IO.File.ReadAllLines "data.txt"
+let rows = System.IO.File.ReadAllLines "sample.txt"
 let split s = [|for c in s -> int (string c)|]
-let cells = rows |> Array.map split
-let lastIndex = Array.length cells - 1
+let octie = rows |> Array.map split
+let lastIndex = Array.length octie - 1
 
 let map f xxs =
     xxs |> Array.map (fun xs -> xs |> Array.map f)
+
+let mapi f xxs =
+    xxs |> Array.mapi (fun ri xs -> xs |> Array.mapi (fun ci x -> f ri ci x))
+
+let mapic c f xxs =
+    xxs |> Array.mapi (fun ri xs -> xs |> Array.mapi (fun ci x -> if c x ri ci then f x ri ci else x))
 
 let print xxs =
     let printable = xxs |> map string |> Seq.map (fun xs -> xs |> String.concat "")
     System.IO.File.WriteAllLines("output.txt", printable)
 
-type Octo = { mutable value: int; mutable flashed: bool }
-
-let printOctie octie =
-    octie |> map (fun o -> o.value) |> print
-
 let maxMin x = [|max 0 (x - 1)..min lastIndex (x + 1)|]
 
-let validNeighborIndexes row col =
+let surrounding row col =
     Array.allPairs (maxMin row) (maxMin col)
     |> Array.filter ((<>) (row, col))
 
-let increase o =
-    o.value <- o.value + 1
-    o
+let increment xxs =
+    xxs |> map (fun x -> x + 1)
 
-let octies = cells |> map (fun v -> { value = v; flashed = false })
+type Octo = { value: int; ri: int; ci: int }
 
-let rec keepFlashing (octie: Octo array array): Octo array array =
-    for r = 0 to (octie |> Array.length) - 1 do  
-        for c = 0 to (cells[0] |> Array.length) - 1 do
-            let current = (octie[r][c])
+let neighbors octie ri ci =
+    let indexes = surrounding ri ci
+    octie |> Seq.filter (fun o -> indexes |> Array.contains (o.ri, o.ci))
 
-            if current.value > 9 && not current.flashed then
-                current.flashed <- true
+let rec flashingLoop xxs flashed =
+    let toFlash, rest = xxs |> Array.partition (fun o -> o.value > 9 && not (flashed |> Array.contains (o.ri, o.ci)))
 
-                let neighbors = validNeighborIndexes r c
-                for (nr, nc) in neighbors do
-                    let neighbor = (octies[nr][nc])
-                    neighbor.value <- neighbor.value + 1
-                    keepFlashing octie |> ignore
-    octie
+    if toFlash |> Array.isEmpty then
+        xxs
+    else
+        let flashedIndexes = toFlash |> Array.map (fun o -> o.ri, o.ci)
+        let incrementTheseIndexes = toFlash |> Array.map (fun o -> surrounding o.ri o.ci) |> Array.collect id
 
-let step = 100
+        let incrementedOctoes =
+            rest
+            |> Array.filter (fun o -> incrementTheseIndexes |> Array.contains (o.ri, o.ci))
+            |> Array.map (fun o -> { o with value = o.value + 1 })
 
-let mutable flashes = 0
+        let totalFlashed = (Array.concat [|flashed; flashedIndexes|])
+        flashingLoop incrementedOctoes totalFlashed
 
-for i = 0 to step - 1 do
-    octies |> map increase |> ignore
-    octies |> keepFlashing |> ignore
 
-    for row in octies do
-        for o in row do
-            if o.flashed then flashes <- flashes + 1 
+let flashing xxs =
+    let octieSeq = xxs |> mapi (fun v ri ci -> { value = v; ri = ri; ci = ci }) |> Array.collect id
+    let octie = flashingLoop octieSeq Array.empty
+    
+    octie |> 
 
-    octies |> map (fun o ->
-        if o.flashed then o.value <- 0
-        o.flashed <- false
-    ) |> ignore
 
-printOctie octies
-logs flashes
+let reset xxs =
+    xxs |> mapic (fun x _ _ -> x > 9) (fun x _ _-> 0)
+
+let step = increment >> flashing >> reset
+
+let rec next octie = seq {
+    yield octie
+    print octie
+    yield! octie |> step |> next
+}
+
+octie |> next |> Seq.item 1 |> logs
