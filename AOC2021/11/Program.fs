@@ -26,7 +26,7 @@ let rec flashing xxs =
                 let neighbors = surrounding ri ci
                 for nri, nci in neighbors do
                     let neighbor = xxs[nri][nci]
-                    if neighbor >= 0 then
+                    if neighbor <> -1 then
                         xxs[nri][nci] <- neighbor + 1
                 xxs[ri][ci] <- -1
                 flashes <- flashes + 1
