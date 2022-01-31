@@ -52,12 +52,6 @@ module Option =
 let bind f x =
     match x with | None -> None | Some v -> f v
 
-let printList1 xs =
-    async {
-        let! xs = xs
-        xs |> Array.choose id |> Array.map (printfn "%ims") |> ignore
-    }
-
 let printList xs =
     xs |> Seq.toArray |> Array.map (Option.Async.bind (printfn "%ims"))
 
