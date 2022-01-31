@@ -1,5 +1,4 @@
-﻿let generator state =
-    let first, second = state
+﻿let generator (first, second) =
     let nextFibNumber = first + second
     let nextState = (second, nextFibNumber)
     Some (nextFibNumber, nextState)
