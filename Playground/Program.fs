@@ -1,9 +1,10 @@
 ﻿let generator (first, second) =
     let nextFibNumber = first + second
     let nextState = (second, nextFibNumber)
-    Some (nextFibNumber, nextState)
+    if nextFibNumber > 1000 then None
+    else Some (nextFibNumber, nextState)
 
-let fib =
-    Seq.unfold generator (1, 1)
-    |> Seq.take 10
-    |> Seq.toList
+let fibSequence = Seq.unfold generator (1, 1)
+
+for x in fibSequence do
+    printfn "%d" x
