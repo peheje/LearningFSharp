@@ -5,13 +5,13 @@ let octos =
     |> Array.map (fun row -> [|for x in row -> int (string x)|])
     |> Array.collect id
 
-let size = lines |> Seq.length
+let size = lines |> Array.length
 let length = octos |> Array.length
 
 let toIndex row col = row * size + col
 
 let anyFlashing data =
-    data |> Seq.exists(fun x -> x > 9)
+    data |> Array.exists(fun x -> x > 9)
 
 let surroundingIndices row col =
     let neighbors = [|[|-1; -1|]; [|-1; 0|]; [|-1; 1|]; [|0; -1|]; [|0; 1|]; [|1; -1|]; [|1; 0|]; [|1; 1|]|]
