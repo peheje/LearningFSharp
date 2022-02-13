@@ -1,55 +1,45 @@
-﻿let logs x = printfn "%A" x; x
-let rows = System.IO.File.ReadAllLines "data.txt"
-let split s = [|for c in s -> int (string c)|]
-let octie = rows |> Array.map split
-let lastIndex = Array.length octie - 1
+﻿let lines = System.IO.File.ReadAllLines("sample.txt")
 
-let map f xxs =
-    xxs |> Array.map (fun xs -> xs |> Array.map f)
+let octos =
+    lines
+    |> Array.map (fun row -> [|for x in row -> int (string x)|])
+    |> Array.collect id
 
-let mapic c f xxs =
-    xxs |> Array.map (fun xs -> xs |> Array.map (fun x -> if c x then f x else x))
+let size = lines |> Seq.length
+let length = octos |> Array.length
 
-let maxMin x = [|max 0 (x - 1)..min lastIndex (x + 1)|]
+let toIndex row col = row * size + col
 
-let surrounding row col =
-    Array.allPairs (maxMin row) (maxMin col)
-    |> Array.filter ((<>) (row, col))
+let anyFlashing data =
+    data |> Seq.exists(fun x -> x > 9)
 
-let increment xxs = xxs |> map ((+) 1)
+let surroundingIndices row col =
+    let neighbors = [|[-1; -1]; [-1; 0]; [-1; 1]; [0; -1]; [0; 1]; [1; -1]; [1; 0]; [1; 1]|]
+    [|for neighbor in neighbors do
+        let r = neighbor[0] + row
+        let c = neighbor[1] + col
+        toIndex r c
+    |] |> Array.filter (fun index -> index >= 0 && index < length)
 
-let flashedThisStep = -1
 let mutable flashes = 0
-let rec flashing xxs =
-    for ri, xs in xxs |> Array.indexed do
-        for ci, v in xs |> Array.indexed do
-            if v > 9 then
-                xxs[ri][ci] <- flashedThisStep
-                flashes <- flashes + 1
 
-                let neighbors = surrounding ri ci
-                for nri, nci in neighbors do
-                    let neighbor = xxs[nri][nci]
-                    if neighbor <> flashedThisStep then
-                        xxs[nri][nci] <- neighbor + 1
+for _ in 1..99 do
+    for i in 0..length-1 do
+        octos[i] <- octos[i] + 1
 
-    if xxs |> Array.exists (fun xs -> xs |> Array.exists (fun x -> x > 9)) then
-        flashing xxs
-    else
-        xxs
+    while anyFlashing octos do
+        for i in 0..size-1 do
+            for j in 0..size-1 do
+                let index = toIndex i j
+                if octos[index] > 9 then
+                    flashes <- flashes + 1
+                    octos[index] <- -1
+                    for ni in surroundingIndices i j do
+                        if octos[ni] <> -1 then
+                            octos[ni] <- octos[ni] + 1
 
-let reset xxs = xxs |> mapic (fun x -> x > 9 || x = flashedThisStep) (fun _ -> 0)
+    for i in 0..length-1 do
+        if octos[i] = -1 then
+            octos[i] <- 0
 
-let step = increment >> flashing >> reset
-
-let rec next octie = seq {
-    yield octie
-    yield! octie |> step |> next
-}
-
-let output = 
-    octie
-    |> next
-    |> Seq.item 100
-
-logs flashes
+printfn "%i" flashes
