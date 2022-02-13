@@ -14,8 +14,8 @@ let anyFlashing data =
     data |> Array.exists(fun x -> x > 9)
 
 let surroundingIndices row col =
-    let neighbors = [|[|-1; -1|]; [|-1; 0|]; [|-1; 1|]; [|0; -1|]; [|0; 1|]; [|1; -1|]; [|1; 0|]; [|1; 1|]|]
-    [|for neighbor in neighbors -> toIndex (neighbor[0] + row) (neighbor[1] + col)|]
+    let neighbors = [|(-1, -1); (-1, 0); (-1, 1); (0, -1); (0, 1); (1, -1); (1, 0); (1, 1)|]
+    [|for (ri, ci) in neighbors -> toIndex (ri + row) (ci + col)|]
     |> Array.filter (fun index -> index >= 0 && index < length)
 
 let mutable flashes = 0
