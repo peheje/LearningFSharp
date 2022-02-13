@@ -20,6 +20,7 @@ let surroundingIndices index =
     [|for (ri, ci) in neighbors -> toIndex (ri + row) (ci + col)|]
     |> Array.filter (fun index -> index >= 0 && index < length)
 
+let tired = -1
 let mutable flashes = 0
 
 for _ in 1..99 do
@@ -30,13 +31,13 @@ for _ in 1..99 do
         for i in 0..length-1 do
             if octos[i] > 9 then
                 flashes <- flashes + 1
-                octos[i] <- -1
+                octos[i] <- tired
                 for ni in surroundingIndices i do
-                    if octos[ni] <> -1 then
+                    if octos[ni] <> tired then
                         octos[ni] <- octos[ni] + 1
 
     for i in 0..length-1 do
-        if octos[i] = -1 then
+        if octos[i] = tired then
             octos[i] <- 0
 
 printfn "%i" flashes
