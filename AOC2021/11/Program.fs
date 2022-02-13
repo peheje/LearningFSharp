@@ -1,4 +1,4 @@
-﻿let lines = System.IO.File.ReadAllLines("sample.txt")
+﻿let lines = System.IO.File.ReadAllLines("data.txt")
 
 let octos =
     lines
