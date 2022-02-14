@@ -36,7 +36,7 @@ for step in 0..<99:
     for i in 0..<octos.len:
         octos[i] += 1
 
-    while (anyFlashing(octos)):
+    while anyFlashing(octos):
         for i in 0..<size:
             for j in 0..<size:
                 let index = toIndex(i, j)
