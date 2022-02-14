@@ -28,7 +28,8 @@ let private getUrl url =
 let private readUrlsList () =
     async {
         let path = "urls.txt"
-        return! IO.File.ReadAllLinesAsync path |> Async.AwaitTask
+        let task = (IO.File.ReadAllLinesAsync path |> Async.AwaitTask)
+        return! task
     }
 
 module Option =

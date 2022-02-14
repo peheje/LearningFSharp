@@ -1,45 +1,82 @@
-let lines = System.IO.File.ReadAllLines("sample.txt")
+// Let me try to rephrase the problem in a more functional manner, as the current
+// explanation is very imperative.
+
+// Step:
+// Let all octos be in group octos
+// Increase octos values by 1
+// A: If one exceeds 9 move it to the group flashed
+// increase its neighbors values by 1, repeat A until no more exceeds 9
+// Move all flashed to group octos, reset moved, count how many moved
+
+let logs x = printfn "%A" x
+
+let lines = System.IO.File.ReadAllLines("data.txt")
+
+type Octo = { row: int; col: int; value: int }
+
+let parseInt a = a |> string |> int
 
 let octos =
     lines
-    |> Array.map (fun row -> [|for x in row -> int (string x)|])
-    |> Array.collect id
+    |> Seq.mapi (fun i row ->
+        row
+        |> Seq.mapi (fun j v -> { row = i; col = j; value = parseInt v }))
+    |> Seq.collect id
+    |> Seq.toList
 
-let size = lines |> Seq.length
-let length = octos |> Array.length
+let isNeighborTo a b =
+    let neighbors =
+        [| (-1, -1)
+           (-1, 0)
+           (-1, 1)
+           (0, -1)
+           (0, 1)
+           (1, -1)
+           (1, 0)
+           (1, 1) |]
 
-let toIndex row col = row * size + col
+    neighbors
+    |> Array.exists (fun (r, c) ->
+        let row = a.row + r
+        let col = a.col + c
+        b.row = row && b.col = col)
 
-let anyFlashing data =
-    data |> Seq.exists(fun x -> x > 9)
+let rec step octos flashed count iteration increment =
 
-let surroundingIndices row col =
-    let neighbors = [|[-1; -1]; [-1; 0]; [-1; 1]; [0; -1]; [0; 1]; [1; -1]; [1; 0]; [1; 1]|]
-    [|for neighbor in neighbors do
-        let r = neighbor[0] + row
-        let c = neighbor[1] + col
-        toIndex r c
-    |] |> Array.filter (fun index -> index >= 0 && index < length)
+    let octos =
+        if increment then
+            octos
+            |> List.map (fun o -> { o with value = o.value + 1 })
+        else
+            octos
 
-let mutable flashes = 0
+    let found = octos |> List.tryFind (fun o -> o.value > 9)
 
-for _ in 1..99 do
-    for i in 0..length-1 do
-        octos[i] <- octos[i] + 1
+    match found with
+    | None ->
+        if iteration = 99 then
+            count
+        else
+            let flashed =
+                flashed
+                |> List.map (fun o -> { o with value = 0 })
 
-    while anyFlashing octos do
-        for i in 0..size-1 do
-            for j in 0..size-1 do
-                let index = toIndex i j
-                if octos[index] > 9 then
-                    flashes <- flashes + 1
-                    octos[index] <- -1
-                    for ni in surroundingIndices i j do
-                        if octos[ni] <> -1 then
-                            octos[ni] <- octos[ni] + 1
+            let octos = List.append octos flashed
+            step octos List.empty count (iteration + 1) true
+    | Some f ->
+        let flashed = (f :: flashed)
 
-    for i in 0..length-1 do
-        if octos[i] = -1 then
-            octos[i] <- 0
+        let octos =
+            octos
+            |> List.filter (fun o -> o <> f)
+            |> List.map (fun o ->
+                if o |> isNeighborTo f then
+                    { o with value = o.value + 1 }
+                else
+                    o)
 
-printfn "%i" flashes
+        step octos flashed (count + 1) iteration false
+
+let ans = step octos List.empty 0 0 true
+
+logs ans
