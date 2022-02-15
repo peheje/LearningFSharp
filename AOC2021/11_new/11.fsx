@@ -1,45 +1,26 @@
-// Let me try to rephrase the problem in a more functional manner, as the current
-// explanation is very imperative.
-
-// Step:
-// Let all octos be in group octos
-// Increase octos values by 1
-// A: If one exceeds 9 move it to the group flashed
-// increase its neighbors values by 1, repeat A until no more exceeds 9
-// Move all flashed to group octos, reset moved, count how many moved
-
-let logs x = printfn "%A" x
-
-let lines = System.IO.File.ReadAllLines("data.txt")
-
 type Octo = { row: int; col: int; value: int }
 
-let parseInt a = a |> string |> int
-
 let octos =
-    lines
-    |> Seq.mapi (fun i row ->
+    System.IO.File.ReadAllLines("data.txt")
+    |> Seq.mapi (fun r row ->
         row
-        |> Seq.mapi (fun j v -> { row = i; col = j; value = parseInt v }))
+        |> Seq.mapi (fun c v ->
+            { row = r
+              col = c
+              value = v |> string |> int }))
     |> Seq.collect id
     |> Seq.toList
 
-let isNeighborTo a b =
-    let neighbors =
-        [| (-1, -1)
-           (-1, 0)
-           (-1, 1)
-           (0, -1)
-           (0, 1)
-           (1, -1)
-           (1, 0)
-           (1, 1) |]
-
-    neighbors
-    |> Array.exists (fun (r, c) ->
-        let row = a.row + r
-        let col = a.col + c
-        b.row = row && b.col = col)
+let isNeighbors a b =
+    [ (-1, -1)
+      (-1, 0)
+      (-1, 1)
+      (0, -1)
+      (0, 1)
+      (1, -1)
+      (1, 0)
+      (1, 1) ]
+    |> Seq.exists (fun (r, c) -> b.row = a.row + r && b.col = a.col + c)
 
 let rec flash octos flashed =
     let found = octos |> List.tryFind (fun o -> o.value > 9)
@@ -53,7 +34,7 @@ let rec flash octos flashed =
             octos
             |> List.filter (fun o -> o <> f)
             |> List.map (fun o ->
-                if o |> isNeighborTo f then
+                if isNeighbors f o then
                     { o with value = o.value + 1 }
                 else
                     o)
@@ -70,11 +51,14 @@ let rec step octos count iteration =
     if iteration = 100 then
         count
     else
-        let flashed = flashed |> List.map (fun o -> { o with value = 0 })
+        let flashed =
+            flashed
+            |> List.map (fun o -> { o with value = 0 })
+
         let flashCount = flashed |> List.length
         let octos = List.append flashed octos
         step octos (count + flashCount) (iteration + 1)
 
-let ans = step octos 0 0
+let stepCount = step octos 0 0
 
-logs ans
+printfn "%i" stepCount
