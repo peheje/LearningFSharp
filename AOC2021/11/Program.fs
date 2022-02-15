@@ -11,34 +11,29 @@ let octos =
     |> Seq.collect id
     |> Seq.toList
 
-let isNeighbors a b =
-    [ (-1, -1)
-      (-1, 0)
-      (-1, 1)
-      (0, -1)
-      (0, 1)
-      (1, -1)
-      (1, 0)
-      (1, 1) ]
-    |> Seq.exists (fun (r, c) -> b.row = a.row + r && b.col = a.col + c)
+let surrounding octos octo =
+    [ for r in -1..1 do for c in -1..1 -> (r + octo.row, c + octo.col) ]
+    |> Seq.map (fun (row, col) -> octos |> Seq.tryFind (fun o -> o.row = row && o.col = col))
+    |> Seq.choose id
 
 let increment octo = { octo with value = octo.value + 1 }
 
 let reset octo = { octo with value = 0 }
 
 let rec flash octos flashed =
-    let toFlash = octos |> List.tryFind (fun o -> o.value > 9)
+    let flashing = octos |> List.tryFind (fun o -> o.value > 9)
 
-    match toFlash with
+    match flashing with
     | None -> (octos, flashed)
     | Some f ->
         let flashed = (f :: flashed)
 
+        let neighbors = surrounding octos f
         let octos =
             octos
             |> List.filter (fun o -> o <> f)
             |> List.map (fun o ->
-                if isNeighbors f o then
+                if neighbors |> Seq.contains o then
                     increment o
                 else
                     o)
