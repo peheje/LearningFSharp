@@ -23,9 +23,9 @@ let isNeighbors a b =
     |> Seq.exists (fun (r, c) -> b.row = a.row + r && b.col = a.col + c)
 
 let rec flash octos flashed =
-    let found = octos |> List.tryFind (fun o -> o.value > 9)
+    let toFlash = octos |> List.tryFind (fun o -> o.value > 9)
 
-    match found with
+    match toFlash with
     | None -> (octos, flashed)
     | Some f ->
         let flashed = (f :: flashed)
