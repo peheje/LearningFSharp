@@ -41,28 +41,11 @@ let isNeighborTo a b =
         let col = a.col + c
         b.row = row && b.col = col)
 
-let rec step octos flashed count iteration increment =
-
-    let octos =
-        if increment then
-            octos
-            |> List.map (fun o -> { o with value = o.value + 1 })
-        else
-            octos
-
+let rec flash octos flashed =
     let found = octos |> List.tryFind (fun o -> o.value > 9)
 
     match found with
-    | None ->
-        if iteration = 99 then
-            count
-        else
-            let flashed =
-                flashed
-                |> List.map (fun o -> { o with value = 0 })
-
-            let octos = List.append octos flashed
-            step octos List.empty count (iteration + 1) true
+    | None -> (octos, flashed)
     | Some f ->
         let flashed = (f :: flashed)
 
@@ -75,8 +58,23 @@ let rec step octos flashed count iteration increment =
                 else
                     o)
 
-        step octos flashed (count + 1) iteration false
+        flash octos flashed
 
-let ans = step octos List.empty 0 0 true
+let rec step octos count iteration =
+    let octos =
+        octos
+        |> List.map (fun o -> { o with value = o.value + 1 })
+
+    let (octos, flashed) = flash octos List.empty
+
+    if iteration = 100 then
+        count
+    else
+        let flashed = flashed |> List.map (fun o -> { o with value = 0 })
+        let flashCount = flashed |> List.length
+        let octos = List.append flashed octos
+        step octos (count + flashCount) (iteration + 1)
+
+let ans = step octos 0 0
 
 logs ans
