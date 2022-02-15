@@ -11,7 +11,7 @@ let octos =
     |> Seq.collect id
     |> Seq.toList
 
-let surrounding octos octo =
+let surrounding octo octos =
     [ for r in -1 .. 1 do
           for c in -1 .. 1 -> (r + octo.row, c + octo.col) ]
     |> Seq.map (fun (row, col) ->
@@ -31,7 +31,7 @@ let rec flash octos flashed =
     | None -> (octos, flashed)
     | Some f ->
         let flashed = (f :: flashed)
-        let neighbors = surrounding octos f
+        let neighbors = octos |> surrounding f
 
         let octos =
             octos
