@@ -1,43 +1,62 @@
-﻿let lines = System.IO.File.ReadAllLines("data.txt")
+﻿type Octo = { row: int; col: int; value: int }
 
 let octos =
-    lines
-    |> Array.map (fun row -> [|for x in row -> int (string x)|])
-    |> Array.collect id
+    System.IO.File.ReadAllLines("data.txt")
+    |> Seq.mapi (fun r row ->
+        row
+        |> Seq.mapi (fun c v ->
+            { row = r
+              col = c
+              value = v |> string |> int }))
+    |> Seq.collect id
+    |> Seq.toList
 
-let size = lines |> Array.length
-let length = octos |> Array.length
+let isNeighbors a b =
+    [ (-1, -1)
+      (-1, 0)
+      (-1, 1)
+      (0, -1)
+      (0, 1)
+      (1, -1)
+      (1, 0)
+      (1, 1) ]
+    |> Seq.exists (fun (r, c) -> b.row = a.row + r && b.col = a.col + c)
 
-let toIndex row col = row * size + col
-let fromIndex index = (index/size, index % size)
+let increment octo = { octo with value = octo.value + 1 }
 
-let anyFlashing data =
-    data |> Array.exists(fun x -> x > 9)
+let reset octo = { octo with value = 0 }
 
-let surroundingIndices index =
-    let (row, col) = fromIndex index
-    let neighbors = [|(-1, -1); (-1, 0); (-1, 1); (0, -1); (0, 1); (1, -1); (1, 0); (1, 1)|]
-    [|for (ri, ci) in neighbors -> toIndex (ri + row) (ci + col)|]
-    |> Array.filter (fun index -> index >= 0 && index < length)
+let rec flash octos flashed =
+    let toFlash = octos |> List.tryFind (fun o -> o.value > 9)
 
-let tired = -1
-let mutable flashes = 0
+    match toFlash with
+    | None -> (octos, flashed)
+    | Some f ->
+        let flashed = (f :: flashed)
 
-for _ in 1..99 do
-    for i in 0..length-1 do
-        octos[i] <- octos[i] + 1
+        let octos =
+            octos
+            |> List.filter (fun o -> o <> f)
+            |> List.map (fun o ->
+                if isNeighbors f o then
+                    increment o
+                else
+                    o)
 
-    while anyFlashing octos do
-        for i in 0..length-1 do
-            if octos[i] > 9 then
-                flashes <- flashes + 1
-                octos[i] <- tired
-                for ni in surroundingIndices i do
-                    if octos[ni] <> tired then
-                        octos[ni] <- octos[ni] + 1
+        flash octos flashed
 
-    for i in 0..length-1 do
-        if octos[i] = tired then
-            octos[i] <- 0
+let rec step octos count iteration =
+    let octos = octos |> List.map increment
+    let (octos, flashed) = flash octos List.empty
 
-printfn "%i" flashes
+    if iteration = 100 then
+        count
+    else
+        let flashed = flashed |> List.map reset
+        let count = count + (flashed |> List.length)
+        let octos = List.append flashed octos
+        step octos count (iteration + 1)
+
+let stepCount = step octos 0 0
+
+printfn "%i" stepCount
