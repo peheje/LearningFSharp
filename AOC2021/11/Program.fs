@@ -12,8 +12,11 @@ let octos =
     |> Seq.toList
 
 let surrounding octos octo =
-    [ for r in -1..1 do for c in -1..1 -> (r + octo.row, c + octo.col) ]
-    |> Seq.map (fun (row, col) -> octos |> Seq.tryFind (fun o -> o.row = row && o.col = col))
+    [ for r in -1 .. 1 do
+          for c in -1 .. 1 -> (r + octo.row, c + octo.col) ]
+    |> Seq.map (fun (row, col) ->
+        octos
+        |> Seq.tryFind (fun o -> o.row = row && o.col = col))
     |> Seq.choose id
 
 let increment octo = { octo with value = octo.value + 1 }
@@ -21,14 +24,15 @@ let increment octo = { octo with value = octo.value + 1 }
 let reset octo = { octo with value = 0 }
 
 let rec flash octos flashed =
-    let flashing = octos |> List.tryFind (fun o -> o.value > 9)
+    let flashing =
+        octos |> List.tryFind (fun o -> o.value > 9)
 
     match flashing with
     | None -> (octos, flashed)
     | Some f ->
         let flashed = (f :: flashed)
-
         let neighbors = surrounding octos f
+
         let octos =
             octos
             |> List.filter (fun o -> o <> f)
@@ -40,18 +44,24 @@ let rec flash octos flashed =
 
         flash octos flashed
 
-let rec step octos count iteration =
+let rec step octos count iteration stopper =
     let octos = octos |> List.map increment
-    let (octos, flashed) = flash octos List.empty
+    let (notFlashed, flashed) = flash octos List.empty
 
-    if iteration = 100 then
-        count
+    if stopper iteration notFlashed then
+        (count, iteration + 1)
     else
         let flashed = flashed |> List.map reset
         let count = count + (flashed |> List.length)
-        let octos = List.append flashed octos
-        step octos count (iteration + 1)
+        let octos = List.append flashed notFlashed
+        step octos count (iteration + 1) stopper
 
-let stepCount = step octos 0 0
+let (flashCount, _) =
+    step octos 0 0 (fun iteration _ -> iteration = 100)
 
-printfn "%i" stepCount
+printfn "Part 1 %i" flashCount
+
+let (_, iteration) =
+    step octos 0 0 (fun _ notFlashed -> notFlashed |> Seq.isEmpty)
+
+printfn "Part 2 %i" iteration
