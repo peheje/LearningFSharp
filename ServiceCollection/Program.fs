@@ -1,6 +1,6 @@
-﻿open Models.Customer
+﻿open Tools
+open Models.Customer
 open Services
-open Tools
 
 let customer = getService<ICustomer> ()
 
