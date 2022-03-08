@@ -1,13 +1,11 @@
 ﻿open Models.Customer
 open Services
-
-let serialize object =
-    System.Text.Json.JsonSerializer.Serialize(object)
+open Tools
 
 let customer = getService<ICustomer> ()
 
-printfn "%A" (serialize customer)
+log (serialize customer)
 
-printfn "%A" (customer.Legal())
+log (customer.Legal())
 
-printfn "%A" (getInstancesCount ())
+log (getInstancesCount ())
