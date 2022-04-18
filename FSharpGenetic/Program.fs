@@ -1,7 +1,8 @@
 ﻿let f1 xs = xs |> Array.sumBy (fun x -> x*x)
 let rand () = System.Random.Shared.NextDouble()
 let randRange min max = rand() * (max - min) + min
-let randomElement (xs: array<_>) = xs[System.Random.Shared.Next(xs |> Array.length)]
+let randomElement xs =
+    Array.get xs (System.Random.Shared.Next(xs |> Array.length))
 let log x = printfn "%A" x
 
 let print = 1000
