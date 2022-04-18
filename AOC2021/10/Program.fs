@@ -9,14 +9,15 @@ let findUnexpected xs =
         | [] -> (None, stack)
         | x::rest ->
             if isStarter x then
-                loop (reverse x::stack) rest
+                let endingChar = reverse x
+                loop (endingChar::stack) rest
             else
                 match stack with
                 | [] -> (Some x, stack)
                 | s::sx -> if s = x then loop sx rest else (Some x, stack)
     loop List.empty (xs |> Seq.toList)
 
-let input = System.IO.File.ReadAllLines "data.txt"
+let input = System.IO.File.ReadAllLines "C:\Users\peter\Repos\LearningFSharp\AOC2021\10\data.txt"
 
 // Part 1
 let part1 = 
