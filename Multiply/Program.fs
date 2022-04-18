@@ -25,7 +25,7 @@ let multiply a b =
             loop nextLeft nextRight (result + right)
         else
             loop nextLeft nextRight result
-    loop a b
+    loop a b 0
 
 multiply 4678 231452 |> printfn "%A"
 
