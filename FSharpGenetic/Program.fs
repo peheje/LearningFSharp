@@ -20,9 +20,9 @@ let randomElement xs =
 let log x = printfn "%A" x
 
 let print = 1000
-let optimizer = booth
+let optimizer = f1
 let generations = 20000
-let argsize = 2
+let argsize = 100
 let popsize = 400
 let min = -10.0
 let max = 10.0
@@ -64,13 +64,14 @@ for g in 0 .. generations - 1 do
                 (xt, xScore))
 
     if g % print = 0 then
-        let best =
-            pop
-            |> Array.minBy (fun (_, score) -> score)
-            |> fst
-
         let scores = pop |> Array.map (fun (_, score) -> score)
         log $"generation {g}"
-        log $"generation best {best |> printArray}"
         log $"generation mean {scores |> Array.average}"
         log $"generation minimum {scores |> Array.min}"
+    
+let best =
+        pop
+        |> Array.minBy (fun (_, score) -> score)
+        |> fst
+log $"generation best {best |> printArray}"
+    
