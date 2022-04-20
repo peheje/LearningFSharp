@@ -10,15 +10,15 @@ let f1 xs = xs |> Array.sumBy (fun x -> x * x)
 let rand () = System.Random.Shared.NextDouble()
 let randRange min max = rand () * (max - min) + min
 
-let randomElement xs =
-    Array.get xs (System.Random.Shared.Next(xs |> Array.length))
+let sample xs : float array =
+    Array.get xs (System.Random.Shared.Next(xs |> Array.length)) |> fst
 
 let sw = System.Diagnostics.Stopwatch.StartNew()
 
 let print = 1000
 let optimizer = f1
 let generations = 20000
-let argsize = 100
+let argsize = 1000
 let popsize = 400
 let min = -10.0
 let max = 10.0
@@ -35,14 +35,14 @@ let pop =
         let score = optimizer agent
         (agent, score))
 
-let live (xs, score) (pop: (float array * float) array) =
+let live (xs, score) pop =
     let crossoverRisk = crossoverRange ()
     let crossover () = rand () < crossoverRisk
     let mutate = mutateRange ()
 
-    let x0 = pop |> randomElement |> fst
-    let x1 = pop |> randomElement |> fst
-    let x2 = pop |> randomElement |> fst
+    let x0 = pop |> sample
+    let x1 = pop |> sample
+    let x2 = pop |> sample
 
     let trial =
         Array.init argsize (fun j ->
