@@ -35,7 +35,7 @@ let mutable pop =
         let score = optimizer agent
         (agent, score))
 
-let live (xt: float array) xScore =
+let live (xs, score) =
     let crossoverRisk = crossoverRange ()
     let crossover () = rand () < crossoverRisk
     let mutate = mutateRange ()
@@ -49,14 +49,14 @@ let live (xt: float array) xScore =
             if crossover () then
                 (x0[j] + (x1[j] - x2[j]) * mutate) |> clamp
             else
-                xt[j])
+                Array.get xs j)
 
     let trialScore = optimizer trial
 
-    if trialScore < xScore then
+    if trialScore < score then
         (trial, trialScore)
     else
-        (xt, xScore)
+        (xs, score)
 
 let rec generationLoop g pop =
     if g % print = 0 then
@@ -68,7 +68,7 @@ let rec generationLoop g pop =
     if g = generations then
         pop
     else
-        let next = pop |> Array.Parallel.map (fun (xt, xScore) -> live xt xScore)
+        let next = pop |> Array.Parallel.map live
         generationLoop (g+1) next
 
 let best = generationLoop 0 pop |> Array.minBy (fun (_, score) -> score) |> fst
