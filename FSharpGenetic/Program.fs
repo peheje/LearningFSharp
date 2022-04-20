@@ -35,42 +35,43 @@ let mutable pop =
         let score = optimizer agent
         (agent, score))
 
-for g in 0 .. generations - 1 do
+let live (xt: float array) xScore =
     let crossoverRisk = crossoverRange ()
     let crossover () = rand () < crossoverRisk
     let mutate = mutateRange ()
 
-    pop <-
-        pop
-        |> Array.Parallel.map (fun (xt, xScore) ->
-            let x0 = pop |> randomElement |> fst
-            let x1 = pop |> randomElement |> fst
-            let x2 = pop |> randomElement |> fst
+    let x0 = pop |> randomElement |> fst
+    let x1 = pop |> randomElement |> fst
+    let x2 = pop |> randomElement |> fst
 
-            let trial =
-                Array.init argsize (fun j ->
-                    if crossover () then
-                        (x0[j] + (x1[j] - x2[j]) * mutate) |> clamp
-                    else
-                        xt[j])
-
-            let trialScore = optimizer trial
-
-            if trialScore < xScore then
-                (trial, trialScore)
+    let trial =
+        Array.init argsize (fun j ->
+            if crossover () then
+                (x0[j] + (x1[j] - x2[j]) * mutate) |> clamp
             else
-                (xt, xScore))
+                xt[j])
 
+    let trialScore = optimizer trial
+
+    if trialScore < xScore then
+        (trial, trialScore)
+    else
+        (xt, xScore)
+
+let rec generationLoop g pop =
     if g % print = 0 then
         let scores = pop |> Array.map (fun (_, score) -> score)
         printfn "generation %i" g
         printfn "generation mean %f" (scores |> Array.average)
         printfn "generation minimum %f" (scores |> Array.min)
 
-let best =
-    pop
-    |> Array.minBy (fun (_, score) -> score)
-    |> fst
+    if g = generations then
+        pop
+    else
+        let next = pop |> Array.Parallel.map (fun (xt, xScore) -> live xt xScore)
+        generationLoop (g+1) next
+
+let best = generationLoop 0 pop |> Array.minBy (fun (_, score) -> score) |> fst
 
 printfn "generation best %A" best
 printfn "Execution time was %i ms" sw.ElapsedMilliseconds
