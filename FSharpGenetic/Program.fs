@@ -1,9 +1,4 @@
-﻿let printArray xs =
-    for x in xs do
-        printf "%f, " x
-    printfn ""
-
-let square x = x * x
+﻿let square x = x * x
 let booth (xs: float array) =
     // f(1.0, 3.0) = 0
     let t1 = square (xs[0] + 2.0*xs[1] - 7.0)
@@ -17,7 +12,7 @@ let randRange min max = rand () * (max - min) + min
 let randomElement xs =
     Array.get xs (System.Random.Shared.Next(xs |> Array.length))
 
-let log x = printfn "%A" x
+let sw = System.Diagnostics.Stopwatch.StartNew()
 
 let print = 1000
 let optimizer = f1
@@ -65,13 +60,14 @@ for g in 0 .. generations - 1 do
 
     if g % print = 0 then
         let scores = pop |> Array.map (fun (_, score) -> score)
-        log $"generation {g}"
-        log $"generation mean {scores |> Array.average}"
-        log $"generation minimum {scores |> Array.min}"
+        printfn "generation %i" g
+        printfn "generation mean %f" (scores |> Array.average)
+        printfn "generation minimum %f" (scores |> Array.min)
     
 let best =
         pop
         |> Array.minBy (fun (_, score) -> score)
         |> fst
-log $"generation best {best |> printArray}"
-    
+        
+printfn "generation best %A" best
+printfn "Execution time was %i ms" sw.ElapsedMilliseconds
