@@ -80,4 +80,4 @@ let best =
     |> fst
 
 printfn "generation best %A" best
-printfn "Execution time was %i ms" sw.ElapsedMilliseconds
+printfn "execution time was %i ms" sw.ElapsedMilliseconds
