@@ -45,11 +45,12 @@ for g in 0 .. generations - 1 do
             let x2 = pop |> randomElement |> fst
 
             let trial =
-                [| for j in 0 .. argsize - 1 ->
+                Array.init argsize (fun j -> 
                        if crossover () then
                            (x0[j] + (x1[j] - x2[j]) * mutate) |> clamp
                        else
-                           xt[j] |]
+                           xt[j]
+                )
 
             let trialScore = optimizer trial
 
