@@ -35,7 +35,7 @@ let pop =
         let score = optimizer agent
         (agent, score))
 
-let live xs score (pop: (float array * float) array) =
+let live (xs, score) (pop: (float array * float) array) =
     let crossoverRisk = crossoverRange ()
     let crossover () = rand () < crossoverRisk
     let mutate = mutateRange ()
@@ -70,7 +70,7 @@ let rec generationLoop g pop =
     else
         let next =
             pop
-            |> Array.Parallel.map (fun (xs, score) -> live xs score pop)
+            |> Array.Parallel.map (fun agent -> live agent pop)
 
         generationLoop (g + 1) next
 
