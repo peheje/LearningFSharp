@@ -12,7 +12,6 @@ let randRange min max = rand () * (max - min) + min
 
 let randomElement xs =
     Array.get xs (System.Random.Shared.Next(xs |> Array.length))
-    |> fst
 
 let sw = System.Diagnostics.Stopwatch.StartNew()
 
@@ -36,10 +35,14 @@ let pop =
         let score = optimizer agent
         (agent, score))
 
-let live xs score (x0: float array) (x1: float array) (x2: float array) =
+let live xs score (pop: (float array * float) array) =
     let crossoverRisk = crossoverRange ()
     let crossover () = rand () < crossoverRisk
     let mutate = mutateRange ()
+
+    let x0 = pop |> randomElement |> fst
+    let x1 = pop |> randomElement |> fst
+    let x2 = pop |> randomElement |> fst
 
     let trial =
         Array.init argsize (fun j ->
@@ -67,11 +70,7 @@ let rec generationLoop g pop =
     else
         let next =
             pop
-            |> Array.Parallel.map (fun (xs, y) ->
-                let x0 = pop |> randomElement
-                let x1 = pop |> randomElement
-                let x2 = pop |> randomElement
-                live xs y x0 x1 x2)
+            |> Array.Parallel.map (fun (xs, score) -> live xs score pop)
 
         generationLoop (g + 1) next
 
