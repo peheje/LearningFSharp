@@ -1,8 +1,9 @@
 ﻿let square x = x * x
+
 let booth (xs: float array) =
     // f(1.0, 3.0) = 0
-    let t1 = square (xs[0] + 2.0*xs[1] - 7.0)
-    let t2 = square (2.0*xs[0] + xs[1] - 5.0)
+    let t1 = square (xs[0] + 2.0 * xs[1] - 7.0)
+    let t2 = square (2.0 * xs[0] + xs[1] - 5.0)
     t1 + t2
 
 let f1 xs = xs |> Array.sumBy (fun x -> x * x)
@@ -24,7 +25,9 @@ let max = 10.0
 let clamp x = System.Math.Clamp(x, min, max)
 let mutateRange () = randRange 0.2 0.95
 let crossoverRange () = randRange 0.1 1.0
-let createAgent () = Array.init argsize (fun _ -> randRange min max)
+
+let createAgent () =
+    Array.init argsize (fun _ -> randRange min max)
 
 let mutable pop =
     Array.init popsize (fun _ ->
@@ -45,12 +48,11 @@ for g in 0 .. generations - 1 do
             let x2 = pop |> randomElement |> fst
 
             let trial =
-                Array.init argsize (fun j -> 
-                       if crossover () then
-                           (x0[j] + (x1[j] - x2[j]) * mutate) |> clamp
-                       else
-                           xt[j]
-                )
+                Array.init argsize (fun j ->
+                    if crossover () then
+                        (x0[j] + (x1[j] - x2[j]) * mutate) |> clamp
+                    else
+                        xt[j])
 
             let trialScore = optimizer trial
 
@@ -64,11 +66,11 @@ for g in 0 .. generations - 1 do
         printfn "generation %i" g
         printfn "generation mean %f" (scores |> Array.average)
         printfn "generation minimum %f" (scores |> Array.min)
-    
+
 let best =
-        pop
-        |> Array.minBy (fun (_, score) -> score)
-        |> fst
-        
+    pop
+    |> Array.minBy (fun (_, score) -> score)
+    |> fst
+
 printfn "generation best %A" best
 printfn "Execution time was %i ms" sw.ElapsedMilliseconds
