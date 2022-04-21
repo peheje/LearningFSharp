@@ -72,4 +72,4 @@ let best =
     |> Array.minBy (fun agent -> agent.score)
 
 printfn "generation best %A" best
-printfn "execution time was %i ms" sw.ElapsedMilliseconds
+printfn "execution time %i ms" sw.ElapsedMilliseconds
