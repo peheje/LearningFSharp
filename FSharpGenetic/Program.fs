@@ -34,17 +34,15 @@ let createAgent () =
 let pool = Array.init popsize (fun _ -> createAgent ())
 
 let live pool agent =
-    let crossoverRisk = crossoverRange ()
-    let crossover () = rand () < crossoverRisk
+    let crossover = crossoverRange ()
     let mutate = mutateRange ()
-
     let x0 = pool |> sample
     let x1 = pool |> sample
     let x2 = pool |> sample
 
     let trial =
         Array.init argsize (fun j ->
-            if crossover () then
+            if rand () < crossover then
                 (x0[j] + (x1[j] - x2[j]) * mutate) |> clamp
             else
                 agent.xs[j])
