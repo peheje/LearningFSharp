@@ -2,10 +2,20 @@
 
 let square x = x * x
 
-let booth (xs: float array) = // f(1.0, 3.0) = 0
+// There are 36 heads and 100 legs, how many horses and jockeys are there? 14 and 22
+let horsesAndJockeys (xs: float array) =
+    let horses = xs[0]
+    let jockeys = xs[1]
+    let legs = horses * 4.0 + jockeys * 2.0
+    let heads = horses + jockeys
+    abs (36.0 - heads) + abs (100.0 - legs)
+
+// booth(1.0, 3.0) = 0
+let booth (xs: float array) =
     square (xs[0] + 2.0 * xs[1] - 7.0)
     + square (2.0 * xs[0] + xs[1] - 5.0)
 
+// f1(0..) = 0
 let f1 xs = xs |> Array.sumBy (fun x -> x * x)
 let rand () = System.Random.Shared.NextDouble()
 let randRange min max = rand () * (max - min) + min
@@ -17,12 +27,12 @@ let sample xs =
     (xs[i]).xs
 
 let print = 1000
-let optimizer = f1
+let optimizer = horsesAndJockeys
 let generations = 10000
-let argsize = 100
+let argsize = 2
 let popsize = 400
-let min = -10.0
-let max = 10.0
+let min = -100.0
+let max = 100.0
 let clamp x = System.Math.Clamp(x, min, max)
 let mutateRange () = randRange 0.2 0.95
 let crossoverRange () = randRange 0.1 1.0
