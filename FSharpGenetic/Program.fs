@@ -1,24 +1,25 @@
-﻿let square x = x * x
+﻿let sw = System.Diagnostics.Stopwatch.StartNew()
 
-let booth (xs: float array) =
-    // f(1.0, 3.0) = 0
-    let t1 = square (xs[0] + 2.0 * xs[1] - 7.0)
-    let t2 = square (2.0 * xs[0] + xs[1] - 5.0)
-    t1 + t2
+let square x = x * x
+
+let booth (xs: float array) = // f(1.0, 3.0) = 0
+    square (xs[0] + 2.0 * xs[1] - 7.0)
+    + square (2.0 * xs[0] + xs[1] - 5.0)
 
 let f1 xs = xs |> Array.sumBy (fun x -> x * x)
 let rand () = System.Random.Shared.NextDouble()
 let randRange min max = rand () * (max - min) + min
 
-let sample xs : float array =
-    Array.get xs (System.Random.Shared.Next(xs |> Array.length)) |> fst
+type Agent = { xs: float array; score: float }
 
-let sw = System.Diagnostics.Stopwatch.StartNew()
+let sample xs =
+    let i = System.Random.Shared.Next(xs |> Array.length)
+    (xs[i]).xs
 
 let print = 1000
 let optimizer = f1
-let generations = 20000
-let argsize = 1000
+let generations = 10000
+let argsize = 100
 let popsize = 400
 let min = -10.0
 let max = 10.0
@@ -27,57 +28,50 @@ let mutateRange () = randRange 0.2 0.95
 let crossoverRange () = randRange 0.1 1.0
 
 let createAgent () =
-    Array.init argsize (fun _ -> randRange min max)
+    let xs = Array.init argsize (fun _ -> randRange min max)
+    { xs = xs; score = optimizer xs }
 
-let pop =
-    Array.init popsize (fun _ ->
-        let agent = createAgent ()
-        let score = optimizer agent
-        (agent, score))
+let pool = Array.init popsize (fun _ -> createAgent ())
 
-let live (xs, score) pop =
+let live pool agent =
     let crossoverRisk = crossoverRange ()
     let crossover () = rand () < crossoverRisk
     let mutate = mutateRange ()
 
-    let x0 = pop |> sample
-    let x1 = pop |> sample
-    let x2 = pop |> sample
+    let x0 = pool |> sample
+    let x1 = pool |> sample
+    let x2 = pool |> sample
 
     let trial =
         Array.init argsize (fun j ->
             if crossover () then
                 (x0[j] + (x1[j] - x2[j]) * mutate) |> clamp
             else
-                Array.get xs j)
+                agent.xs[j])
 
     let trialScore = optimizer trial
 
-    if trialScore < score then
-        (trial, trialScore)
+    if trialScore < agent.score then
+        { xs = trial; score = trialScore }
     else
-        (xs, score)
+        agent
 
-let rec generationLoop g pop =
+let rec generationLoop g pool =
     if g % print = 0 then
-        let scores = pop |> Array.map (fun (_, score) -> score)
+        let scores = pool |> Array.map (fun agent -> agent.score)
         printfn "generation %i" g
         printfn "generation mean %f" (scores |> Array.average)
         printfn "generation minimum %f" (scores |> Array.min)
 
     if g = generations then
-        pop
+        pool
     else
-        let next =
-            pop
-            |> Array.Parallel.map (fun agent -> live agent pop)
-
+        let next = pool |> Array.Parallel.map (live pool)
         generationLoop (g + 1) next
 
 let best =
-    generationLoop 0 pop
-    |> Array.minBy (fun (_, score) -> score)
-    |> fst
+    generationLoop 0 pool
+    |> Array.minBy (fun agent -> agent.score)
 
 printfn "generation best %A" best
 printfn "execution time was %i ms" sw.ElapsedMilliseconds
