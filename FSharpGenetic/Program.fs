@@ -3,11 +3,11 @@
 let square x = x * x
 
 // Solve systems of equations like, x + y = 6 and -3x + y = 2, but with twists like please make x > y
-let equation(xs: float array) =
+let equation (xs: float array) =
     let x = xs[0]
     let y = xs[1]
     let err = if x < y then 100.0 else 0.0
-    abs (x + y - 6.0) + abs (-3.0*x + y - 2.0) + err
+    abs (x + y - 6.0) + abs (-3.0 * x + y - 2.0) + err
 
 // There are 36 heads and 100 legs, how many horses and jockeys are there? 14 and 22
 let horsesAndJockeys (xs: float array) =
@@ -22,6 +22,17 @@ let booth (xs: float array) =
     square (xs[0] + 2.0 * xs[1] - 7.0)
     + square (2.0 * xs[0] + xs[1] - 5.0)
 
+let rastrigin (xs: float array) =
+    let pi = System.Math.PI
+    let n = xs |> Array.length |> float
+    let a = 10.0
+
+    let sum =
+        xs
+        |> Array.sumBy (fun x -> (square x) - (a * cos (2.0 * pi * x)))
+
+    a * n + sum
+
 // f1(0..) = 0
 let f1 xs = xs |> Array.sumBy (fun x -> x * x)
 let rand () = System.Random.Shared.NextDouble()
@@ -34,12 +45,12 @@ let sample xs =
     (xs[i]).xs
 
 let print = 1000
-let optimizer = equation
+let optimizer = rastrigin
 let generations = 10000
-let argsize = 2
-let popsize = 400
-let min = -100.0
-let max = 100.0
+let argsize = 100
+let popsize = 200
+let min = -5.12
+let max = 5.12
 let clamp x = System.Math.Clamp(x, min, max)
 let mutateRange () = randRange 0.2 0.95
 let crossoverRange () = randRange 0.1 1.0
