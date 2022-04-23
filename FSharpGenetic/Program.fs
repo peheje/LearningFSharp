@@ -18,11 +18,10 @@ let sample xs =
 
 let print = 1000
 let optimizer = f1
-let generations = 10000
+let generations = 20000
 let argsize = 100
 let popsize = 400
-let min = -10.0
-let max = 10.0
+let min, max = -10.0, 10.0
 let clamp x = System.Math.Clamp(x, min, max)
 let mutateRange () = randRange 0.2 0.95
 let crossoverRange () = randRange 0.1 1.0
