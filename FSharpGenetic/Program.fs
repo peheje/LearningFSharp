@@ -1,4 +1,5 @@
 ﻿open Problems
+
 let sw = System.Diagnostics.Stopwatch.StartNew()
 
 let rand () = System.Random.Shared.NextDouble()
