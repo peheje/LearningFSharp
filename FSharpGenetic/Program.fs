@@ -30,9 +30,9 @@ let pool = Array.init popsize (fun _ -> createAgent ())
 let mate pool agent =
     let crossover = crossoverOdds ()
     let mutate = mutateOdds ()
-    let x0 = pool |> sample
-    let x1 = pool |> sample
-    let x2 = pool |> sample
+    let x0 = sample pool
+    let x1 = sample pool
+    let x2 = sample pool
 
     let trial =
         Array.init argsize (fun j ->
