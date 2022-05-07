@@ -52,8 +52,8 @@ let rec loop generation pool =
     if generation % print = 0 then
         let scores = pool |> Array.map (fun agent -> agent.score)
         printfn "generation %i" generation
-        printfn "generation mean %f" (scores |> Array.average)
-        printfn "generation minimum %f" (scores |> Array.min)
+        printfn "mean %f" (scores |> Array.average)
+        printfn "minimum %f" (scores |> Array.min)
 
     if generation = generations then
         pool
