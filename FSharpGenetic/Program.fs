@@ -7,9 +7,9 @@ let randRange min max = rand () * (max - min) + min
 
 type Agent = { xs: float array; score: float }
 
-let sample xs =
-    let i = System.Random.Shared.Next(xs |> Array.length)
-    (xs[i]).xs
+let sample agents =
+    let i = System.Random.Shared.Next(agents |> Array.length)
+    (agents[i]).xs
 
 let print = 1000
 let optimizer = rastrigin
@@ -27,7 +27,7 @@ let createAgent () =
 
 let pool = Array.init popsize (fun _ -> createAgent ())
 
-let live pool agent =
+let mate pool agent =
     let crossover = crossoverRange ()
     let mutate = mutateRange ()
     let x0 = pool |> sample
@@ -48,21 +48,21 @@ let live pool agent =
     else
         agent
 
-let rec generationLoop g pool =
-    if g % print = 0 then
+let rec loop generation pool =
+    if generation % print = 0 then
         let scores = pool |> Array.map (fun agent -> agent.score)
-        printfn "generation %i" g
+        printfn "generation %i" generation
         printfn "generation mean %f" (scores |> Array.average)
         printfn "generation minimum %f" (scores |> Array.min)
 
-    if g = generations then
+    if generation = generations then
         pool
     else
-        let next = pool |> Array.Parallel.map (live pool)
-        generationLoop (g + 1) next
+        let next = pool |> Array.Parallel.map (mate pool)
+        loop (generation + 1) next
 
 let best =
-    generationLoop 0 pool
+    loop 0 pool
     |> Array.minBy (fun agent -> agent.score)
 
 printfn "generation best %A" best
