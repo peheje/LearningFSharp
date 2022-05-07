@@ -18,8 +18,8 @@ let argsize = 100
 let popsize = 200
 let min, max = -5.12, 5.12
 let clamp x = System.Math.Clamp(x, min, max)
-let mutateRange () = randRange 0.2 0.95
-let crossoverRange () = randRange 0.1 1.0
+let crossoverOdds () = randRange 0.1 1.0
+let mutateOdds () = randRange 0.2 0.95
 
 let createAgent () =
     let xs = Array.init argsize (fun _ -> randRange min max)
@@ -28,8 +28,8 @@ let createAgent () =
 let pool = Array.init popsize (fun _ -> createAgent ())
 
 let mate pool agent =
-    let crossover = crossoverRange ()
-    let mutate = mutateRange ()
+    let crossover = crossoverOdds ()
+    let mutate = mutateOdds ()
     let x0 = pool |> sample
     let x1 = pool |> sample
     let x2 = pool |> sample
