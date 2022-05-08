@@ -1,8 +1,9 @@
 ﻿let rand () = System.Random.Shared.NextDouble()
 let randRange min max = rand () * (max - min) + min
 let binarySearch target xs = System.Array.BinarySearch (xs, target) |> abs
-let mutatePower () = randRange -10.0 10.0
+let mutatePower () = randRange 0.0 5.0
 let mutateOdds () = rand () < 0.1
+let poolSize = 1000
 
 let crossoverPower () = rand () < 0.1
 let crossoverOdds () = rand () < 0.1
@@ -10,18 +11,18 @@ let crossoverOdds () = rand () < 0.1
 type Agent = { data: float array; fitness: float }
 
 let min, max = 0.0, 10.0
+let target = [|0.0; 0.0; 1.0; 1.0; 2.0; 2.0; 3.0; 3.0; 4.0; 4.0; 5.0; 5.0; 6.0; 6.0; 7.0; 7.0; 8.0; 8.0; 9.0; 9.0|]
+let argsize = target |> Array.length
 
-let argsize = 10
+let calculateFitness (data: float array) =
+    let mutable fit = 0.0
+    for i in 0..argsize-1 do
+        fit <- fit + ((data[i] - target[i]) |> abs)
+    1.0 / fit
 
-let randomFloatArray size =
-    Array.init size (fun _ -> randRange min max)
-
-let a1 = { data = randomFloatArray argsize; fitness = 10.0 } 
-let a2 = { data = randomFloatArray argsize; fitness = 20.0 }
-let a3 = { data = randomFloatArray argsize; fitness = 30.0 }
-//[10; 30; 60]
-
-let agents = [|a1; a2; a3|]
+let createAgent () =
+    let data = Array.init argsize (fun _ -> randRange min max)
+    { data = data; fitness = calculateFitness data }
 
 let createWheel agents =
     let mutable s = 0.0
@@ -48,3 +49,5 @@ let crossover agent pool wheel =
             let tmp = agent.data[i]
             agent.data[i] <- mate.data[i]
             mate.data[i] <- tmp
+
+let pool = Array.init poolSize (fun _ -> createAgent ())
