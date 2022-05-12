@@ -5,6 +5,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="DifferentReturnParallel.fs" />
+    <Compile Include="DifferentReturnParallelTask.fs" />
     <Compile Include="CombineWork.fs" />
     <Compile Include="GetWebpages.fs" />
     <Compile Include="Main.fs" />
