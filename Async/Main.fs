@@ -1,1 +1,1 @@
-Learning.GetWebpages.run ()
+Learning.DifferentTypeParallel.run ()
