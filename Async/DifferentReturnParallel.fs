@@ -1,7 +1,6 @@
 module Learning.DifferentTypeParallel
 
 open System.IO
-open System.Threading.Tasks
 
 let private readTheFile () =
     async {
