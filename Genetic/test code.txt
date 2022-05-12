@@ -1,0 +1,38 @@
+// Test correctness of wheel
+let rand () = System.Random.Shared.NextDouble()
+let randRange min max = rand () * (max - min) + min
+let binarySearch target xs = System.Array.BinarySearch (xs, target) |> abs
+
+type Agent = { data: float array; fitness: float }
+
+let randomFloatArray size =
+    Array.init size (fun _ -> randRange 0.0 10.0)
+
+let a1 = { data = randomFloatArray 10; fitness = 10.0 } 
+let a2 = { data = randomFloatArray 10; fitness = 20.0 }
+let a3 = { data = randomFloatArray 10; fitness = 30.0 }
+
+//[10; 30; 60]
+
+let createWheel agents =
+    let mutable s = 0.0
+
+    agents |> Array.map (fun agent ->
+        s <- s + agent.fitness
+        s)
+
+let wheel = createWheel [|a1; a2; a3|]
+
+
+
+let size = 1_000_000
+let idxes = Array.init size (fun _ ->
+    let roll = randRange 0.0 (wheel |> Array.last)
+    let idx = (wheel |> binarySearch roll) - 1
+    idx
+)
+
+let exp = 
+    idxes |>
+    Array.countBy id |>
+    Array.map (fun (idx, count) -> (idx, (count |> float) / (size |> float)))
