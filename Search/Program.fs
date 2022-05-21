@@ -1,5 +1,5 @@
 ﻿open System.IO
-open System.Text
+open System.Text.RegularExpressions
 
 let search = @"C:\Users\peter\Repos"
 let target = "exception"
@@ -20,7 +20,7 @@ let allFiles =
 let readFileContent path = (path, File.ReadAllLines path)
 
 let count target line =
-    RegularExpressions.Regex.Matches(line, target, RegularExpressions.RegexOptions.IgnoreCase).Count
+    Regex.Matches(line, target, RegexOptions.IgnoreCase).Count
 
 type Result = { rowIdx: int; line: string; count: int }
 
@@ -30,9 +30,7 @@ let find target file =
     let found =
         lines
         |> Array.indexed
-        |> Array.map (fun (i, line) -> 
-            { rowIdx = i; count = line |> count target; line = line }
-        )
+        |> Array.map (fun (i, line) -> { rowIdx = i; count = line |> count target; line = line })
         |> Array.filter (fun result -> result.count > 0)
 
     (path, found)
