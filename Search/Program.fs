@@ -1,23 +1,56 @@
 ﻿open System.IO
 open System.Text.RegularExpressions
 
-let search = @"C:\Users\peter\Repos"
-let target = "exception"
-let ignoredFileTypes = [|".dll"; ".exe" |]
+let dump x =
+    let json = System.Text.Json.JsonSerializer.Serialize x
+    File.WriteAllText("C:\Users\peter\Repos\LearningFSharp\Search\dump.json", json)
+
+let search = @"C:\Users"
+let target = "Master"
+let ignoredFileTypes = [|".dll"; ".exe"; ".db"; ".pdf" |]
 let ignoredFolders = [| ".git" |]
 
 let filterEndsWith (ignore: string array) (xs: string array) =
     xs
     |> Array.filter (fun file -> ignore |> Array.exists file.EndsWith |> not)
 
-let allFiles =
-    Directory.EnumerateDirectories(search, "*", SearchOption.AllDirectories)
-    |> Seq.toArray
-    |> filterEndsWith ignoredFolders
-    |> Seq.collect Directory.EnumerateFiles
-    |> Seq.toArray
+let rec getAllDirectories path =
+    try
+        let dirs = Directory.GetDirectories(path)
+        let rest = dirs |> Array.collect getAllDirectories
+        Array.append dirs rest
+    with
+        | :? System.UnauthorizedAccessException ->
+            printfn "skipping folder %s no access" path
+            Array.empty
 
-let readFileContent path = (path, File.ReadAllLines path)
+let rec getAllFiles path =
+    try
+        Directory.GetFiles path
+    with
+        | :? System.UnauthorizedAccessException ->
+            printfn "skipping file %s no access" path
+            Array.empty
+        | :? System.AggregateException as aggregateException ->
+            printfn "failed with AggregateException %s" aggregateException.Message
+            Array.empty
+        | :? IOException as ioException ->
+            printfn "failed with IOException %s" ioException.Message
+            Array.empty
+
+let allFiles =
+    getAllDirectories search
+    |> filterEndsWith ignoredFolders
+    |> Array.collect getAllFiles
+
+let readFileContent path =
+
+    try
+        (path, File.ReadAllLines path)
+    with
+        | :? IOException as ioException ->
+            printfn "failed with IOException %s" ioException.Message
+            (path, [||])
 
 let count target line =
     Regex.Matches(line, target, RegexOptions.IgnoreCase).Count
@@ -40,13 +73,8 @@ let fileHasSearchResults (_, rows) = rows |> Array.length > 0
 let result =
     allFiles
     |> filterEndsWith ignoredFileTypes
-    |> Array.map readFileContent
-    |> Array.map (find target)
+    |> Array.map (fun file -> readFileContent file |> find target)
     |> Array.filter fileHasSearchResults
-
-let dump x =
-    let json = System.Text.Json.JsonSerializer.Serialize x
-    File.WriteAllText("C:\Users\peter\Repos\Search\Searcher\dump.json", json)
 
 printfn "dumping.."
 
