@@ -9,7 +9,7 @@ type Agent = { xs: float array; score: float }
 
 let sample agents =
     let i = System.Random.Shared.Next(agents |> Array.length)
-    (agents[i]).xs
+    agents[i].xs
 
 let print = 1000
 let optimizer = rastrigin
