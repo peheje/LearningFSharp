@@ -13,9 +13,9 @@ let sample agents =
 
 let print = 1000
 let optimizer = rastrigin
-let generations = 10000
+let generations = 50_000
 let argsize = 100
-let popsize = 200
+let popsize = 500
 let min, max = -5.12, 5.12
 let clamp x = System.Math.Clamp(x, min, max)
 let crossoverOdds () = randRange 0.1 1.0
