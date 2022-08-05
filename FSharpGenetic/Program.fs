@@ -1,14 +1,14 @@
 ﻿open Problems
+open Shared
 
-let sw = System.Diagnostics.Stopwatch.StartNew()
-
-let rand () = System.Random.Shared.NextDouble()
+let sw = Stopwatch()
+let rand () = random.NextDouble()
 let randRange min max = rand () * (max - min) + min
 
 type Agent = { xs: float array; score: float }
 
 let sample agents =
-    let i = System.Random.Shared.Next(agents |> Array.length)
+    let i = random.Next(agents |> Array.length)
     agents[i].xs
 
 let print = 1000
@@ -66,4 +66,4 @@ let best =
     |> Array.minBy (fun agent -> agent.score)
 
 printfn "generation best %A" best
-printfn "execution time %i ms" sw.ElapsedMilliseconds
+printfn "execution time %i ms" (sw.ElapsedMilliseconds())
