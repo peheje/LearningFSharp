@@ -13,7 +13,7 @@ let sample agents =
 
 let print = 1000
 let optimizer = rastrigin
-let generations = 50_000
+let generations = 10_000
 let argsize = 100
 let popsize = 500
 let min, max = -5.12, 5.12
