@@ -34,4 +34,4 @@ let rastrigin (xs: float array) =
     a * n + sum
 
 // f1(0..) = 0
-let f1 xs = xs |> Array.sumBy (fun x -> x * x)
+let f1 (xs: float array) = xs |> Array.sumBy (fun x -> x * x)
