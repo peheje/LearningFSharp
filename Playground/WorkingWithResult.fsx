@@ -16,9 +16,7 @@ Richard|richard@nottest.com|0|1|2016-03-23|0.0
 Sarah||0|0||
 Peter||0|0|"""
 
-let path = "/Users/phj/Code/F-Sharp-Advent-of-Code-2021/Playground/data.csv"
-
-let rows = IO.File.ReadAllLines path |> Array.skip 1
+let rows = inputData.Split ("\n")
 
 let parseDateTimeOffset (dateTimeOffsetString: string) =
     match DateTimeOffset.TryParse(dateTimeOffsetString) with
@@ -44,7 +42,7 @@ let parseCustomer (row: string) =
             { message = $"parseCustomer error, saw {sx.Length} columns but expected {expectedColumns}"
               row = row }
 
-let listFolder (oks, errors) result =  
+let splitByOkAndErrors (oks, errors) result =
     match result with
     | Ok value -> (value :: oks, errors)
     | Error error -> (oks, error :: errors)
@@ -52,7 +50,7 @@ let listFolder (oks, errors) result =
 let parsedOkcustomers, failedToParseErrors =
     rows
     |> Array.map parseCustomer
-    |> Array.fold listFolder ([], [])
+    |> Array.fold splitByOkAndErrors ([], [])
 
 let customersJson = Text.Json.JsonSerializer.Serialize(parsedOkcustomers)
 
