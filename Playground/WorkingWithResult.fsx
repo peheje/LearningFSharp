@@ -1,4 +1,5 @@
 open System
+open System.Collections.Generic
 
 type Customer =
     { customerId: string
@@ -16,7 +17,7 @@ Richard|richard@nottest.com|0|1|2016-03-23|0.0
 Sarah||0|0||
 Peter||0|0|"""
 
-let rows = inputData.Split ("\n")
+let rows = inputData.Split("\n")
 
 let parseDateTimeOffset (dateTimeOffsetString: string) =
     match DateTimeOffset.TryParse(dateTimeOffsetString) with
@@ -42,6 +43,15 @@ let parseCustomer (row: string) =
             { message = $"parseCustomer error, saw {sx.Length} columns but expected {expectedColumns}"
               row = row }
 
+let splitByOkAndErrors2 xs =
+    let oks = List<'T>()
+    let errors = List<'V>()
+    for x in xs do
+        match x with
+        | Ok v -> oks.Add v
+        | Error e -> errors.Add e
+    (oks |> seq, errors |> seq)
+
 let splitByOkAndErrors (oks, errors) result =
     match result with
     | Ok value -> (value :: oks, errors)
@@ -50,7 +60,9 @@ let splitByOkAndErrors (oks, errors) result =
 let parsedOkcustomers, failedToParseErrors =
     rows
     |> Array.map parseCustomer
-    |> Array.fold splitByOkAndErrors ([], [])
+    // What do you think is simpler? https://stackoverflow.com/questions/69797185/how-to-split-f-result-type-list-into-lists-of-inner-type
+    // |> Array.fold splitByOkAndErrors ([], [])
+    |> splitByOkAndErrors2
 
 let customersJson = Text.Json.JsonSerializer.Serialize(parsedOkcustomers)
 
