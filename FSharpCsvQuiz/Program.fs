@@ -20,7 +20,7 @@ let readAllCsvRows (path: string) =
         | true ->
             output
             |> List.rev
-            |> List.map (fun x -> {| question = x[0]; answer = x[1] |})
+            |> List.map (fun xs -> {| question = xs[0]; answer = xs[1] |})
 
     let parser = new TextFieldParser(path)
     parser.Delimiters <- [| "," |]
