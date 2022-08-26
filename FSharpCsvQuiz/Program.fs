@@ -2,7 +2,7 @@
 open System.Threading.Tasks
 
 let ask () =
-    task { return! Task.Run(fun _ -> System.Console.ReadLine()) }
+    task { return! Task.Run(System.Console.ReadLine) }
 
 let startTimer seconds =
     task {
@@ -29,12 +29,12 @@ let readAllCsvRows (path: string) =
 
 let play () =
     task {
-        let! rows = readAllCsvRows "/Users/phj/Code/FSharpCsvQuiz/input.csv"
+        let! rows = readAllCsvRows "/Users/phj/Code/F-Sharp-Advent-of-Code-2021/FSharpCsvQuiz/input.csv"
         let totalRows = rows |> Seq.length
 
         let mutable points = 0
         let mutable rowIdx = 0
-        let timerTask = startTimer 10
+        let timerTask = startTimer 3
 
         while not timerTask.IsCompleted && rowIdx < totalRows do
             let row = rows[rowIdx]
@@ -54,7 +54,7 @@ let play () =
                 else
                     printfn "incorrect"
 
-        printfn "you had %i/%i correct" points rows.Length
+        printfn "You had %i/%i correct" points rows.Length
 
         return rows
     }
