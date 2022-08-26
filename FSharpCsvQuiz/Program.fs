@@ -10,7 +10,7 @@ let startTimer seconds =
         printfn "\nSorry, time ran out."
         return ""
     }
-
+    
 let readAllCsvRows (path: string) =
     let rec loop (parser: TextFieldParser) output =
         match parser.EndOfData with
