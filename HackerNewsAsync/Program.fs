@@ -30,11 +30,18 @@ task {
     let! response = client.GetAsync("https://hacker-news.firebaseio.com/v0/topstories.json")
     let! responseString = response.Content.ReadAsStringAsync()
 
+    let throttle = new Threading.SemaphoreSlim(8)
     let storiesJson =
         responseString
         |> parseTopIdsResponse
         |> Array.take 40
-        |> Array.Parallel.collect (fun id -> [| (getStory id).Result |])
+        |> Array.Parallel.collect (fun id ->
+            try
+                throttle.Wait()
+                [| (getStory id).Result |]
+            finally
+                throttle.Release() |> ignore
+        )
         |> Array.filter (fun story -> story.typ = "story")
         |> Array.take 30
         |> Array.sortBy (fun story -> story.id)
