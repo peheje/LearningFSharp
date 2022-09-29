@@ -23,6 +23,10 @@ let getStory (id: string) =
     }
 
 task {
+    // Ideally the API should be able to query only stories, i.e. this should be handled by the backend database
+    // Instead take 40 will almost always end up in at least 30 stories (type=story) after filtering for it
+    // Could do it more efficient/clever client-side, but you would almost be re-implementing "select top 30 from x where type = story order by id"
+    // And that problem is already most efficiently solved by database
     let! response = client.GetAsync("https://hacker-news.firebaseio.com/v0/topstories.json")
     let! responseString = response.Content.ReadAsStringAsync()
 
