@@ -1,0 +1,182 @@
+[
+    {
+        "id": 33156032,
+        "title": "The science and emotions of Lincoln Center\u2019s new sound",
+        "type": "story",
+        "url": "https://www.newyorker.com/magazine/2022/10/17/the-science-and-emotions-of-lincoln-centers-new-sound"
+    },
+    {
+        "id": 33157527,
+        "title": "How not to go off the grid",
+        "type": "story",
+        "url": "https://www.wsj.com/articles/how-not-to-go-off-the-grid-11665067328"
+    },
+    {
+        "id": 33159680,
+        "title": "Everything I wish I had known about raising a seed round",
+        "type": "story",
+        "url": "https://mdwdotla.medium.com/everything-i-wish-i-had-known-about-raising-a-seed-round-a615f8f7740b"
+    },
+    {
+        "id": 33162318,
+        "title": "They Called It LISP for a Reason: List Processing (2005)",
+        "type": "story",
+        "url": "https://gigamonkeys.com/book/they-called-it-lisp-for-a-reason-list-processing.html"
+    },
+    {
+        "id": 33175124,
+        "title": "Old Elbe Tunnel",
+        "type": "story",
+        "url": "https://en.wikipedia.org/wiki/Elbe_Tunnel_(1911)"
+    },
+    {
+        "id": 33176026,
+        "title": "P5.js \u2013 A library to make coding accessible for artists, designers, educators",
+        "type": "story",
+        "url": "https://p5js.org/"
+    },
+    {
+        "id": 33178797,
+        "title": "Plane: Per-user backends for web apps",
+        "type": "story",
+        "url": "https://driftingin.space/posts/plane"
+    },
+    {
+        "id": 33187677,
+        "title": "New ScyllaDB Go Driver: Faster Than GoCQL and Its Rust Counterpart",
+        "type": "story",
+        "url": "https://www.scylladb.com/2022/10/12/a-new-scylladb-go-driver-faster-than-gocql-and-its-rust-counterpart/"
+    },
+    {
+        "id": 33188028,
+        "title": "Meta executives \u2018inadvertently\u2019 identified in OnlyFans bribery suit",
+        "type": "story",
+        "url": "https://gizmodo.com/clegg-meta-executives-identified-in-onlyfans-bribery-su-1849649270?rev=1665602961883"
+    },
+    {
+        "id": 33188276,
+        "title": "PHYS771 Lecture 9: Quantum (2007)",
+        "type": "story",
+        "url": "https://www.scottaaronson.com/democritus/lec9.html"
+    },
+    {
+        "id": 33189503,
+        "title": "We are stuck with egrep and fgrep (unless you like beating people)",
+        "type": "story",
+        "url": "https://utcc.utoronto.ca/~cks/space/blog/unix/EgrepFgrepStuckWith"
+    },
+    {
+        "id": 33190257,
+        "title": "Terminal.Gui: A Cross Platform Terminal UI Toolkit for .NET",
+        "type": "story",
+        "url": "https://github.com/gui-cs/Terminal.Gui"
+    },
+    {
+        "id": 33190295,
+        "title": "Bonfire \u2013 working to build safer, more open federated tools and communities",
+        "type": "story",
+        "url": "https://bonfirenetworks.org/"
+    },
+    {
+        "id": 33190433,
+        "title": "Obsidian 1.0 \u2013 Personal knowledge base app",
+        "type": "story",
+        "url": "https://obsidian.md/1.0"
+    },
+    {
+        "id": 33190456,
+        "title": "PostgreSQL 15",
+        "type": "story",
+        "url": "https://www.postgresql.org/about/news/postgresql-15-released-2526/"
+    },
+    {
+        "id": 33190627,
+        "title": "TikTok profits from livestreams of families begging",
+        "type": "story",
+        "url": "https://www.bbc.com/news/world-63213567"
+    },
+    {
+        "id": 33190973,
+        "title": "Prusti: Static Analyzer for Rust",
+        "type": "story",
+        "url": "https://github.com/viperproject/prusti-dev"
+    },
+    {
+        "id": 33191266,
+        "title": "A summary of my learnings on how to find startup ideas",
+        "type": "story",
+        "url": "https://liorn.substack.com/p/a-summary-of-my-learnings-on-how"
+    },
+    {
+        "id": 33191307,
+        "title": "Why doesn\u0027t Stripe use Stripe Billing?",
+        "type": "story",
+        "url": "https://www.getlago.com/blog/is-stripe-using-stripe"
+    },
+    {
+        "id": 33191420,
+        "title": "Virtual communication curbs creative idea generation",
+        "type": "story",
+        "url": "https://www.nature.com/articles/s41586-022-04643-y"
+    },
+    {
+        "id": 33191494,
+        "title": "Why does a football arc through the air and not tumble?",
+        "type": "story",
+        "url": "https://www.vox.com/videos/2022/10/12/23401291/football-physics-spiral-pass-paradox"
+    },
+    {
+        "id": 33191603,
+        "title": "I\u0027m Peter Roberts, immigration attorney who does work for YC and startups. AMA",
+        "type": "story",
+        "url": null
+    },
+    {
+        "id": 33192074,
+        "title": "Teenager solves stubborn riddle about prime number look-alikes",
+        "type": "story",
+        "url": "https://www.quantamagazine.org/teenager-solves-stubborn-riddle-about-prime-number-look-alikes-20221013/"
+    },
+    {
+        "id": 33192288,
+        "title": "A database without dynamic memory allocation",
+        "type": "story",
+        "url": "https://tigerbeetle.com/blog/a-database-without-dynamic-memory/"
+    },
+    {
+        "id": 33192295,
+        "title": "AWS Permission Boundaries for Dummies",
+        "type": "story",
+        "url": "https://www.firemon.com/aws-permission-boundaries-for-dummies/"
+    },
+    {
+        "id": 33192649,
+        "title": "How much have tech layoffs affected engineers vs. other departments?",
+        "type": "story",
+        "url": "https://blog.interviewing.io/how-much-have-2022-layoffs-affected-engineers-vs-other-departments-we-dug-into-the-data-to-find-out/"
+    },
+    {
+        "id": 33192956,
+        "title": "Regulators of Facebook, Google and Amazon also invest in the companies\u2019 stocks",
+        "type": "story",
+        "url": "https://www.wsj.com/articles/the-regulators-of-facebook-google-and-amazon-also-invest-in-the-companies-stocks-11665670207"
+    },
+    {
+        "id": 33194515,
+        "title": "Framework Laptops Now Offering Refurbished Products",
+        "type": "story",
+        "url": "https://frame.work/blog/closing-the-loop-with-refurbished-framework-products"
+    },
+    {
+        "id": 33194974,
+        "title": "Discovering Azure\u0027s unannounced breaking change with Cosmos DB",
+        "type": "story",
+        "url": "https://metrist.io/blog/how-we-found-azures-unannounced-breaking-change/"
+    },
+    {
+        "id": 33195953,
+        "title": "Anonymous hacker sabu and the fed who arrested him start a podcast together",
+        "type": "story",
+        "url": "https://podcasts.apple.com/us/podcast/hacker-and-the-fed/id1649541362"
+    }
+]
