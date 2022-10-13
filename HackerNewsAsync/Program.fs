@@ -2,6 +2,7 @@
 open System.Net.Http
 open System.Text.Json
 open System.Diagnostics
+open System.Net.Http.Json
 
 type Story =
     { id: int
@@ -14,8 +15,7 @@ let client =
     new HttpClient(new SocketsHttpHandler(PooledConnectionLifetime = TimeSpan.FromMinutes(2)))
 
 let getStory (id: int) =
-    let json = client.GetStringAsync($"https://hacker-news.firebaseio.com/v0/item/{id}.json").Result
-    JsonSerializer.Deserialize<Story>(json)
+    client.GetFromJsonAsync<Story>($"https://hacker-news.firebaseio.com/v0/item/{id}.json").Result
 
 task {
     // Ideally the API should be able to query only stories, i.e. this should be handled by the backend database
