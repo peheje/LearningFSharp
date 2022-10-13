@@ -1,13 +1,14 @@
 ﻿open System
-open System.Net.Http
-open System.Text.Json
 open System.Diagnostics
+open System.Net.Http
 open System.Net.Http.Json
+open System.Text.Json
+open System.Text.Json.Serialization
 
 type Story =
     { id: int
       title: string
-      [<Serialization.JsonPropertyName("type")>]
+      [<JsonPropertyName("type")>]
       typ: string
       url: string }
 
