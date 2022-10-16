@@ -25,7 +25,7 @@ let consumer =
         try
             while true do
                 let! story =
-                    queue.Take(Threading.CancellationToken.None)
+                    queue.Take(Threading.CancellationToken.None)    // Todo, should find a non-blocking version of this
                     |> HnClient.getStory
 
                 results.TryAdd(story.id, story) |> Debug.Assert
