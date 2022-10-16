@@ -1,39 +1,8 @@
 ﻿open System
 open System.Diagnostics
-open System.Net.Http
-open System.Net.Http.Json
-open System.Text.Json.Serialization
 open System.Collections.Concurrent
-
-type Story =
-    { id: int
-      title: string
-      [<JsonPropertyName("type")>]
-      typ: string
-      url: string }
-
-module HnClient =
-    let private http =
-        new HttpClient(
-            new SocketsHttpHandler(PooledConnectionLifetime = TimeSpan.FromMinutes(2)),
-            BaseAddress = Uri("https://hacker-news.firebaseio.com")
-        )
-
-    let getStory id =
-        async {
-            return!
-                http.GetFromJsonAsync<Story>($"v0/item/{id}.json")
-                |> Async.AwaitTask
-        }
-
-    let getTopStoriesIds n =
-        async {
-            let! ids =
-                http.GetFromJsonAsync<int array>("v0/topstories.json")
-                |> Async.AwaitTask
-
-            return ids |> Seq.truncate n
-        }
+open HackerNewsAsync.Model
+open HackerNewsAsync
 
 let sw = Stopwatch.StartNew()
 
@@ -44,11 +13,9 @@ let producer =
         let! ids = HnClient.getTopStoriesIds 1000
 
         for id in ids do
-            printfn "producer adding %i to queue" id
             queue.Add(id)
 
         queue.CompleteAdding()
-        printfn "Producer finished"
     }
 
 let results = ConcurrentDictionary<int, Story>()
