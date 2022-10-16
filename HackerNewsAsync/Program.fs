@@ -12,31 +12,38 @@ type Story =
       typ: string
       url: string }
 
-let client =
-    new HttpClient(new SocketsHttpHandler(PooledConnectionLifetime = TimeSpan.FromMinutes(2)))
-
-let getStory id =
-    client
-        .GetFromJsonAsync<Story>(
-            $"https://hacker-news.firebaseio.com/v0/item/{id}.json"
+module HnClient =
+    let private http =
+        new HttpClient(
+            new SocketsHttpHandler(PooledConnectionLifetime = TimeSpan.FromMinutes(2)),
+            BaseAddress = Uri("https://hacker-news.firebaseio.com")
         )
-        .Result
+
+    let getStory id =
+        async {
+            return!
+                http.GetFromJsonAsync<Story>($"v0/item/{id}.json")
+                |> Async.AwaitTask
+        }
+
+    let getTopStoriesIds n =
+        async {
+            let! ids =
+                http.GetFromJsonAsync<int array>("v0/topstories.json")
+                |> Async.AwaitTask
+
+            return ids |> Seq.take n
+        }
 
 let sw = Stopwatch.StartNew()
-
-let getTopStoriesIds =
-    client
-        .GetFromJsonAsync<int array>(
-            "https://hacker-news.firebaseio.com/v0/topstories.json"
-        )
-        .Result
-    |> Seq.take 20
 
 let queue = new BlockingCollection<int>(1)
 
 let producer =
     async {
-        for id in getTopStoriesIds do
+        let! ids = HnClient.getTopStoriesIds 20
+
+        for id in ids do
             queue.Add(id)
 
         queue.CompleteAdding()
@@ -49,9 +56,9 @@ let consumer =
     async {
         try
             while true do
-                let story =
+                let! story =
                     queue.Take(Threading.CancellationToken.None)
-                    |> getStory
+                    |> HnClient.getStory
 
                 results.TryAdd(story.id, story) |> Debug.Assert
                 printfn "Thread %i Received %s" Threading.Thread.CurrentThread.ManagedThreadId story.title
