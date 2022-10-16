@@ -32,7 +32,7 @@ module HnClient =
                 http.GetFromJsonAsync<int array>("v0/topstories.json")
                 |> Async.AwaitTask
 
-            return ids |> Seq.take n
+            return ids |> Seq.truncate n
         }
 
 let sw = Stopwatch.StartNew()
@@ -41,9 +41,10 @@ let queue = new BlockingCollection<int>(1)
 
 let producer =
     async {
-        let! ids = HnClient.getTopStoriesIds 20
+        let! ids = HnClient.getTopStoriesIds 1000
 
         for id in ids do
+            printfn "producer adding %i to queue" id
             queue.Add(id)
 
         queue.CompleteAdding()
@@ -66,14 +67,25 @@ let consumer =
         | :? InvalidOperationException -> printfn "Consumer ended"
     }
 
-let maxConcurrent = 8
+async {
+    // I need the producer to run in it's own thread, not shared by the threadpool, because I rely on the consumer being allowed to block the thread with .Take
+    let! p = producer |> Async.StartChild
 
-let consumers = [ for _ in 0..maxConcurrent -> consumer ]
+    // But then how do I construct the consumers with a loop with this with the let! syntax?
+    // And also, how do I instead start the consumers on the thread-pool?
+    // This guys seems to do it, but that involves using task https://stackoverflow.com/questions/43239247/f-async-parallel-plus-main-thread
+    let! c1 = consumer |> Async.StartChild
+    let! c2 = consumer |> Async.StartChild
+    let! c3 = consumer |> Async.StartChild
+    let! c4 = consumer |> Async.StartChild
 
-(producer :: consumers)
-|> Async.Parallel
+    do! p
+    do! c1
+    do! c2
+    do! c3
+    do! c4
+}
 |> Async.RunSynchronously
-|> ignore
 
 results.Values
 |> Seq.filter (fun s -> s.typ = "story")
