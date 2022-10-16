@@ -27,6 +27,7 @@ let results = ConcurrentDictionary<int, Story>()
 let producer = async {
     for id in topStories do
         queue.Add(id)
+        printfn "producer added %i" id
     queue.CompleteAdding()
 }
 
