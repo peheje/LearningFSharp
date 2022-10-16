@@ -24,7 +24,7 @@ let getStory id =
 
 let sw = Stopwatch.StartNew()
 
-let topStories =
+let getTopStoriesIds =
     client
         .GetFromJsonAsync<int array>(
             "https://hacker-news.firebaseio.com/v0/topstories.json"
@@ -36,7 +36,7 @@ let queue = new BlockingCollection<int>(1)
 
 let producer =
     async {
-        for id in topStories do
+        for id in getTopStoriesIds do
             queue.Add(id)
 
         queue.CompleteAdding()
