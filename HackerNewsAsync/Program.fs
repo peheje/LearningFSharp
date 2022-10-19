@@ -3,6 +3,7 @@ open System.Diagnostics
 open System.Collections.Concurrent
 open HackerNewsAsync.Model
 open HackerNewsAsync
+open System.Collections.Generic
 
 let sw = Stopwatch.StartNew()
 
@@ -36,21 +37,19 @@ let consumer =
 
 async {
     // I need the producer to run in it's own thread, not shared by the threadpool, because I rely on the consumer being allowed to block the thread with .Take
-    let! p = producer |> Async.StartChild
+    let! p = Async.StartChild producer
 
-    // But then how do I construct the consumers with a loop with this with the let! syntax?
-    // And also, how do I instead start the consumers on the thread-pool?
-    // This guys seems to do it, but that involves using task https://stackoverflow.com/questions/43239247/f-async-parallel-plus-main-thread
-    let! c1 = consumer |> Async.StartChild
-    let! c2 = consumer |> Async.StartChild
-    let! c3 = consumer |> Async.StartChild
-    let! c4 = consumer |> Async.StartChild
+    let consumers = List<Async<unit>>();
+
+    for _ in 0..3 do
+        let! c = Async.StartChild consumer
+        consumers.Add(c)
 
     do! p
-    do! c1
-    do! c2
-    do! c3
-    do! c4
+
+    for i in 0..3 do
+        do! consumers[i]
+
 }
 |> Async.RunSynchronously
 
