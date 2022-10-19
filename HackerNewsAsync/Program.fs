@@ -26,7 +26,7 @@ let consumer =
         try
             while true do
                 let! story =
-                    queue.Take(Threading.CancellationToken.None)    // Todo, should find a non-blocking version of this
+                    queue.Take(Threading.CancellationToken.None) // Todo, should find a non-blocking version of this
                     |> HnClient.getStory
 
                 results.TryAdd(story.id, story) |> Debug.Assert
@@ -38,16 +38,17 @@ let consumer =
 async {
     // I need the producer to run in it's own thread, not shared by the threadpool, because I rely on the consumer being allowed to block the thread with .Take
     let! p = Async.StartChild producer
+    let maxConcurrent = 8
 
-    let consumers = List<Async<unit>>();
+    let consumers = List<Async<unit>>()
 
-    for _ in 0..3 do
+    for _ in 0 .. maxConcurrent - 1 do
         let! c = Async.StartChild consumer
         consumers.Add(c)
 
     do! p
 
-    for i in 0..3 do
+    for i in 0 .. maxConcurrent - 1 do
         do! consumers[i]
 
 }
