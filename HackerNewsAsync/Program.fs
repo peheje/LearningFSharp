@@ -3,7 +3,6 @@ open System.Diagnostics
 open System.Collections.Concurrent
 open HackerNewsAsync.Model
 open HackerNewsAsync
-open System.Collections.Generic
 
 let sw = Stopwatch.StartNew()
 
@@ -31,26 +30,19 @@ let consumer =
 
                 results.TryAdd(story.id, story) |> Debug.Assert
                 printfn "Thread %i Received %s" Threading.Thread.CurrentThread.ManagedThreadId story.title
-        with
-        | :? InvalidOperationException -> printfn "Consumer ended"
+        with :? InvalidOperationException ->
+            printfn "Consumer ended"
     }
 
 async {
     // I need the producer to run in it's own thread, not shared by the threadpool, because I rely on the consumer being allowed to block the thread with .Take
     let! p = Async.StartChild producer
-    let maxConcurrent = 8
-
-    let consumers = List<Async<unit>>()
-
-    for _ in 0 .. maxConcurrent - 1 do
-        let! c = Async.StartChild consumer
-        consumers.Add(c)
-
+    let! consumers = List.init 8 (fun _ -> Async.StartChild consumer) |> Async.Parallel
+    
     do! p
 
-    for i in 0 .. maxConcurrent - 1 do
-        do! consumers[i]
-
+    for c in consumers do
+        do! c
 }
 |> Async.RunSynchronously
 
