@@ -18,8 +18,7 @@ module IdChannel =
                 let! id = Async.AwaitTask(channel.Reader.ReadAsync().AsTask())
                 return Some id
             with
-            | :? AggregateException as ae when (ae.InnerException :? ChannelClosedException) ->
-                return None
+            | :? AggregateException as ae when (ae.InnerException :? ChannelClosedException) -> return None
         }
 
     let send id =
