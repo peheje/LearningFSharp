@@ -13,12 +13,20 @@ module IdChannel =
 
     // In future might use this: https://github.com/fsharp/fslang-design/blob/main/RFCs/FS-1021-value-task-interop.md
     let receive () =
-        channel.Reader.ReadAsync().AsTask()
-        |> Async.AwaitTask
+        async {
+            try
+                let! id = Async.AwaitTask(channel.Reader.ReadAsync().AsTask())
+                return Some id
+            with
+            | :? AggregateException as ae ->
+                if not (ae.InnerException :? ChannelClosedException) then
+                    return raise ae
+                else
+                    return None
+        }
 
     let send id =
-        channel.Writer.WriteAsync(id).AsTask()
-        |> Async.AwaitTask
+        Async.AwaitTask(channel.Writer.WriteAsync(id).AsTask())
 
     let close () = channel.Writer.Complete()
 
@@ -37,20 +45,17 @@ let stories = ConcurrentDictionary<int, Story>()
 let consumer =
     async {
         let threadId = Thread.CurrentThread.ManagedThreadId
+        let mutable read = true
 
-        try
-            while true do
-                let! storyId = IdChannel.receive ()
+        while read do
+            match! IdChannel.receive () with
+            | Some storyId ->
                 let! story = storyId |> HnClient.getStory
                 stories.TryAdd(story.id, story) |> Debug.Assert
                 printfn "Thread %i Received %s" threadId story.title
-        with
-        | :? AggregateException as ax ->
-            for inner in ax.InnerExceptions do
-                if not (inner :? ChannelClosedException) then
-                    raise inner
-
-            printfn "Thread %i done" threadId
+            | None ->
+                read <- false
+                printfn "Thread %i done" threadId
     }
 
 async {
