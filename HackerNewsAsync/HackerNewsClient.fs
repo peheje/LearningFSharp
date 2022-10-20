@@ -12,10 +12,7 @@ let private http =
     )
 
 let getStory id =
-    async { return! Async.AwaitTask(http.GetFromJsonAsync<Story>($"v0/item/{id}.json")) }
+    Async.AwaitTask(http.GetFromJsonAsync<Story>($"v0/item/{id}.json"))
 
-let getTopStoriesIds n =
-    async {
-        let! ids = Async.AwaitTask(http.GetFromJsonAsync<int array>("v0/topstories.json"))
-        return ids |> Seq.truncate n
-    }
+let getTopStoriesIds () =
+    Async.AwaitTask(http.GetFromJsonAsync<int array>("v0/topstories.json"))

@@ -28,7 +28,7 @@ module IdChannel =
 
 let producer =
     async {
-        let! ids = HnClient.getTopStoriesIds 1000
+        let! ids = HnClient.getTopStoriesIds ()
 
         for id in ids do
             do! IdChannel.send (id)
