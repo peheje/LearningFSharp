@@ -3,42 +3,45 @@ open System.Diagnostics
 open System.Collections.Concurrent
 open HackerNewsAsync.Model
 open HackerNewsAsync
+open System.Threading.Channels
 
 let sw = Stopwatch.StartNew()
-
-let queue = new BlockingCollection<int>(1)
+let channel = Channel.CreateBounded<int>(1)
 
 let producer =
     async {
         let! ids = HnClient.getTopStoriesIds 1000
 
         for id in ids do
-            queue.Add(id)
+            do! channel.Writer.WriteAsync(id).AsTask() |> Async.AwaitTask // In future might use this: https://github.com/fsharp/fslang-design/blob/main/RFCs/FS-1021-value-task-interop.md
 
-        queue.CompleteAdding()
+        channel.Writer.Complete()
     }
 
-let results = ConcurrentDictionary<int, Story>()
+let stories = ConcurrentDictionary<int, Story>()
 
 let consumer =
     async {
+        let threadId = Threading.Thread.CurrentThread.ManagedThreadId
+
         try
             while true do
-                let! story =
-                    queue.Take(Threading.CancellationToken.None) // Todo, should find a non-blocking version of this
-                    |> HnClient.getStory
+                let! storyId = (channel.Reader.ReadAsync().AsTask()) |> Async.AwaitTask
+                let! story = storyId |> HnClient.getStory
+                stories.TryAdd(story.id, story) |> Debug.Assert
+                printfn "Thread %i Received %s" threadId story.title
+        with :? AggregateException as ax ->
+            for inner in ax.InnerExceptions do
+                if not (inner :? ChannelClosedException) then
+                    raise inner
 
-                results.TryAdd(story.id, story) |> Debug.Assert
-                printfn "Thread %i Received %s" Threading.Thread.CurrentThread.ManagedThreadId story.title
-        with :? InvalidOperationException ->
-            printfn "Consumer ended"
+            printfn "Thread %i done" threadId
     }
 
 async {
-    // I need the producer to run in it's own thread, not shared by the threadpool, because I rely on the consumer being allowed to block the thread with .Take
     let! p = Async.StartChild producer
     let! consumers = List.init 8 (fun _ -> Async.StartChild consumer) |> Async.Parallel
-    
+
     do! p
 
     for c in consumers do
@@ -46,7 +49,7 @@ async {
 }
 |> Async.RunSynchronously
 
-results.Values
+stories.Values
 |> Seq.filter (fun s -> s.typ = "story")
 |> Seq.sortBy (fun s -> s.id)
 |> Seq.length
