@@ -23,19 +23,18 @@ let stories = ConcurrentDictionary<int, Story>()
 let consumer =
     async {
         let threadId = Threading.Thread.CurrentThread.ManagedThreadId
+        let mutable read = true
+        while read do
+            let! ready = channel.Reader.WaitToReadAsync().AsTask() |> Async.AwaitTask
+            if ready then
+                match channel.Reader.TryRead() with
+                | (true, storyId) ->
+                    let! story = storyId |> HnClient.getStory
+                    stories.TryAdd(story.id, story) |> Debug.Assert
+                    printfn "Thread %i Received %s" threadId story.title
+                | (false, _) -> read <- false
 
-        try
-            while true do
-                let! storyId = (channel.Reader.ReadAsync().AsTask()) |> Async.AwaitTask
-                let! story = storyId |> HnClient.getStory
-                stories.TryAdd(story.id, story) |> Debug.Assert
-                printfn "Thread %i Received %s" threadId story.title
-        with :? AggregateException as ax ->
-            for inner in ax.InnerExceptions do
-                if not (inner :? ChannelClosedException) then
-                    raise inner
-
-            printfn "Thread %i done" threadId
+        printfn "Thread %i done" threadId
     }
 
 async {
