@@ -11,20 +11,30 @@ let sw = Stopwatch.StartNew()
 module IdChannel =
     let private channel = Channel.CreateBounded<int>(1)
 
+    let private cts = new CancellationTokenSource()
+
     // In future might use this: https://github.com/fsharp/fslang-design/blob/main/RFCs/FS-1021-value-task-interop.md
     let receive () =
         async {
             try
                 let! id = Async.AwaitTask(channel.Reader.ReadAsync().AsTask())
                 return Some id
-            with
-            | :? AggregateException as ae when (ae.InnerException :? ChannelClosedException) -> return None
+            with :? AggregateException as ae when (ae.InnerException :? ChannelClosedException) ->
+                return None
         }
 
     let send id =
-        Async.AwaitTask(channel.Writer.WriteAsync(id).AsTask())
-
+        async {
+            try
+                return! Async.AwaitTask(channel.Writer.WriteAsync(id, cts.Token).AsTask())
+            with :? Tasks.TaskCanceledException ->
+                return! Async.AwaitTask(Tasks.Task.CompletedTask)
+        }
+            
     let close () = channel.Writer.Complete()
+
+    let stopSend () =
+        cts.Cancel()
 
 let producer =
     async {
@@ -48,6 +58,11 @@ let consumer =
             | Some storyId ->
                 let! story = storyId |> HnClient.getStory
                 stories.TryAdd(story.id, story) |> Debug.Assert
+
+                if stories.Count >= 30 then
+                    IdChannel.stopSend()
+                    read <- false
+
                 printfn "Thread %i Received %s" threadId story.title
             | None ->
                 read <- false
@@ -57,9 +72,7 @@ let consumer =
 async {
     let! p = Async.StartChild producer
 
-    let! consumers =
-        List.init 8 (fun _ -> Async.StartChild consumer)
-        |> Async.Parallel
+    let! consumers = List.init 8 (fun _ -> Async.StartChild consumer) |> Async.Parallel
 
     do! p
 
