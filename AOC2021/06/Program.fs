@@ -14,14 +14,22 @@ let step xs =
         | 8 -> xs[0]            // offspring of those who procreate
         | _ -> xs[i + 1])
 
+let rec loop i stop xs =
+    if i = stop then xs
+    else xs |> step |> loop (i + 1) stop
+
 let rec next xs = seq {         // instead of recursive function with state, plays nicely when number of iterations is given
     yield xs
     yield! xs |> step |> next
 }
 
+let sw = System.Diagnostics.Stopwatch.StartNew()
+
 [0..8]
     |> List.map (fun i -> input |> countWhere (fun x -> x = i) |> int64)
-    |> next
-    |> Seq.item 256
+    |> next |> Seq.item 256
+    // |> loop 0 256
     |> List.sum
     |> log
+
+printfn "Took %ims" sw.ElapsedMilliseconds
