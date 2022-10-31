@@ -1,5 +1,4 @@
-﻿open System
-open System.Diagnostics
+﻿open System.Diagnostics
 open System.Collections.Concurrent
 open HackerNewsAsync.Model
 open HackerNewsAsync
@@ -11,18 +10,19 @@ let sw = Stopwatch.StartNew()
 module IdChannel =
     let private channel = Channel.CreateBounded<int>(1)
 
-    // In future might use this: https://github.com/fsharp/fslang-design/blob/main/RFCs/FS-1021-value-task-interop.md
     let receive () =
-        async {
+        task {
             try
-                let! id = channel.Reader.ReadAsync().AsTask() |> Async.AwaitTask
+                let! id = channel.Reader.ReadAsync()
                 return Some id
             with
-            | :? AggregateException as ae when (ae.InnerException :? ChannelClosedException) -> return None
+            | :? ChannelClosedException -> return None
         }
+        |> Async.AwaitTask
 
     let send id =
-        channel.Writer.WriteAsync(id).AsTask() |> Async.AwaitTask
+        channel.Writer.WriteAsync(id).AsTask()
+        |> Async.AwaitTask
 
     let close () = channel.Writer.Complete()
 
