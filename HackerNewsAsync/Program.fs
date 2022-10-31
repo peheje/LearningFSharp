@@ -15,14 +15,14 @@ module IdChannel =
     let receive () =
         async {
             try
-                let! id = Async.AwaitTask(channel.Reader.ReadAsync().AsTask())
+                let! id = channel.Reader.ReadAsync().AsTask() |> Async.AwaitTask
                 return Some id
             with
             | :? AggregateException as ae when (ae.InnerException :? ChannelClosedException) -> return None
         }
 
     let send id =
-        Async.AwaitTask(channel.Writer.WriteAsync(id).AsTask())
+        channel.Writer.WriteAsync(id).AsTask() |> Async.AwaitTask
 
     let close () = channel.Writer.Complete()
 
