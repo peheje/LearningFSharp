@@ -3,7 +3,7 @@
 type Hand = | Rock | Paper | Scissor
 type Outcome = | Win | Loss | Draw
 
-let outcome (yours, theirs) =
+let outcome (theirs, yours) =
     match yours, theirs with
     | Rock, Scissor -> Win
     | Rock, Paper -> Loss
@@ -13,7 +13,7 @@ let outcome (yours, theirs) =
     | Scissor, Rock -> Loss
     | _, _ -> Draw
 
-let plays = rows |> Array.map(fun row ->
+let strategy1 = rows |> Array.map(fun row ->
     let s = row.Split(" ")
     
     let theyPlay =
@@ -30,16 +30,49 @@ let plays = rows |> Array.map(fun row ->
         | "Z" -> Scissor
         | _ -> failwith "not xyz"
 
-    (wePlay, theyPlay)
+    (theyPlay, wePlay)
 )
 
-let shapeScore = function
+let handScore = function
     | Rock -> 1 | Paper -> 2 | Scissor -> 3
 
 let outcomeScore = function
     | Win -> 6 | Draw -> 3 | Loss -> 0
 
-let outcomesScores = plays |> Array.map (outcome >> outcomeScore)
-let shapeScores = plays |> Array.map (fun (wePlay, _) -> shapeScore wePlay)
+let outcomesScores1 = strategy1 |> Array.map (outcome >> outcomeScore)
+let handScores1 = strategy1 |> Array.map (fun (_, wePlay) -> handScore wePlay)
+let total1 = (outcomesScores1 |> Array.sum) + (handScores1 |> Array.sum)
 
-let total = (outcomesScores |> Array.sum) + (shapeScores |> Array.sum)
+let handForOutcome (theirHand, outcome) =
+    match (theirHand, outcome) with
+    | Rock, Win -> Paper
+    | Rock, Loss -> Scissor
+    | Paper, Win -> Scissor
+    | Paper, Loss -> Rock
+    | Scissor, Win -> Rock
+    | Scissor, Loss -> Paper
+    | _, _ -> theirHand
+
+let strategy2 = rows |> Array.map(fun row ->
+    let s = row.Split(" ")
+    
+    let theyPlay =
+        match s[0] with
+        | "A" -> Rock
+        | "B" -> Paper
+        | "C" -> Scissor
+        | _ -> failwith "not abc"
+
+    let theOutcome =
+        match s[1] with
+        | "X" -> Loss
+        | "Y" -> Draw
+        | "Z" -> Win
+        | _ -> failwith "not xyz"
+
+    (theyPlay, theOutcome)
+)
+
+let handScores2 = strategy2 |> Array.map (fun s -> (handForOutcome s) |> handScore)
+let outcomeScores2 = strategy2 |> Array.map (fun (_, theOutcome) -> outcomeScore theOutcome)
+let total2 = (handScores2 |> Array.sum) + (outcomeScores2 |> Array.sum)
