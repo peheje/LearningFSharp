@@ -27,12 +27,13 @@ let moves =
         row.Split(" ")
         |> Array.map (fun d -> (d |> int) - 1))
 
-// Part 1
-let makeMove source destination =
-    match source with
-    | x :: xs -> (xs, x :: destination)
-    | _ -> failwith "cannot move"
+let makeMoves source destination times =
+    let toMove = source |> List.take times
+    let newSource = source |> List.removeManyAt 0 times
+    let newDestination = toMove @ destination
+    (newSource, newDestination)
 
+// Part 1
 let crates1 = crates |> Seq.toArray
 
 for move in moves do
@@ -41,22 +42,16 @@ for move in moves do
     let destIdx = move[2]
 
     for n in 0..times do
-        let (nextSource, nextDestination) = makeMove crates1[sourceIdx] crates1[destIdx]
+        let (nextSource, nextDestination) = makeMoves crates1[sourceIdx] crates1[destIdx] 1
         crates1[sourceIdx] <- nextSource
         crates1[destIdx] <- nextDestination
 
 let part1 =
     crates1
-    |> Array.map (fun col -> col |> List.head)
+    |> Array.map List.head
     |> System.String
 
 // Part 2
-let makeMoves source destination times =
-    let toMove = source |> List.take times
-    let newSource = source |> List.removeManyAt 0 times
-    let newDestination = toMove @ destination
-    (newSource, newDestination)
-
 let crates2 = crates |> Seq.toArray
 
 for move in moves do
@@ -72,5 +67,5 @@ for move in moves do
 
 let part2 =
     crates2
-    |> Array.map (fun col -> col |> List.head)
+    |> Array.map List.head
     |> System.String
