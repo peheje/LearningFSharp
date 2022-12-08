@@ -11,11 +11,11 @@ let parseCrates (row: string) =
         .Replace(" ", "")
     |> Seq.toArray
 
-let makeMove (source: char list) (destination: char list) =
-    let toMove = source |> List.head
-    let newDestination = toMove :: destination
-    let newSource = source |> List.tail
-    (newSource, newDestination)
+let makeMove source destination =
+    match source with
+    | toMove :: tailOfSource ->
+        (tailOfSource, toMove :: destination)
+    | _ -> failwith "cannot move"
 
 let crates =
     s[ 0 ].Split("\n")
@@ -34,19 +34,15 @@ let moves =
         row.Split(" ")
         |> Array.map (fun d -> (d |> int) - 1))
 
+// Mutates crates
 for move in moves do
     let times = move[0]
     let sourceIdx = move[1]
     let destIdx = move[2]
 
     for n in 0..times do
-        let (newSource, newDestination) = makeMove crates[sourceIdx] crates[destIdx]
-        crates[sourceIdx] <- newSource
-        crates[destIdx] <- newDestination
+        let (nextSource, nextDestination) = makeMove crates[sourceIdx] crates[destIdx]
+        crates[sourceIdx] <- nextSource
+        crates[destIdx] <- nextDestination
     
-    printfn "move %i from %i to %i" times (move[1]+1) (move[2]+1)
-    printfn "%A" crates
-
-printfn "%A" crates
-
 crates |> Array.map (fun col -> col |> List.head) |> System.String
