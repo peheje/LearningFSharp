@@ -12,5 +12,5 @@ let firstUnique size row =
 let firstUnique4 = firstUnique 4
 let firstUnique14 = firstUnique 14
 
-let part1 = rows |> Array.map firstUnique4 |> Array.head
-let part2 = rows |> Array.map firstUnique14 |> Array.head
+let part1 = rows |> Seq.map firstUnique4 |> Seq.head
+let part2 = rows |> Seq.map firstUnique14 |> Seq.head
