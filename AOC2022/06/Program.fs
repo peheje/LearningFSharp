@@ -5,7 +5,7 @@ let allUnique l =
     l |> Seq.distinct |> Seq.length = (l |> Seq.length)
 
 let firstUnique size row =
-    // Using Seq, should only evaluate the required amount of windows
+    // Using Seq will only evaluate the required amount of windows
     // https://learn.microsoft.com/en-us/dotnet/fsharp/language-reference/sequences#searching-and-finding-elements
     (row |> Seq.windowed size |> Seq.findIndex allUnique) + size
 
