@@ -43,8 +43,15 @@ let rec buildGraph (rows: string list) (current: Directory): Directory =
 
     | _ -> failwith "havent dont that part yet"
 
-
 let root = {Name="/"; Parent=None; Files = []; Folders = []}
 buildGraph rows root
 
 printfn "%A" root
+
+let rec totalSize root =
+    let sum = root.Files |> List.sum
+    root.Folders |> List.fold (fun state value ->
+        state + (visit value)
+    ) sum
+
+visit root
