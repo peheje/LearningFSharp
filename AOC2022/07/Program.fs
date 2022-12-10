@@ -51,7 +51,7 @@ printfn "%A" root
 let rec totalSize root =
     let sum = root.Files |> List.sum
     root.Folders |> List.fold (fun state value ->
-        state + (visit value)
+        state + (totalSize value)
     ) sum
 
-visit root
+totalSize root
