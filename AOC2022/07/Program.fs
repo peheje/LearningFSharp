@@ -17,12 +17,13 @@ let isGoBack (row: string) = row = "$ cd .."
 
 type Directory = { Name: string; mutable Parent: Directory option; mutable Files: int list; mutable Folders: Map<string, Directory> }
 
-let rec directorySize size (directories: Directory list) =
-    let directSize = directories |> List.map (fun dir -> dir.Files |> List.sum) |> List.sum
-    match directories with
-    | [] -> size + directSize
-    | _ :: rest ->
-        directorySize (size + directSize) rest
+let rec totalSize sum directory =
+
+    (directory.Folders |> Map.toList |> List.map snd)
+    |> List.reduce (fun a b ->
+        totalSize a b
+    ) 0
+
 
 let rec buildGraph (rows: string list) (current: Directory): Directory =
     match rows with
@@ -56,4 +57,4 @@ buildGraph rows root
 
 printfn "%A" root
 
-[root] |> directorySize 0
+totalSize 0 root
