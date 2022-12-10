@@ -44,7 +44,7 @@ let rec buildGraph (rows: string list) (current: Directory): Directory =
     | _ -> failwith "havent dont that part yet"
 
 let root = {Name="/"; Parent=None; Files = []; Folders = []}
-buildGraph rows root
+let _ = buildGraph rows root
 
 printfn "%A" root
 
@@ -54,4 +54,16 @@ let rec totalSize root =
         state + (totalSize value)
     ) sum
 
-totalSize root
+let rec visit root action =
+    action root
+    root.Folders |> List.iter(fun f -> visit f action)
+
+let getAllFolderSizes root =
+    let sizes = System.Collections.Generic.List<int>()
+    visit root (fun dir ->
+        printfn "visiting %s" dir.Name
+        sizes.Add(totalSize dir)
+    )
+    sizes |> Seq.toList
+
+getAllFolderSizes root |> List.filter (fun s -> s <= 100000) |> List.sum
