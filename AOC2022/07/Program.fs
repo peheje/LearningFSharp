@@ -21,7 +21,7 @@ let rec buildGraph (rows: string list) (current: Directory): Directory =
     match rows with
     | row :: rest when row |> isDir ->
         let dirName = directoryName row
-        let dir = {Name=dirName; Parent=current.Parent; Files = []; Folders = List.empty}
+        let dir = {Name=dirName; Parent=current.Parent; Files = []; Folders = []}
         current.Folders <- (dir :: current.Folders)
         buildGraph rest current
 
@@ -44,7 +44,7 @@ let rec buildGraph (rows: string list) (current: Directory): Directory =
     | _ -> failwith "havent dont that part yet"
 
 
-let root = {Name="/"; Parent=None; Files = []; Folders = List.empty}
+let root = {Name="/"; Parent=None; Files = []; Folders = []}
 buildGraph rows root
 
 printfn "%A" root
