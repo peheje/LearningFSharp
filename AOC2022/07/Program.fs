@@ -6,49 +6,45 @@ let rows =
     |> Array.skip 1
     |> Array.toList
 
-let isChangeDirectory (row: string) =
-    row.StartsWith("$ cd")
-    && row.EndsWith("..") |> not
-
+let isChangeFolder (row: string) = row.StartsWith("$ cd") && row.EndsWith("..") |> not
 let isFile (row: string) = System.Char.IsDigit(row[0])
-let isDir (row: string) = row.StartsWith("dir ")
+let isFolder (row: string) = row.StartsWith("dir ")
 let isGoBack (row: string) = row = "$ cd .."
 let fileSize (row: string) = row.Split(" ")[0] |> int
-let changedToDirectoryName (row: string) = row.Split("$ cd ")[1]
-let directoryName (row: string) = row.Split("dir ")[1]
+let changedToFolderName (row: string) = row.Split("$ cd ")[1]
+let folderName (row: string) = row.Split("dir ")[1]
 
-type Directory =
+type Folder =
     { Name: string
-      mutable Parent: Directory option
+      mutable Parent: Folder option
       mutable Files: int list
-      mutable Folders: Directory list }
+      mutable Folders: Folder list }
 
 let rec buildTree rows current =
     match rows with
-    | row :: rest when row |> isDir ->
-        let dir =
-            { Name = directoryName row
+    | row :: rest when row |> isFolder ->
+        let folder =
+            { Name = row |> folderName
               Parent = Some current
               Files = []
               Folders = [] }
 
-        current.Folders <- (dir :: current.Folders)
+        current.Folders <- folder :: current.Folders
         buildTree rest current
     | row :: rest when row |> isFile ->
         let size = row |> fileSize
         current.Files <- size :: current.Files
         buildTree rest current
-    | row :: rest when row |> isChangeDirectory ->
-        let dirName = changedToDirectoryName row
+    | row :: rest when row |> isChangeFolder ->
+        let folderName = row |> changedToFolderName
 
-        let dir =
-            (current.Folders
-             |> List.find (fun f -> f.Name = dirName))
+        let folder =
+            current.Folders
+            |> List.find (fun f -> f.Name = folderName)
 
-        dir.Parent <- Some current
-        buildTree rest dir
+        buildTree rest folder
     | row :: rest when row |> isGoBack -> buildTree rest (Option.get current.Parent)
-    | [] -> current
+    | [] -> ()
     | _ -> failwith "Unhandled input"
 
 let root =
@@ -57,13 +53,13 @@ let root =
       Files = []
       Folders = [] }
 
-let _ = buildTree rows root
+buildTree rows root
 
-let rec folderSize root =
-    let sum = root.Files |> List.sum
+let rec folderSize folder =
+    let sum = folder.Files |> List.sum
 
-    root.Folders
-    |> List.fold (fun state value -> state + (folderSize value)) sum
+    folder.Folders
+    |> List.fold (fun accumulator innerFolder -> accumulator + (folderSize innerFolder)) sum
 
 let rec folderSizes root =
     seq {
