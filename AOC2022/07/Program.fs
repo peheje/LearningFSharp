@@ -13,30 +13,38 @@ let isDir (row: string) = row.StartsWith("dir ")
 let fileSize (row: string) = row.Split(" ")[0] |> int
 let changedToDirectoryName (row: string) = row.Split("$ cd ")[1]
 let directoryName (row: string) = row.Split("dir ")[1]
+let isGoBack (row: string) = row = "$ cd .."
 
-
-type Directory = { Name: string; Parent: string; Files: int list; Folders: Directory list }
+type Directory = { Name: string; mutable Parent: Directory option; mutable Files: int list; mutable Folders: Map<string, Directory> }
 
 let rec buildGraph (rows: string list) (current: Directory): Directory =
     match rows with
     | row :: rest when row |> isDir ->
         let dirName = directoryName row
-        let dir = {Name=dirName; Parent=current.Name; Files = []; Folders = []}
-        let current = { current with Folders = dir :: current.Folders }
+        let dir = {Name=dirName; Parent=current.Parent; Files = []; Folders = Map.empty}
+        current.Folders <- (current.Folders |> Map.add dirName dir)
         buildGraph rest current
 
     | row :: rest when row |> isFile ->
         let size = row |> fileSize
-        let current = { current with Files = size :: current.Files }
+        current.Files <- size :: current.Files
         buildGraph rest current
     
-    | row :: rest 
+    | row :: rest when row |> isChangeDirectory ->
+        let dirName = changedToDirectoryName row
+        let dir = (current.Folders |> Map.find dirName)
+        dir.Parent <- Some current
+        buildGraph rest dir
+
+    | row :: rest when row |> isGoBack ->
+        buildGraph rest (Option.get current.Parent)
 
     | [] -> current
-    
+
     | _ -> failwith "havent dont that part yet"
 
 
-let g = buildGraph rows {Name="/"; Parent=""; Files = []; Folders = []}
+let root = {Name="/"; Parent=None; Files = []; Folders = Map.empty}
+buildGraph rows root
 
-printfn "%A" g
+printfn "%A" root
