@@ -2,20 +2,20 @@ let path = "/Users/phj/Code/F-Sharp-Advent-of-Code-2021/AOC2022/07/input"
 
 let rows =
     System.IO.File.ReadAllLines(path)
-    |> Array.filter (fun row -> row.StartsWith("$ ls") |> not)
+    |> Array.filter (fun row -> row <> "$ ls")
     |> Array.skip 1
     |> Array.toList
 
 let isChangeDirectory (row: string) =
     row.StartsWith("$ cd")
-    && row.Contains("..") |> not
+    && row.EndsWith("..") |> not
 
 let isFile (row: string) = System.Char.IsDigit(row[0])
 let isDir (row: string) = row.StartsWith("dir ")
+let isGoBack (row: string) = row = "$ cd .."
 let fileSize (row: string) = row.Split(" ")[0] |> int
 let changedToDirectoryName (row: string) = row.Split("$ cd ")[1]
 let directoryName (row: string) = row.Split("dir ")[1]
-let isGoBack (row: string) = row = "$ cd .."
 
 type Directory =
     { Name: string
@@ -23,25 +23,21 @@ type Directory =
       mutable Files: int list
       mutable Folders: Directory list }
 
-let rec buildGraph (rows: string list) (current: Directory) : Directory =
+let rec buildTree rows current =
     match rows with
     | row :: rest when row |> isDir ->
-        let dirName = directoryName row
-
         let dir =
-            { Name = dirName
-              Parent = current.Parent
+            { Name = directoryName row
+              Parent = Some current
               Files = []
               Folders = [] }
 
         current.Folders <- (dir :: current.Folders)
-        buildGraph rest current
-
+        buildTree rest current
     | row :: rest when row |> isFile ->
         let size = row |> fileSize
         current.Files <- size :: current.Files
-        buildGraph rest current
-
+        buildTree rest current
     | row :: rest when row |> isChangeDirectory ->
         let dirName = changedToDirectoryName row
 
@@ -50,13 +46,10 @@ let rec buildGraph (rows: string list) (current: Directory) : Directory =
              |> List.find (fun f -> f.Name = dirName))
 
         dir.Parent <- Some current
-        buildGraph rest dir
-
-    | row :: rest when row |> isGoBack -> buildGraph rest (Option.get current.Parent)
-
+        buildTree rest dir
+    | row :: rest when row |> isGoBack -> buildTree rest (Option.get current.Parent)
     | [] -> current
-
-    | _ -> failwith "havent dont that part yet"
+    | _ -> failwith "Unhandled input"
 
 let root =
     { Name = "/"
@@ -64,13 +57,13 @@ let root =
       Files = []
       Folders = [] }
 
-let _ = buildGraph rows root
+let _ = buildTree rows root
 
 let rec folderSize root =
     let sum = root.Files |> List.sum
 
     root.Folders
-    |> List.fold (fun s v -> s + (folderSize v)) sum
+    |> List.fold (fun state value -> state + (folderSize value)) sum
 
 let rec folderSizes root =
     seq {
@@ -84,4 +77,5 @@ let part1 =
     folderSizes root
     |> Seq.filter (fun s -> s <= 100000)
     |> Seq.sum
-    |> printfn "%i"
+
+printfn "part1: %i" part1
