@@ -73,9 +73,22 @@ let rec folderSizes root =
         folderSize root
     }
 
+let sizes = folderSizes root
+
 let part1 =
-    folderSizes root
+    sizes
     |> Seq.filter (fun s -> s <= 100000)
     |> Seq.sum
 
 printfn "part1: %i" part1
+
+let rootSize = folderSize root
+let left = 70000000 - rootSize
+let missing = 30000000 - left
+
+let part2 =
+    sizes
+    |> Seq.filter (fun size -> size >= missing)
+    |> Seq.min
+
+printfn "part2: %i" part2
