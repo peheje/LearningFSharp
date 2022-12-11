@@ -25,10 +25,20 @@ let nameText = document.querySelector("#name") :?> Browser.Types.HTMLTextAreaEle
 let yes = document.querySelector("#yes") :?> Browser.Types.HTMLButtonElement
 let no = document.querySelector("#no") :?> Browser.Types.HTMLButtonElement
 
+let appendDebug message =
+    debug.textContent <- sprintf "\n%s" message + debug.textContent
+
 let nameIterator () =
     let liked = getLocalStorageOrEmpty "liked" |> split ';'
+    appendDebug (String.Join('\n', liked))
     let disliked = getLocalStorageOrEmpty "disliked" |> split ';'
-    let nonProcessedNames = names |> Array.except liked |> Array.except disliked
+    let nonProcessedNames =
+        names
+        |> Array.except liked
+        |> Array.except disliked
+        |> Array.map (fun name ->
+            name.Substring(0, 1) + name.Substring(1).ToLower()
+        )
     let mutable index = -1
     let currentName () =
         if index = -1 then "" else nonProcessedNames[index]
@@ -50,22 +60,19 @@ let appendToLocalStorage key name =
         setLocalStorage key (current + ";" + name)
 
 let addToDisliked name = appendToLocalStorage "disliked" name
-let addToLiked name = appendToLocalStorage "liked" name
-
-let appendDebug message =
-    debug.textContent <- sprintf "\n%s" message + debug.textContent
+let addToLiked name =
+    appendToLocalStorage "liked" name
+    appendDebug name
 
 askNext ()
 
 yes.onclick <- fun _ ->
     let name = currentName()
-    appendDebug ("liked " + name)
     addToLiked name
     askNext ()
 
 no.onclick <- fun _ ->
     let name = currentName()
-    appendDebug ("disliked " + name)
     addToDisliked name
     askNext ()
 
