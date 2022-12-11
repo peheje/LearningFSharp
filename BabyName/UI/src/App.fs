@@ -10,9 +10,12 @@ let splitOrEmpty (split: char) (s: string option) =
     | None -> [||]
 
 let getLocalStorageOrEmpty key =
-    match Browser.WebStorage.localStorage.getItem(key) with
+    match Browser.WebStorage.localStorage.getItem key with
     | null -> ""
     | x -> x
+
+let setLocalStorage key value =
+    Browser.WebStorage.localStorage.setItem(key, value)
 
 let split (separator: char) (source: string) =
     source.Split separator
@@ -32,13 +35,22 @@ let nameIterator () =
     let nextName () =
         index <- index + 1
         currentName ()
-    
     (nextName, currentName)
 
 let (nextName, currentName) = nameIterator()
 
 let askNext () =
     nameText.textContent <- sprintf "Do you like %s?" (nextName ())
+
+let appendToLocalStorage key name =
+    let current = getLocalStorageOrEmpty key
+    if current = "" then
+        setLocalStorage key name
+    else
+        setLocalStorage key (current + ";" + name)
+
+let addToDisliked name = appendToLocalStorage "disliked" name
+let addToLiked name = appendToLocalStorage "liked" name
 
 let appendDebug message =
     debug.textContent <- sprintf "\n%s" message + debug.textContent
@@ -48,10 +60,12 @@ askNext ()
 yes.onclick <- fun _ ->
     let name = currentName()
     appendDebug ("liked " + name)
+    addToLiked name
     askNext ()
 
 no.onclick <- fun _ ->
     let name = currentName()
     appendDebug ("disliked " + name)
+    addToDisliked name
     askNext ()
 
