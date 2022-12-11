@@ -4,19 +4,6 @@ open Browser.Dom
 open System
 open Data
 
-// Mutable variable to count the number of times we clicked the button
-let mutable count = 0
-
-// Get a reference to our button and cast the Element to an HTMLButtonElement
-let myButton = document.querySelector(".my-button") :?> Browser.Types.HTMLButtonElement
-
-let nameText = document.querySelector("#names") :?> Browser.Types.HTMLTextAreaElement
-
-// Register our listener
-myButton.onclick <- fun _ ->
-    count <- count + 1
-    myButton.innerText <- sprintf "You clicked: %i time(s)" count
-
 let splitOrEmpty (split: char) (s: string option) =
     match s with
     | Some v -> v.Split(split)
@@ -30,9 +17,26 @@ let getLocalStorageOrEmpty key =
 let split (separator: char) (source: string) =
     source.Split separator
 
-let liked = getLocalStorageOrEmpty "liked" |> split ';'
-let disliked = getLocalStorageOrEmpty "disliked" |> split ';'
+let debug = document.querySelector("#debug") :?> Browser.Types.HTMLTextAreaElement
+let nameText = document.querySelector("#name") :?> Browser.Types.HTMLTextAreaElement
+let yes = document.querySelector("#yes") :?> Browser.Types.HTMLButtonElement
+let no = document.querySelector("#no") :?> Browser.Types.HTMLButtonElement
 
-let nonProcessedNames = names |> Array.except liked |> Array.except disliked
+let nameIterator () =
+    let liked = getLocalStorageOrEmpty "liked" |> split ';'
+    let disliked = getLocalStorageOrEmpty "disliked" |> split ';'
+    let nonProcessedNames = names |> Array.except liked |> Array.except disliked
+    let mutable index = -1
+    let next () =
+        index <- index + 1
+        nonProcessedNames[index]
+    next
 
-nameText.textContent <- String.Join("\n", nonProcessedNames)
+let nextName = nameIterator()
+
+nameText.textContent <- sprintf "Do you like %s?" (nextName ())
+
+yes.onclick <- fun _ ->
+    nameText.textContent <- sprintf "Do you like %s?" (nextName ())
+
+
