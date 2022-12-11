@@ -27,16 +27,31 @@ let nameIterator () =
     let disliked = getLocalStorageOrEmpty "disliked" |> split ';'
     let nonProcessedNames = names |> Array.except liked |> Array.except disliked
     let mutable index = -1
-    let next () =
+    let currentName () =
+        if index = -1 then "" else nonProcessedNames[index]
+    let nextName () =
         index <- index + 1
-        nonProcessedNames[index]
-    next
+        currentName ()
+    
+    (nextName, currentName)
 
-let nextName = nameIterator()
+let (nextName, currentName) = nameIterator()
 
-nameText.textContent <- sprintf "Do you like %s?" (nextName ())
-
-yes.onclick <- fun _ ->
+let askNext () =
     nameText.textContent <- sprintf "Do you like %s?" (nextName ())
 
+let appendDebug message =
+    debug.textContent <- sprintf "\n%s" message + debug.textContent
+
+askNext ()
+
+yes.onclick <- fun _ ->
+    let name = currentName()
+    appendDebug ("liked " + name)
+    askNext ()
+
+no.onclick <- fun _ ->
+    let name = currentName()
+    appendDebug ("disliked " + name)
+    askNext ()
 
