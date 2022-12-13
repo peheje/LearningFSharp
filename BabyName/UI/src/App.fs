@@ -28,6 +28,14 @@ let no = document.querySelector("#no") :?> Browser.Types.HTMLButtonElement
 let appendDebug message =
     debug.textContent <- sprintf "\n%s" message + debug.textContent
 
+let capitalizeName (name: string) =
+    let nameSeparator = if name.Contains('-') then '-' else ' '
+    let parts = name.Split(nameSeparator)
+    let capitalizedParts = parts |> Array.map (fun part ->
+        part.Substring(0, 1).ToUpper() + part.Substring(1).ToLower()
+    )
+    String.Join(nameSeparator, capitalizedParts)
+
 let nameIterator () =
     let liked = getLocalStorageOrEmpty "liked" |> split ';'
     appendDebug (String.Join('\n', liked))
@@ -36,9 +44,7 @@ let nameIterator () =
         names
         |> Array.except liked
         |> Array.except disliked
-        |> Array.map (fun name ->
-            name.Substring(0, 1) + name.Substring(1).ToLower()
-        )
+        |> Array.map capitalizeName
     let mutable index = -1
     let currentName () =
         if index = -1 then "" else nonProcessedNames[index]
