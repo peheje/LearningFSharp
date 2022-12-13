@@ -1,6 +1,7 @@
 module Data
 
 let names = [|
+    "LISBETH"
     "ANNE"
     "KIRSTEN"
     "METTE"
