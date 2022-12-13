@@ -1,20 +1,22 @@
 let path = "/Users/phj/Code/F-Sharp-Advent-of-Code-2021/AOC2022/06/input"
 let rows = System.IO.File.ReadAllLines path
 
-let allUnique xs =
+let allUnique2 xs =
     let seen = System.Collections.Generic.HashSet<'a>()
     xs |> Seq.tryFind (fun x ->
         if seen.Contains(x) then true
-        else seen.Add(x)
-    ) |> Option.isSome
+        else
+            seen.Add(x) |> ignore
+            false
+    ) |> Option.isNone
 
-let allUnique2 l =
+let allUnique l =
     l |> Seq.distinct |> Seq.length = (l |> Seq.length)
 
 let firstUnique size row =
     // Using Seq will only evaluate the required amount of windows
     // https://learn.microsoft.com/en-us/dotnet/fsharp/language-reference/sequences#searching-and-finding-elements
-    (row |> Seq.windowed size |> Seq.findIndex allUnique2) + size
+    (row |> Seq.windowed size |> Seq.findIndex allUnique) + size
 
 let firstUnique4 = firstUnique 4
 let firstUnique14 = firstUnique 14
