@@ -16,7 +16,8 @@ let allUnique3 (xs: seq<'a>) =
 let allUnique2 xs =
     let seen = System.Collections.Generic.HashSet<'a>()
     xs |> Seq.tryFind (fun x ->
-        if seen.Contains(x) then true
+        if seen.Contains(x) then
+            true
         else
             seen.Add(x) |> ignore
             false
