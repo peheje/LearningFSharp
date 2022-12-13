@@ -4,11 +4,6 @@ open Browser.Dom
 open System
 open Data
 
-let splitOrEmpty (split: char) (s: string option) =
-    match s with
-    | Some v -> v.Split(split)
-    | None -> [||]
-
 let getLocalStorageOrEmpty key =
     match Browser.WebStorage.localStorage.getItem key with
     | null -> ""
@@ -24,6 +19,10 @@ let debug = document.querySelector("#debug") :?> Browser.Types.HTMLTextAreaEleme
 let nameText = document.querySelector("#name") :?> Browser.Types.HTMLTextAreaElement
 let yes = document.querySelector("#yes") :?> Browser.Types.HTMLButtonElement
 let no = document.querySelector("#no") :?> Browser.Types.HTMLButtonElement
+let username = document.querySelector("#username") :?> Browser.Types.HTMLInputElement
+
+let usernameIsValid username =
+    username |> Seq.length > 4
 
 let appendDebug message =
     debug.textContent <- sprintf "\n%s" message + debug.textContent
@@ -42,9 +41,9 @@ let nameIterator () =
     let disliked = getLocalStorageOrEmpty "disliked" |> split ';'
     let nonProcessedNames =
         names
+        |> Array.map capitalizeName
         |> Array.except liked
         |> Array.except disliked
-        |> Array.map capitalizeName
     let mutable index = -1
     let currentName () =
         if index = -1 then "" else nonProcessedNames[index]
@@ -69,6 +68,15 @@ let addToDisliked name = appendToLocalStorage "disliked" name
 let addToLiked name =
     appendToLocalStorage "liked" name
     appendDebug name
+
+username.oninput <- fun _ ->
+    if username.value |> usernameIsValid then
+        setLocalStorage "username" username.value
+        yes.disabled <- false
+        no.disabled <- false
+
+username.value <- getLocalStorageOrEmpty "username"
+username.dispatchEvent(Browser.Event.Event.Create("input")) |> ignore
 
 askNext ()
 
