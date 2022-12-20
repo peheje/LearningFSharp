@@ -3,6 +3,8 @@ module App
 open Browser.Dom
 open System
 open Data
+open Fable.Core
+open Fable.Core.JsInterop
 
 let getLocalStorageOrEmpty key =
     match Browser.WebStorage.localStorage.getItem key with
@@ -90,3 +92,4 @@ no.onclick <- fun _ ->
     addToDisliked name
     askNext ()
 
+let [<Global("LZString")>] lzstring: JS.Console = jsNative
