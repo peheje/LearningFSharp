@@ -1,0 +1,7 @@
+textarea {
+    min-height: 100px;
+    min-width: 100px;
+    display: flex;
+    margin-bottom: 10px;
+    margin-top: 10px;
+}
