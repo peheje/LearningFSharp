@@ -4,7 +4,6 @@ open Browser.Dom
 open System
 open Data
 open Fable.Core
-open Fable.Core.JsInterop
 
 let getLocalStorageOrEmpty key =
     match Browser.WebStorage.localStorage.getItem key with
@@ -17,17 +16,21 @@ let setLocalStorage key value =
 let split (separator: char) (source: string) =
     source.Split separator
 
-let debug = document.querySelector("#debug") :?> Browser.Types.HTMLTextAreaElement
+let liked = document.querySelector("#liked") :?> Browser.Types.HTMLTextAreaElement
 let nameText = document.querySelector("#name") :?> Browser.Types.HTMLTextAreaElement
 let yes = document.querySelector("#yes") :?> Browser.Types.HTMLButtonElement
 let no = document.querySelector("#no") :?> Browser.Types.HTMLButtonElement
+let copy = document.querySelector("#copy") :?> Browser.Types.HTMLButtonElement
 let username = document.querySelector("#username") :?> Browser.Types.HTMLInputElement
 
 let usernameIsValid username =
     username |> Seq.length > 4
 
-let appendDebug message =
-    debug.textContent <- sprintf "\n%s" message + debug.textContent
+let toBase64 (input: string) =
+    Text.Encoding.UTF8.GetBytes(input) |> Convert.ToBase64String
+
+let appendLiked message =
+    liked.textContent <- sprintf "\n%s" message + liked.textContent
 
 let capitalizeName (name: string) =
     let nameSeparator = if name.Contains('-') then '-' else ' '
@@ -39,7 +42,7 @@ let capitalizeName (name: string) =
 
 let nameIterator () =
     let liked = getLocalStorageOrEmpty "liked" |> split ';'
-    appendDebug (String.Join('\n', liked))
+    appendLiked (String.Join('\n', liked))
     let disliked = getLocalStorageOrEmpty "disliked" |> split ';'
     let nonProcessedNames =
         names
@@ -69,19 +72,36 @@ let appendToLocalStorage key name =
 let addToDisliked name = appendToLocalStorage "disliked" name
 let addToLiked name =
     appendToLocalStorage "liked" name
-    appendDebug name
+    appendLiked name
+
+let setInputValue value (input: Browser.Types.HTMLInputElement) =
+    input.value <- value
+    input.dispatchEvent(Browser.Event.Event.Create("input")) |> ignore
 
 username.oninput <- fun _ ->
     if username.value |> usernameIsValid then
         setLocalStorage "username" username.value
         yes.disabled <- false
         no.disabled <- false
+    else
+        yes.disabled <- true
+        no.disabled <- true
 
-username.value <- getLocalStorageOrEmpty "username"
-username.dispatchEvent(Browser.Event.Event.Create("input")) |> ignore
+setInputValue (getLocalStorageOrEmpty "username") username
 
 askNext ()
 
+[<Emit("navigator.clipboard.writeText($0)")>]
+let private writeToClipboard _text : JS.Promise<unit> = jsNative
+
+copy.onclick <- fun _ ->
+    async {
+        try
+            do! liked.textContent |> toBase64 |> writeToClipboard |> Async.AwaitPromise 
+        with ex ->
+            printfn "Promise rejected %s" ex.Message
+    } |> Async.StartImmediate
+    
 yes.onclick <- fun _ ->
     let name = currentName()
     addToLiked name
@@ -92,4 +112,3 @@ no.onclick <- fun _ ->
     addToDisliked name
     askNext ()
 
-let [<Global("LZString")>] lzstring: JS.Console = jsNative
