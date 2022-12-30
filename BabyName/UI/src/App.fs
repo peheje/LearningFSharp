@@ -16,7 +16,7 @@ let setLocalStorage key value =
 
 let split (separator: char) (source: string) = source.Split separator
 let join (separator: char) (source: string array) = String.Join(separator, source)
-let id id = document.getElementById (id)
+let id id = document.getElementById id
 
 let liked = id "liked" :?> HTMLTextAreaElement
 let nameText = id "name" :?> HTMLTextAreaElement
@@ -37,9 +37,9 @@ let capitalizeName (name: string) =
 
 let nameIterator () =
     let liked = getLocalStorageOrEmpty "liked" |> split ';'
-    liked |> Array.rev |> join '\n' |> appendLiked
-
     let disliked = getLocalStorageOrEmpty "disliked" |> split ';'
+
+    liked |> Array.rev |> join '\n' |> appendLiked
 
     let nonProcessedNames =
         names |> Array.map capitalizeName |> Array.except liked |> Array.except disliked
@@ -68,35 +68,27 @@ let appendToLocalStorage key name =
     else
         setLocalStorage key (current + ";" + name)
 
-let addToDisliked name = appendToLocalStorage "disliked" name
+[<Emit("navigator.clipboard.writeText($0)")>]
+let writeToClipboard _text : JS.Promise<unit> = jsNative
 
-let addToLiked name =
-    appendToLocalStorage "liked" name
-    appendLiked name
+let copyLikedToClipboard _ =
+    async {
+        try
+            do! liked.textContent |> writeToClipboard |> Async.AwaitPromise
+        with ex ->
+            printfn "Promise rejected %s" ex.Message
+    }
+    |> Async.StartImmediate
+
+let likeCurrentName _ =
+    currentName () |> appendToLocalStorage "liked"
+    currentName () |> appendLiked
+
+let dislikeCurrentName _ =
+    currentName () |> appendToLocalStorage "disliked"
 
 askNext ()
 
-[<Emit("navigator.clipboard.writeText($0)")>]
-let private writeToClipboard _text : JS.Promise<unit> = jsNative
-
-copy.onclick <-
-    fun _ ->
-        async {
-            try
-                do! liked.textContent |> writeToClipboard |> Async.AwaitPromise
-            with ex ->
-                printfn "Promise rejected %s" ex.Message
-        }
-        |> Async.StartImmediate
-
-yes.onclick <-
-    fun _ ->
-        let name = currentName ()
-        addToLiked name
-        askNext ()
-
-no.onclick <-
-    fun _ ->
-        let name = currentName ()
-        addToDisliked name
-        askNext ()
+copy.onclick <- copyLikedToClipboard
+yes.onclick <- likeCurrentName >> askNext
+no.onclick <- dislikeCurrentName >> askNext
