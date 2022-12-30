@@ -5,6 +5,7 @@ open Browser.Types
 open System
 open Data
 open Fable.Core
+open Buttons
 
 let getLocalStorageOrEmpty key =
     match Browser.WebStorage.localStorage.getItem key with
@@ -90,14 +91,15 @@ let dislikeCurrentName _ =
 
 let confirmClear _ =
     let prompt = "delete all liked and disliked names"
-    if window.prompt $"Type '{prompt}' to continue." = prompt then 
+
+    if window.prompt $"Type '{prompt}' to continue." = prompt then
         setLocalStorage "liked" ""
         setLocalStorage "disliked" ""
         window.location.reload ()
 
 askNext ()
 
-copy.onclick <- copyLikedToClipboard
+copy.onclick <- copyLikedToClipboard >> showCopiedAnimation copy
 yes.onclick <- likeCurrentName >> askNext
 no.onclick <- dislikeCurrentName >> askNext
 clear.onclick <- confirmClear
