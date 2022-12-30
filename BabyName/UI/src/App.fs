@@ -25,23 +25,19 @@ let yes = document.querySelector("#yes") :?> Browser.Types.HTMLButtonElement
 let no = document.querySelector("#no") :?> Browser.Types.HTMLButtonElement
 let copy = document.querySelector("#copy") :?> Browser.Types.HTMLButtonElement
 
-let usernameIsValid username =
-    username |> Seq.length > 4
-
 let appendLiked message =
     liked.textContent <- message + "\n" + liked.textContent
 
 let capitalizeName (name: string) =
     let nameSeparator = if name.Contains('-') then '-' else ' '
-    let parts = name.Split(nameSeparator)
-    let capitalizedParts = parts |> Array.map (fun part ->
-        part.Substring(0, 1).ToUpper() + part.Substring(1).ToLower()
-    )
-    capitalizedParts |> join nameSeparator
+    name
+    |> split nameSeparator
+    |> Array.map (fun part -> part.Substring(0, 1).ToUpper() + part.Substring(1).ToLower())
+    |> join nameSeparator
 
 let nameIterator () =
     let liked = getLocalStorageOrEmpty "liked" |> split ';'
-    liked |> Array.rev |> join '\n' |> appendLiked 
+    liked |> Array.rev |> join '\n' |> appendLiked
     
     let disliked = getLocalStorageOrEmpty "disliked" |> split ';'
     let nonProcessedNames =
