@@ -23,6 +23,7 @@ let nameText = id "name" :?> HTMLTextAreaElement
 let yes = id "yes" :?> HTMLButtonElement
 let no = id "no" :?> HTMLButtonElement
 let copy = id "copy" :?> HTMLButtonElement
+let clear = id "clear" :?> HTMLButtonElement
 
 let appendLiked message =
     liked.textContent <- message + "\n" + liked.textContent
@@ -87,8 +88,16 @@ let likeCurrentName _ =
 let dislikeCurrentName _ =
     currentName () |> appendToLocalStorage "disliked"
 
+let confirmClear _ =
+    let prompt = "delete all liked and disliked names"
+    if window.prompt $"Type '{prompt}' to continue." = prompt then 
+        setLocalStorage "liked" ""
+        setLocalStorage "disliked" ""
+        window.location.reload ()
+
 askNext ()
 
 copy.onclick <- copyLikedToClipboard
 yes.onclick <- likeCurrentName >> askNext
 no.onclick <- dislikeCurrentName >> askNext
+clear.onclick <- confirmClear
