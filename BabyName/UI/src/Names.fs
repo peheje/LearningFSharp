@@ -1,6 +1,13 @@
 module Data
 
-let names = [|
+let boyNames = [|
+    "PETER"
+    "TOMAS"
+    "NIKOLAJ"
+    "KENNETH"
+|]
+
+let girlNames = [|
     "ANNE"
     "KIRSTEN"
     "METTE"

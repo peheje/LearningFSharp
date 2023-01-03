@@ -25,6 +25,25 @@ let no = id "no" :?> HTMLButtonElement
 let copy = id "copy" :?> HTMLButtonElement
 let clear = id "clear" :?> HTMLButtonElement
 
+let initGenderSelector () =
+    let girl = id "girl" :?> HTMLInputElement
+    let boy = id "boy" :?> HTMLInputElement
+
+    girl.onchange <- fun _ ->
+        setLocalStorage "gender" "girl"
+        window.location.reload ()
+    boy.onchange <- fun _ ->
+        setLocalStorage "gender" "boy"
+        window.location.reload ()
+
+    match getLocalStorageOrEmpty "gender" with
+    | "boy" ->
+        boy.checked <- true
+        boyNames
+    | _ ->
+        girl.checked <- true
+        girlNames
+
 let appendLiked message =
     liked.textContent <- message + "\n" + liked.textContent
 
@@ -39,6 +58,7 @@ let capitalizeName (name: string) =
 let nameIterator () =
     let liked = getLocalStorageOrEmpty "liked" |> split ';'
     let disliked = getLocalStorageOrEmpty "disliked" |> split ';'
+    let names = initGenderSelector ()
 
     liked |> Array.rev |> join '\n' |> appendLiked
 
