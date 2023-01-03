@@ -17,6 +17,7 @@ let setLocalStorage key value =
 let split (separator: char) (source: string) = source.Split separator
 let join (separator: char) (source: string array) = String.Join(separator, source)
 let id id = document.getElementById id
+let name id = document.getElementsByName id
 
 let liked = id "liked" :?> HTMLTextAreaElement
 let nameText = id "name" :?> HTMLTextAreaElement
@@ -24,6 +25,8 @@ let yes = id "yes" :?> HTMLButtonElement
 let no = id "no" :?> HTMLButtonElement
 let copy = id "copy" :?> HTMLButtonElement
 let clear = id "clear" :?> HTMLButtonElement
+let girl = id "girl" :?> HTMLInputElement
+let boy = id "boy" :?> HTMLInputElement
 
 let appendLiked message =
     liked.textContent <- message + "\n" + liked.textContent
@@ -36,30 +39,54 @@ let capitalizeName (name: string) =
     |> Array.map (fun part -> part.Substring(0, 1).ToUpper() + part.Substring(1).ToLower())
     |> join nameSeparator
 
-let nameIterator () =
+let nameIterator names =
     let liked = getLocalStorageOrEmpty "liked" |> split ';'
     let disliked = getLocalStorageOrEmpty "disliked" |> split ';'
-
     liked |> Array.rev |> join '\n' |> appendLiked
-
-    let nonProcessedNames =
-        names |> Array.map capitalizeName |> Array.except liked |> Array.except disliked
-
+    let freeNames = names |> Array.map capitalizeName |> Array.except liked |> Array.except disliked
     let mutable index = -1
 
     let currentName () =
-        if index = -1 then "" else nonProcessedNames[index]
+        freeNames[index]
 
     let nextName () =
         index <- index + 1
         currentName ()
 
-    (nextName, currentName)
+    let askNext () =
+        nameText.textContent <- sprintf "Do you like %s?" (nextName ())
 
-let (nextName, currentName) = nameIterator ()
+    (nextName, currentName, askNext)
 
-let askNext () =
-    nameText.textContent <- sprintf "Do you like %s?" (nextName ())
+let boyOrGirlNames () =
+    let savedGender = getLocalStorageOrEmpty "gender"
+    match savedGender with
+    | "boy" -> boyNames
+    | _ -> girlNames
+
+let initializeGenderChange () = 
+    let savedGender = getLocalStorageOrEmpty "gender"
+    match savedGender with
+    | "boy" -> boy.checked <- true
+    | _ -> girl.checked <- true
+
+    match document.querySelector("""input[name="gender"]:checked""") with
+    | :? HTMLInputElement as el ->
+        setLocalStorage "gender" el.value
+        document.location.reload()
+    | _ -> printfn "Could not find checked"
+
+    boy.onchange <- fun _ ->
+        
+    girl.onchange <- fun _ ->
+        setLocalStorage "gender" "girl"
+        document.location.reload()
+
+    
+
+initializeGenderChange()
+
+let (nextName, currentName, askNext) = nameIterator (boyOrGirlNames())
 
 let appendToLocalStorage key name =
     let current = getLocalStorageOrEmpty key
