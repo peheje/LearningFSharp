@@ -47,14 +47,6 @@ let initGenderSelector () =
 let appendLiked message =
     liked.textContent <- message + "\n" + liked.textContent
 
-let capitalizeName (name: string) =
-    let nameSeparator = if name.Contains('-') then '-' else ' '
-
-    name
-    |> split nameSeparator
-    |> Array.map (fun part -> part.Substring(0, 1).ToUpper() + part.Substring(1).ToLower())
-    |> join nameSeparator
-
 let nameIterator () =
     let liked = getLocalStorageOrEmpty "liked" |> split ';'
     let disliked = getLocalStorageOrEmpty "disliked" |> split ';'
@@ -63,7 +55,7 @@ let nameIterator () =
     liked |> Array.rev |> join '\n' |> appendLiked
 
     let nonProcessedNames =
-        names |> Array.map capitalizeName |> Array.except liked |> Array.except disliked
+        names |> Array.except liked |> Array.except disliked
 
     let mutable index = -1
 
