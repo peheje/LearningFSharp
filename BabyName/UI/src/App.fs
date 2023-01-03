@@ -6,6 +6,22 @@ open System
 open Data
 open Fable.Core
 
+open Lit
+open Browser
+
+
+[<HookComponent>]
+let MyComponent() =
+    let value, setValue = Hook.useState "World"
+    html $"""
+      <div class="content">
+        <p>Local statser: <i>Hello {value}!</i></p>
+        <input
+          value={value}
+          @keyup={EvVal setValue}>
+      </div>
+    """
+
 let getLocalStorageOrEmpty key =
     match Browser.WebStorage.localStorage.getItem key with
     | null -> ""
@@ -13,6 +29,46 @@ let getLocalStorageOrEmpty key =
 
 let setLocalStorage key value =
     Browser.WebStorage.localStorage.setItem (key, value)
+
+[<HookComponent>]
+let GenderSelector () =
+    let value, setValue = Hook.useState "girl"
+    
+    let saveValue () =
+        setLocalStorage "gender" value
+        EvVal setValue
+
+    Hook.useEffect (fun _ ->
+        printfn "hello hook.useEffect")
+
+    html $"""
+    <p>You chose {value}</p>
+    <div class="margin-bottom-10">
+        <input
+            ?checked={value = "girl"}
+            @change={saveValue()}
+            type="radio"
+            id="girl"
+            name="gender"
+            value="girl">
+        <label for="girl" class="not-selectable">Girls</label>
+        <br>
+        <input
+            ?checked={value = "boy"}
+            @change={saveValue()}
+            type="radio"
+            id="boy"
+            name="gender"
+            value="boy">
+        <label for="boy" class="not-selectable">Boys</label><br>
+    </div>
+    """
+
+let el = document.getElementById("container")
+GenderSelector() |> Lit.render el
+
+(*
+
 
 let split (separator: char) (source: string) = source.Split separator
 let join (separator: char) (source: string array) = String.Join(separator, source)
@@ -82,7 +138,6 @@ let initializeGenderChange () =
         setLocalStorage "gender" "girl"
         document.location.reload()
 
-    
 
 initializeGenderChange()
 
@@ -128,3 +183,5 @@ copy.onclick <- copyLikedToClipboard
 yes.onclick <- likeCurrentName >> askNext
 no.onclick <- dislikeCurrentName >> askNext
 clear.onclick <- confirmClear
+
+*)

@@ -12,6 +12,7 @@
   },
   "version": "1.0.0",
   "dependencies": {
+    "lit": "^2.5.0",
     "lz-string": "^1.4.4"
   }
 }
