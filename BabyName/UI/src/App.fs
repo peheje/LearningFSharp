@@ -4,7 +4,7 @@ open Browser.Dom
 open Browser.Types
 open Data
 open Html
-
+open Browser
 
 let private initGenderSelector () =
     let girl = id "girl" :?> HTMLInputElement
@@ -37,7 +37,7 @@ let private initBabyNames () =
     let unprocessedNames =
         (names |> Array.except liked |> Array.except disliked |> Array.toSeq).GetEnumerator()
 
-    let likeName () =
+    let like () =
         unprocessedNames.Current |> appendToLocalStorageList "liked"
         unprocessedNames.Current |> appendLiked
 
@@ -50,13 +50,12 @@ let private initBabyNames () =
 
     let confirmClear () =
         let prompt = "delete all liked and disliked names"
-        if window.prompt $"Type '{prompt}' to continue." = prompt then 
-            setLocalStorage "liked" ""
-            setLocalStorage "disliked" ""
+        if window.prompt $"Type '{prompt}' to continue." = prompt then
+            localStorage.clear()
             window.location.reload ()
 
     liked |> Array.rev |> join '\n' |> appendLiked
-    id "yes" |> onClick (likeName >> askNext)
+    id "yes" |> onClick (like >> askNext)
     id "no" |> onClick (dislike >> askNext)
     id "clear" |> onClick confirmClear
     id "copy" |> onClick (fun _ -> toClipboard likedElement.textContent)
