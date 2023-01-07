@@ -9,7 +9,7 @@ let private initGenderSelector () =
     let girl = id "girl" :?> HTMLInputElement
     let boy = id "boy" :?> HTMLInputElement
 
-    [girl; boy] |> List.iter (fun el -> el |> onClick (fun _ ->
+    [|girl; boy|] |> Array.iter (fun el -> el |> onClick (fun _ ->
         setLocalStorage "gender" el.value
         window.location.reload ()))
 
