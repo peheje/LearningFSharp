@@ -2,30 +2,11 @@ module App
 
 open Browser.Dom
 open Browser.Types
-open System
 open Data
-open Fable.Core
+open Html
 
-let getLocalStorageOrEmpty key =
-    match Browser.WebStorage.localStorage.getItem key with
-    | null -> ""
-    | x -> x
 
-let setLocalStorage key value =
-    Browser.WebStorage.localStorage.setItem (key, value)
-
-let split (separator: char) (source: string) = source.Split separator
-let join (separator: char) (source: string array) = String.Join(separator, source)
-let id id = document.getElementById id
-
-let liked = id "liked" :?> HTMLTextAreaElement
-let nameText = id "name" :?> HTMLTextAreaElement
-let yes = id "yes" :?> HTMLButtonElement
-let no = id "no" :?> HTMLButtonElement
-let copy = id "copy" :?> HTMLButtonElement
-let clear = id "clear" :?> HTMLButtonElement
-
-let initGenderSelector () =
+let private initGenderSelector () =
     let girl = id "girl" :?> HTMLInputElement
     let boy = id "boy" :?> HTMLInputElement
 
@@ -36,80 +17,50 @@ let initGenderSelector () =
         setLocalStorage "gender" "boy"
         window.location.reload ()
 
-    match getLocalStorageOrEmpty "gender" with
-    | "boy" ->
+    if getLocalStorageOrEmpty "gender" = "boy" then
         boy.checked <- true
         boyNames
-    | _ ->
+    else
         girl.checked <- true
         girlNames
 
-let appendLiked message =
-    liked.textContent <- message + "\n" + liked.textContent
-
-let nameIterator () =
+let private initBabyNames () =
     let liked = getLocalStorageOrEmpty "liked" |> split ';'
     let disliked = getLocalStorageOrEmpty "disliked" |> split ';'
     let names = initGenderSelector ()
+    let nameElement = id "name"
+    let likedElement = id "liked" :?> HTMLTextAreaElement
+
+    let appendLiked message =
+        likedElement.textContent <- message + "\n" + likedElement.textContent
+
+    let unprocessedNames =
+        (names |> Array.except liked |> Array.except disliked |> Array.toSeq).GetEnumerator()
+
+    let likeName () =
+        unprocessedNames.Current |> appendToLocalStorageList "liked"
+        unprocessedNames.Current |> appendLiked
+
+    let dislike () =
+        unprocessedNames.Current |> appendToLocalStorageList "disliked"
+
+    let askNext () =
+        unprocessedNames.MoveNext () |> ignore
+        nameElement.textContent <- sprintf "Do you like %s?" (unprocessedNames.Current)
+
+    let confirmClear () =
+        let prompt = "delete all liked and disliked names"
+        if window.prompt $"Type '{prompt}' to continue." = prompt then 
+            setLocalStorage "liked" ""
+            setLocalStorage "disliked" ""
+            window.location.reload ()
 
     liked |> Array.rev |> join '\n' |> appendLiked
+    id "yes" |> onClick (likeName >> askNext)
+    id "no" |> onClick (dislike >> askNext)
+    id "clear" |> onClick confirmClear
+    id "copy" |> onClick (fun _ -> toClipboard likedElement.textContent)
 
-    let nonProcessedNames =
-        names |> Array.except liked |> Array.except disliked
+    askNext()
 
-    let mutable index = -1
-
-    let currentName () =
-        if index = -1 then "" else nonProcessedNames[index]
-
-    let nextName () =
-        index <- index + 1
-        currentName ()
-
-    (nextName, currentName)
-
-let (nextName, currentName) = nameIterator ()
-
-let askNext () =
-    nameText.textContent <- sprintf "Do you like %s?" (nextName ())
-
-let appendToLocalStorage key name =
-    let current = getLocalStorageOrEmpty key
-
-    if current = "" then
-        setLocalStorage key name
-    else
-        setLocalStorage key (current + ";" + name)
-
-[<Emit("navigator.clipboard.writeText($0)")>]
-let writeToClipboard _text : JS.Promise<unit> = jsNative
-
-let copyLikedToClipboard _ =
-    async {
-        try
-            do! liked.textContent |> writeToClipboard |> Async.AwaitPromise
-        with ex ->
-            printfn "Promise rejected %s" ex.Message
-    }
-    |> Async.StartImmediate
-
-let likeCurrentName _ =
-    currentName () |> appendToLocalStorage "liked"
-    currentName () |> appendLiked
-
-let dislikeCurrentName _ =
-    currentName () |> appendToLocalStorage "disliked"
-
-let confirmClear _ =
-    let prompt = "delete all liked and disliked names"
-    if window.prompt $"Type '{prompt}' to continue." = prompt then 
-        setLocalStorage "liked" ""
-        setLocalStorage "disliked" ""
-        window.location.reload ()
-
-askNext ()
-
-copy.onclick <- copyLikedToClipboard
-yes.onclick <- likeCurrentName >> askNext
-no.onclick <- dislikeCurrentName >> askNext
-clear.onclick <- confirmClear
+initBabyNames ()
