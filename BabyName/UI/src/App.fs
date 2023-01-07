@@ -1,6 +1,5 @@
 module App
 
-open Browser.Dom
 open Browser.Types
 open Data
 open Html
@@ -10,12 +9,9 @@ let private initGenderSelector () =
     let girl = id "girl" :?> HTMLInputElement
     let boy = id "boy" :?> HTMLInputElement
 
-    girl.onchange <- fun _ ->
-        setLocalStorage "gender" "girl"
-        window.location.reload ()
-    boy.onchange <- fun _ ->
-        setLocalStorage "gender" "boy"
-        window.location.reload ()
+    [girl; boy] |> List.iter (fun el -> el |> onClick (fun _ ->
+        setLocalStorage "gender" el.value
+        window.location.reload ()))
 
     if getLocalStorageOrEmpty "gender" = "boy" then
         boy.checked <- true
@@ -27,26 +23,26 @@ let private initGenderSelector () =
 let private initBabyNames () =
     let liked = getLocalStorageOrEmpty "liked" |> split ';'
     let disliked = getLocalStorageOrEmpty "disliked" |> split ';'
-    let names = initGenderSelector ()
     let nameElement = id "name"
     let likedElement = id "liked" :?> HTMLTextAreaElement
+    let mutable index = -1
 
     let appendLiked message =
         likedElement.textContent <- message + "\n" + likedElement.textContent
 
     let unprocessedNames =
-        (names |> Array.except liked |> Array.except disliked |> Array.toSeq).GetEnumerator()
+        initGenderSelector () |> Array.except liked |> Array.except disliked
 
     let like () =
-        unprocessedNames.Current |> appendToLocalStorageList "liked"
-        unprocessedNames.Current |> appendLiked
+        unprocessedNames[index] |> appendToLocalStorageList "liked"
+        unprocessedNames[index] |> appendLiked
 
     let dislike () =
-        unprocessedNames.Current |> appendToLocalStorageList "disliked"
+        unprocessedNames[index] |> appendToLocalStorageList "disliked"
 
     let askNext () =
-        unprocessedNames.MoveNext () |> ignore
-        nameElement.textContent <- sprintf "Do you like %s?" (unprocessedNames.Current)
+        index <- index + 1
+        nameElement.textContent <- sprintf "Do you like %s?" (unprocessedNames[index])
 
     let confirmClear () =
         let prompt = "delete all liked and disliked names"
