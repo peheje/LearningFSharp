@@ -41,7 +41,7 @@ let private randomize () =
     Array.init 10000 (fun _ -> random.Next(10000) |> string) |> setTextArea "b" "b-count"
     compare ()
 
-let private download () =
+let private download (event: Event) =
     let getValidSeparator () =
         let source = (areaFromId "a").value + (areaFromId "b").value
         [|"|"; ";"; ","|] |> Array.tryFind (fun separator -> source |> contains separator |> not)
@@ -50,7 +50,9 @@ let private download () =
         match source |> Array.tryItem index with | None -> "" | Some v -> v
 
     match getValidSeparator () with
-        | None -> window.alert "Download failed. Input already includes separator values | ; ,"
+        | None ->
+            event.preventDefault()
+            window.alert "Download failed. Input already includes separator values | ; ,"
         | Some separator ->
             let (a, b, both, onlyA, onlyB) = compareData ()
             let mutable data = "Left" + separator + "Right" + separator + "In both" + separator + "Only in left" + separator + "Only in right\n"
@@ -74,4 +76,4 @@ let private download () =
 let initCompare () =
     fromId "compare-btn" |> onClick compare
     fromId "random-btn" |> onClick randomize
-    fromId "download-btn" |> onClick download
+    fromId "download-btn" |> onClickEvent download

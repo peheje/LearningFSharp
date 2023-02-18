@@ -32,6 +32,9 @@ let inputFromId id = (fromId id) :?> HTMLInputElement
 let onClick action (el: HTMLElement) =
     el.onclick <- (fun _ -> action ())
 
+let onClickEvent action (el: HTMLElement) =
+    el.onclick <- (fun event -> action event)
+
 [<Emit("navigator.clipboard.writeText($0)")>]
 let private writeToClipboard _text : JS.Promise<unit> = jsNative
 
