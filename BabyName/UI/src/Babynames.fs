@@ -6,8 +6,8 @@ open Html
 open Browser
 
 let private initGenderSelector () =
-    let girl = id "girl" :?> HTMLInputElement
-    let boy = id "boy" :?> HTMLInputElement
+    let girl = inputFromId "girl"
+    let boy = inputFromId "boy"
 
     [|girl; boy|] |> Array.iter (fun el -> el |> onClick (fun _ ->
         setLocalStorage "gender" el.value
@@ -23,8 +23,8 @@ let private initGenderSelector () =
 let initBabyNames () =
     let liked = getLocalStorageOrEmpty "liked" |> split ';'
     let disliked = getLocalStorageOrEmpty "disliked" |> split ';'
-    let nameElement = id "name"
-    let likedElement = id "liked" :?> HTMLTextAreaElement
+    let nameElement = fromId "name"
+    let likedElement = areaFromId "liked"
     let mutable index = -1
 
     let unprocessedNames =
@@ -51,10 +51,10 @@ let initBabyNames () =
             window.location.reload ()
 
     liked |> Array.rev |> join '\n' |> appendLiked
-    id "yes" |> onClick (like >> askNext)
-    id "no" |> onClick (dislike >> askNext)
-    id "clear" |> onClick confirmClear
-    id "copy" |> onClick (fun _ -> toClipboard likedElement.textContent)
+    fromId "yes" |> onClick (like >> askNext)
+    fromId "no" |> onClick (dislike >> askNext)
+    fromId "clear" |> onClick confirmClear
+    fromId "copy" |> onClick (fun _ -> toClipboard likedElement.textContent)
 
     askNext()
 

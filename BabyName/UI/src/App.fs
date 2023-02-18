@@ -1,5 +1,8 @@
 module App.Main
 
 open BabyNames
+open Compare
 
-initBabyNames ()
+// initBabyNames ()
+
+initCompare ()

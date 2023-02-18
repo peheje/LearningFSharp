@@ -23,7 +23,9 @@ let appendToLocalStorageList key name =
     else
         setLocalStorage key (current + ";" + name)
 
-let id id = document.getElementById id
+let fromId id = document.getElementById id
+let areaFromId id = (fromId id) :?> HTMLTextAreaElement
+let inputFromId id = (fromId id) :?> HTMLInputElement
 
 let onClick action (el: HTMLElement) =
     el.onclick <- (fun _ -> action ())
