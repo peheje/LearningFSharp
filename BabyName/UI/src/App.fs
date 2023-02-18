@@ -27,11 +27,11 @@ let private initBabyNames () =
     let likedElement = id "liked" :?> HTMLTextAreaElement
     let mutable index = -1
 
-    let appendLiked message =
-        likedElement.textContent <- message + "\n" + likedElement.textContent
-
     let unprocessedNames =
         initGenderSelector () |> Array.except liked |> Array.except disliked
+
+    let appendLiked message =
+        likedElement.textContent <- message + "\n" + likedElement.textContent
 
     let like () =
         unprocessedNames[index] |> appendToLocalStorageList "liked"
