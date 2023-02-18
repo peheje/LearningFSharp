@@ -55,19 +55,14 @@ let private download (event: Event) =
             window.alert "Download failed. Input already includes separator values | ; ,"
         | Some separator ->
             let (a, b, both, onlyA, onlyB) = compareData ()
-            let mutable data = "Left" + separator + "Right" + separator + "In both" + separator + "Only in left" + separator + "Only in right\n"
+            let compareData = [|a; b; both; onlyA; onlyB|]
             
-            let size = max a.Length b.Length
+            let size = max (a |> Array.length) (b |> Array.length)
+            let mutable data = "Left" + separator + "Right" + separator + "In both" + separator + "Only in left" + separator + "Only in right\n"
             for i in 0..size - 1 do
-                data <- data + takeOrEmpty a i
-                data <- data + separator
-                data <- data + takeOrEmpty b i
-                data <- data + separator
-                data <- data + takeOrEmpty both i
-                data <- data + separator
-                data <- data + takeOrEmpty onlyA i
-                data <- data + separator
-                data <- data + takeOrEmpty onlyB i
+                for item in compareData do
+                    data <- data + takeOrEmpty item i
+                    data <- data + separator
                 data <- data + "\n"
             
             let downloadBtn = (fromId "download-btn") :?> HTMLLinkElement
