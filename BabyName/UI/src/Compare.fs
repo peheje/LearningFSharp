@@ -11,10 +11,11 @@ let private setTextArea id countId xs =
 let private compareData () =
     let readInput id =
         let ignoreCase = (inputFromId "case-insensitive").checked
+        let areaValue = if ignoreCase then (areaFromId id).value.ToLower()
+                        else (areaFromId id).value
         let filtered = 
-            (areaFromId id).value 
+            areaValue
             |> split newline
-            |> Array.map (fun x -> if ignoreCase then x.ToLower() else x)
             |> Array.filter (fun x -> x.Trim() <> "")
             |> Array.distinct
         (filtered, filtered |> Set.ofArray)
