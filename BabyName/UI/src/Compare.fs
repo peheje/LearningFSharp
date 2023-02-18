@@ -35,8 +35,14 @@ let private compare () =
     let onlyB = Set.difference bSet aSet |> Set.toArray
     setTextArea "only-b" "only-b-count" onlyB
 
+let private random = System.Random()
+
+let private randomize () =
+    Array.init 10000 (fun _ -> random.Next(10000) |> string) |> setTextArea "a" "a-count"
+    Array.init 10000 (fun _ -> random.Next(10000) |> string) |> setTextArea "b" "b-count"
+    compare ()
+
 let initCompare () =
 
-    let compareBtn = fromId "compare-btn"
-
-    compareBtn |> onClick compare
+    fromId "compare-btn" |> onClick compare
+    fromId "random-btn" |> onClick randomize
