@@ -4,6 +4,7 @@ open Browser
 open System
 open Fable.Core
 
+let newline = '\n'
 let split (separator: char) (source: string) = source.Split separator
 let join (separator: char) (source: string array) = String.Join(separator, source)
 let contains (target: string) (source: string) = source.Contains(target)

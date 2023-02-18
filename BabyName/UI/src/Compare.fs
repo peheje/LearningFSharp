@@ -4,23 +4,21 @@ open Browser
 open Html
 open Browser.Types
 
-let private readInput id =
-    let xs = (areaFromId id).value |> split '\n'
-    let ignoreCase = (inputFromId "case-insensitive").checked
-
-    let filtered = 
-        xs
-        |> Array.map (fun x -> if ignoreCase then x.ToLower() else x)
-        |> Array.filter (fun x -> x.Trim() <> "")
-        |> Array.distinct
-
-    (filtered, filtered |> Set.ofArray)
-
 let private setTextArea id countId xs =
-    (areaFromId id).value <- xs |> join '\n'
-    (fromId countId).textContent <- xs.Length |> string
+    (areaFromId id).value <- xs |> join newline
+    (fromId countId).textContent <- xs |> Array.length |> string
 
 let private compareData () =
+    let readInput id =
+        let ignoreCase = (inputFromId "case-insensitive").checked
+        let filtered = 
+            (areaFromId id).value 
+            |> split newline
+            |> Array.map (fun x -> if ignoreCase then x.ToLower() else x)
+            |> Array.filter (fun x -> x.Trim() <> "")
+            |> Array.distinct
+        (filtered, filtered |> Set.ofArray)
+
     let aList, aSet = readInput "a"
     let bList, bSet = readInput "b"
     let both = Set.intersect aSet bSet |> Set.toArray
@@ -44,15 +42,12 @@ let private randomize () =
     compare ()
 
 let private download () =
-    
     let getValidSeparator () =
         let source = (areaFromId "a").value + (areaFromId "b").value
         [|"|"; ";"; ","|] |> Array.tryFind (fun separator -> source |> contains separator |> not)
 
     let takeOrEmpty source index =
-        match source |> Array.tryItem index with
-        | None -> ""
-        | Some v -> v
+        match source |> Array.tryItem index with | None -> "" | Some v -> v
 
     match getValidSeparator () with
         | None -> window.alert "Download failed. Input already includes separator values | ; ,"
@@ -77,7 +72,6 @@ let private download () =
             downloadBtn.href <- "data:text/plain;charset=UTF-8," + window.encodeURIComponent(data)
 
 let initCompare () =
-
     fromId "compare-btn" |> onClick compare
     fromId "random-btn" |> onClick randomize
     fromId "download-btn" |> onClick download

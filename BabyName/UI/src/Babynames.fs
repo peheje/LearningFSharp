@@ -50,7 +50,7 @@ let initBabyNames () =
             localStorage.clear()
             window.location.reload ()
 
-    liked |> Array.rev |> join '\n' |> appendLiked
+    liked |> Array.rev |> join newline |> appendLiked
     fromId "yes" |> onClick (like >> askNext)
     fromId "no" |> onClick (dislike >> askNext)
     fromId "clear" |> onClick confirmClear
