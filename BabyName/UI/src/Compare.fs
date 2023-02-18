@@ -61,8 +61,7 @@ let private download (event: Event) =
             let mutable data = "Left" + separator + "Right" + separator + "In both" + separator + "Only in left" + separator + "Only in right\n"
             for i in 0..size - 1 do
                 for item in compareData do
-                    data <- data + takeOrEmpty item i
-                    data <- data + separator
+                    data <- data + takeOrEmpty item i + separator
                 data <- data + "\n"
             
             let downloadBtn = (fromId "download-btn") :?> HTMLLinkElement
