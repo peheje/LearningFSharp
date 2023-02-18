@@ -29,7 +29,7 @@ let onClick action (el: HTMLElement) =
     el.onclick <- (fun _ -> action ())
 
 [<Emit("navigator.clipboard.writeText($0)")>]
-let writeToClipboard _text : JS.Promise<unit> = jsNative
+let private writeToClipboard _text : JS.Promise<unit> = jsNative
 
 let toClipboard text =
     async {
