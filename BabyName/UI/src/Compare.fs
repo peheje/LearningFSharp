@@ -3,28 +3,28 @@ module Compare
 open Browser.Types
 open Html
 
-let private readCompareList id =
+let private readInput id =
     let xs = (areaFromId id).value |> split '\n'
     let ignoreCase = (inputFromId "case-insensitive").checked
 
-    xs
+    let filtered = 
+        xs
         |> Array.map (fun x -> if ignoreCase then x.ToLower() else x)
         |> Array.filter (fun x -> x.Trim() <> "")
         |> Array.distinct
+
+    (filtered, filtered |> Set.ofArray)
 
 let private setTextArea id countId xs =
     (areaFromId id).value <- xs |> join '\n'
     (fromId countId).textContent <- xs.Length |> string
 
 let private compare () =
-    let a = readCompareList "a"
-    let b = readCompareList "b"
+    let aList, aSet = readInput "a"
+    let bList, bSet = readInput "b"
 
-    let aSet = a |> Set.ofArray
-    let bSet = b |> Set.ofArray
-
-    setTextArea "a" "a-count" a
-    setTextArea "b" "b-count" b
+    setTextArea "a" "a-count" aList
+    setTextArea "b" "b-count" bList
 
     let both = Set.intersect aSet bSet |> Set.toArray
     setTextArea "both" "both-count" both
