@@ -6,6 +6,7 @@ open Fable.Core
 
 let split (separator: char) (source: string) = source.Split separator
 let join (separator: char) (source: string array) = String.Join(separator, source)
+let contains (target: string) (source: string) = source.Contains(target)
 
 let getLocalStorageOrEmpty key =
     match localStorage.getItem key with
