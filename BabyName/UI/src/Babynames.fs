@@ -57,5 +57,3 @@ let initBabyNames () =
     fromId "copy" |> onClick (fun _ -> toClipboard likedElement.textContent)
 
     askNext()
-
-initBabyNames ()

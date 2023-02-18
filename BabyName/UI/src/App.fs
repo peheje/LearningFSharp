@@ -1,8 +1,13 @@
 module App.Main
 
+open Browser
+
 open BabyNames
 open Compare
+open Alcohol
 
-// initBabyNames ()
-
-initCompare ()
+match window.location.pathname with
+| "/babynames.html" -> initBabyNames ()
+| "/compare.html" -> initCompare ()
+| "/alcohol.html" -> initAlcohol ()
+| _ -> failwith "unknown site!"
