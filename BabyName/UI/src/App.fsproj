@@ -10,6 +10,7 @@
     <Compile Include="Unique.fs" />
     <Compile Include="Alcohol.fs" />
     <Compile Include="Heartbeat.fs" />
+    <Compile Include="Memory.fs" />
     <Compile Include="App.fs" />
   </ItemGroup>
   <ItemGroup>

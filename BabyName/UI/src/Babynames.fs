@@ -20,8 +20,8 @@ let private initGenderSelector () =
         girlNames
 
 let initBabyNames () =
-    let liked = getLocalStorageOrEmpty "liked" |> split ';'
-    let disliked = getLocalStorageOrEmpty "disliked" |> split ';'
+    let liked = getLocalStorageOrEmpty "liked" |> split ";"
+    let disliked = getLocalStorageOrEmpty "disliked" |> split ";"
     let nameElement = fromId "name"
     let likedElement = areaFromId "liked"
     let mutable index = -1
