@@ -10,33 +10,34 @@ open Heartbeat
 open Unique
 open Memory
 
-let nav =
-    let urls =
-        [
-            ("/compare.html", "Compare", initCompare)
-            ("/unique.html", "Unique", initUnique)
-            ("/alcohol.html", "Alcohol", initAlcohol)
-            ("/heartbeat.html", "Heartbeat", initHeartbeat)
-            ("/memory.html", "Memory", initMemory)
-            ("/babynames.html", "Babynames", initBabyNames)
-        ]
-    let items =
-        urls
-        |> List.mapi (fun i (url, name, _) ->
-            let active = if window.location.pathname = url then "active" else ""
-            let notLast = i = (urls |> List.length) - 1 |> not
-            [
-                Html.a
-                    [
-                        prop.href url
-                        prop.text name
-                        prop.classes [ active ]
-                    ]
-                if notLast then Html.span [ Html.text " | " ]
-            ]
-        ) |> List.collect id
+let urls =
+    [
+        ("/compare.html", "Compare", initCompare)
+        ("/unique.html", "Unique", initUnique)
+        ("/alcohol.html", "Alcohol", initAlcohol)
+        ("/heartbeat.html", "Heartbeat", initHeartbeat)
+        ("/memory.html", "Memory", initMemory)
+        ("/babynames.html", "Babynames", initBabyNames)
+    ]
 
-    Html.nav items |> Render.htmlView
+let nav =
+    urls
+    |> List.mapi (fun i (url, name, _) ->
+        let active = if window.location.pathname = url then "active" else ""
+        let notLast = i = (urls |> List.length) - 1 |> not
+        [
+            Html.a
+                [
+                    prop.href url
+                    prop.text name
+                    prop.classes [ active ]
+                ]
+            if notLast then Html.span [ Html.text " | " ]
+        ]
+    )
+    |> List.collect id
+    |> Html.nav
+    |> Render.htmlView
 
 match window.location.pathname with
 | "/babynames.html" -> initBabyNames ()
@@ -49,7 +50,6 @@ match window.location.pathname with
     window.setTimeout (fun _ ->
         window.location.pathname <- "/compare.html"
     , 3000) |> ignore
-
 | _ -> failwith "unknown site!"
 
 (document.getElementById "menu").innerHTML <- nav
