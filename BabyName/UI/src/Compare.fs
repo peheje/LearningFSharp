@@ -4,10 +4,6 @@ open Browser
 open Html
 open Browser.Types
 
-let private setTextArea id countId xs =
-    (areaFromId id).value <- xs |> join newline
-    (fromId countId).textContent <- xs |> Array.length |> string
-
 let private compareData () =
     let readInput id =
         let ignoreCase = (inputFromId "case-insensitive").checked

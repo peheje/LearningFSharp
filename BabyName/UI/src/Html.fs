@@ -46,3 +46,7 @@ let toClipboard text =
             printfn "Promise rejected %s" ex.Message
     }
     |> Async.StartImmediate
+
+let setTextArea id countId xs =
+    (areaFromId id).value <- xs |> join newline
+    (fromId countId).textContent <- xs |> Array.length |> string
