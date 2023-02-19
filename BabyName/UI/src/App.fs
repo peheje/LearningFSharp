@@ -20,8 +20,11 @@ let nav =
             ("/memory.html", "Memory", initMemory)
             ("/babynames.html", "Babynames", initBabyNames)
         ]
-        |> List.map (fun (url, name, _) ->
+    let items =
+        urls
+        |> List.mapi (fun i (url, name, _) ->
             let active = if window.location.pathname = url then "active" else ""
+            let notLast = i = (urls |> List.length) - 1 |> not
             [
                 Html.a
                     [
@@ -29,10 +32,11 @@ let nav =
                         prop.text name
                         prop.classes [ active ]
                     ]
-                if true then Html.span [ Html.text " | " ]
+                if notLast then Html.span [ Html.text " | " ]
             ]
         ) |> List.collect id
-    Html.nav urls |> Render.htmlView
+
+    Html.nav items |> Render.htmlView
 
 match window.location.pathname with
 | "/babynames.html" -> initBabyNames ()
