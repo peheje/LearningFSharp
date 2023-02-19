@@ -1,6 +1,5 @@
 module BabyNames
 
-open Browser.Types
 open Data
 open Html
 open Browser

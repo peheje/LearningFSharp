@@ -8,6 +8,7 @@
     <Compile Include="Babynames.fs" />
     <Compile Include="Compare.fs" />
     <Compile Include="Alcohol.fs" />
+    <Compile Include="Heartbeat.fs" />
     <Compile Include="App.fs" />
   </ItemGroup>
   <ItemGroup>
