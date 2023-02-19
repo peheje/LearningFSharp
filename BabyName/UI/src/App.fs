@@ -39,17 +39,13 @@ let nav =
     |> Html.nav
     |> Render.htmlView
 
-match window.location.pathname with
-| "/babynames.html" -> initBabyNames ()
-| "/compare.html" -> initCompare ()
-| "/alcohol.html" -> initAlcohol ()
-| "/heartbeat.html" -> initHeartbeat ()
-| "/unique.html" -> initUnique ()
-| "/memory.html" -> initMemory ()
-| "/compare/compare.html" ->
+if window.location.pathname = "/compare/compare.html" then
     window.setTimeout (fun _ ->
         window.location.pathname <- "/compare.html"
     , 3000) |> ignore
-| _ -> failwith "unknown site!"
-
-(document.getElementById "menu").innerHTML <- nav
+else
+    let site = urls |> List.tryFind (fun (url, _, _) -> url = window.location.pathname)
+    match site with
+    | Some (_, _, init) -> init ()
+    | None -> failwith "unknown site!"
+    (document.getElementById "menu").innerHTML <- nav
