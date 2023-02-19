@@ -11,11 +11,7 @@ let initHeartbeat () =
     let beats = List<int64>()
     let beatElement = fromId "beat"
     let heartbeatElement = fromId "heartbeat"
-
-    let test () =
-        window.setInterval((fun _ -> 
-            document.dispatchEvent(Event.Create("KeyboardEvent", ))
-        ))
+    let heartbeatBtn = inputFromId "heartbeat-btn"
 
     let showBeatIndicator () =
         beatElement.removeAttribute("hidden")
@@ -48,13 +44,19 @@ let initHeartbeat () =
             |> Seq.average
         
         let bpm = 60000.0 / averageTimeBetweenBeatMs
-        heartbeatElement.innerHTML <- bpm.ToString("#.##") + " bpm"
+        heartbeatElement.innerHTML <- bpm.ToString("#") + " bpm"
 
     let beatKeyPressed (event: Event) =
         let keyboardEvent = event :?> KeyboardEvent
         beat keyboardEvent.key
 
+    let test () =
+        window.setInterval((fun _ ->
+            beat " "
+            pressed <- false
+        ), 500) |> ignore
+
     document.addEventListener("keyup", beatKeyNotPressed)
     document.addEventListener("mouseup", beatKeyNotPressed)
     document.addEventListener("keydown", beatKeyPressed)
-    (inputFromId "heartbeat-btn") |> onClick (fun _ -> beat " ")
+    heartbeatBtn |> onClick (fun _ -> beat " ")
