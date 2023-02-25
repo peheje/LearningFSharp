@@ -2,6 +2,11 @@ html * {
     font-family: monospace !important;
 }
 
+.notice {
+    background-color: yellow;
+    display: inline-block
+}
+
 textarea {
     min-height: 100px;
     min-width: 320px;

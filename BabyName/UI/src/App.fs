@@ -40,13 +40,27 @@ let nav =
     |> Html.nav
     |> Render.htmlView
 
+let noticeExpiry = System.DateTimeOffset(2023, 04, 1, 0, 0, 0, System.TimeSpan.Zero)
+
+let notice = 
+    if System.DateTimeOffset.Now < noticeExpiry 
+    then
+        Html.p
+            [
+                prop.text "25/02/2023: Rewrote site in F# Fable, let me know if you see issues."
+                prop.classes [ "notice" ]
+                prop.id "notice"
+            ] |> Render.htmlView
+    else
+        Html.none |> Render.htmlView
+
 if window.location.pathname = "/compare/compare.html" then
     window.setTimeout (fun _ ->
         window.location.pathname <- "/compare.html"
-    , 3000) |> ignore
+    , 6000) |> ignore
 else
     let site = urls |> List.tryFind (fun (url, _, _) -> url = window.location.pathname)
     match site with
     | Some (_, _, init) -> init ()
     | None -> failwith "unknown site!"
-    (document.getElementById "menu").innerHTML <- nav
+    (document.getElementById "menu").innerHTML <- notice + nav
