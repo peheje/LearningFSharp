@@ -18,6 +18,7 @@ let urls =
         ("/heartbeat.html", "Heartbeat", initHeartbeat)
         ("/memory.html", "Memory", initMemory)
         ("/babynames.html", "Babynames", initBabyNames)
+        ("https://twitter.com/peheje", "Contact", id)
     ]
 
 let nav =
