@@ -1,31 +1,42 @@
 module Days
 
 open System
+open Html
 
-let midday = 12
-let start = DateTimeOffset(2023, 04, 1, midday, 0, 0, TimeSpan.Zero)
-let stop = start.AddDays (7.0 * 12.0)
-//let stop = DateTimeOffset(2023, 05, 1, midday, 0, 0, TimeSpan.Zero)
-
-let isWeekend (time: DateTimeOffset) =
+let private isWeekend (time: DateTime) =
     match time.DayOfWeek with
     | DayOfWeek.Saturday | DayOfWeek.Sunday -> true
     | _ -> false
 
-let counter () =
+let private counter () =
     let mutable c = 0
     (fun () -> c <- c + 1), (fun () -> c)
 
-let addDay, days = counter ()
-let addWeekendDay, weekendDays = counter ()
-let addHoliday, holiday = counter ()
+let private daysToWeeks days =
+    let weeks, remainingDays = Math.DivRem(days, 7)
+    sprintf "%i weeks and %i days" weeks remainingDays
+    
+let initDays () =
+    let startDayInput = (inputFromId "start-day")
+    startDayInput.valueAsDate <- DateTime.Now
 
-let mutable cursor = start
-while cursor < stop do
-    addDay ()
-    if isWeekend cursor then addWeekendDay()
+    let endDayInput = (inputFromId "end-day")
+    endDayInput.valueAsDate <- DateTime.Now.AddDays(7)
 
-    cursor <- cursor.AddDays(1)
+    let calculate () =
+        let addDay, days = counter ()
+        let addWeekendDay, weekendDays = counter ()
 
-printfn "%A" (days ())
-printfn "%A" (weekendDays ())
+        let mutable cursor = startDayInput.valueAsDate
+        while cursor < endDayInput.valueAsDate do
+            addDay ()
+            if isWeekend cursor then addWeekendDay()
+            cursor <- cursor.AddDays(1)
+
+        (fromId "total-days").textContent <- (days() |> string)
+        (fromId "weeks").textContent <- (daysToWeeks (days()))
+        (fromId "weekend-days").textContent <- (weekendDays () |> string)
+
+    (inputFromId "calculate") |> onClick calculate
+
+    calculate ()

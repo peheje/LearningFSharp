@@ -9,6 +9,7 @@ open Alcohol
 open Heartbeat
 open Unique
 open Memory
+open Days
 
 let urls =
     [
@@ -18,6 +19,7 @@ let urls =
         ("/heartbeat.html", "Heartbeat", initHeartbeat)
         ("/memory.html", "Memory", initMemory)
         ("/babynames.html", "Babynames", initBabyNames)
+        ("/days.html", "Days", initDays)
         ("https://twitter.com/peheje", "Contact", id)
     ]
 

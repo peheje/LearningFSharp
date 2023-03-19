@@ -5,7 +5,7 @@ open Html
 let private mlInput = inputFromId "millilitres"
 let private pcInput = inputFromId "percentage"
 
-let calculateAndShowUnits () =
+let private calculateAndShowUnits () =
     let percentage = pcInput.valueAsNumber / 100.0
     let millilitresAlcohol = mlInput.valueAsNumber * percentage
     let dkUnits = millilitresAlcohol / 15.0
