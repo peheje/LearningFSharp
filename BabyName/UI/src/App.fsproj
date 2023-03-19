@@ -11,6 +11,7 @@
     <Compile Include="Alcohol.fs" />
     <Compile Include="Heartbeat.fs" />
     <Compile Include="Memory.fs" />
+    <Compile Include="Days.fs" />
     <Compile Include="App.fs" />
   </ItemGroup>
   <ItemGroup>
