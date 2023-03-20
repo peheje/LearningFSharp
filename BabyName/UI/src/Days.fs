@@ -32,7 +32,7 @@ let initDays () =
     stop.valueAsDate <- DateTime.Now
 
     let rec collectDays (cursor: DateTime) stop out =
-        if cursor < stop then
+        if cursor <= stop then
             collectDays (cursor.AddDays(1)) stop (cursor :: out)
         else
             out
