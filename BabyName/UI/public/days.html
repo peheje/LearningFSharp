@@ -11,6 +11,8 @@
 <body>
     <div id="menu"></div>
 
+    <p>Start day is included, but end day is not.</p>
+
     <div class="inline-block">
         <label for="start-day">Start day:</label>
         <input id="start-day" type="date" />
@@ -20,19 +22,9 @@
         <input id="end-day" type="date" />
     </div>
 
-    <div>
-        <b>Total days:</b>
-        <p id="total-days">..</p>
-        
-        <b>Total weeks:</b>
-        <p id="weeks">..</p>
-
-        <b>Weekend days:</b>
-        <p id="weekend-days">..</p>
-    </div>
-
-    <div>
-        <button id="calculate">Calculate interval</button>
+    <div class="inline-block">
+        <b id="total-days">..</b>
+        <b id="weekend-days">..</b>
     </div>
 
     <script src="bundle.js"></script>

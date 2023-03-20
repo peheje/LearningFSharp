@@ -29,6 +29,9 @@ let fromId id = document.getElementById id
 let areaFromId id = (fromId id) :?> HTMLTextAreaElement
 let inputFromId id = (fromId id) :?> HTMLInputElement
 
+let onChange action (el: HTMLElement) =
+    el.onchange <- (fun _ -> action ())
+
 let onClick action (el: HTMLElement) =
     el.onclick <- (fun _ -> action ())
 
