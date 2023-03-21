@@ -27,7 +27,7 @@ let nav =
     urls
     |> List.mapi (fun i (url, name, _) ->
         let active = if window.location.pathname = url then "active" else ""
-        let notLast = i = (urls |> List.length) - 1 |> not
+        let notLast = i < (urls |> List.length) - 1
         [
             Html.a
                 [
