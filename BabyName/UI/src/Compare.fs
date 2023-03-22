@@ -68,3 +68,9 @@ let initCompare () =
     fromId "compare-btn" |> onClick compare
     fromId "random-btn" |> onClick randomize
     fromId "download-btn" |> onClickEvent download
+
+let handleCompareRedirect () =
+    if window.location.pathname = "/compare/compare.html" then
+        window.setTimeout (fun _ ->
+            window.location.pathname <- "/compare.html"
+        , 6000) |> ignore
