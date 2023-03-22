@@ -6,23 +6,15 @@ open Html
 let private isWeekend (time: DateTime) =
     time.DayOfWeek = DayOfWeek.Saturday || time.DayOfWeek = DayOfWeek.Sunday
 
-let private pluralize word count =
-    if count = 1 then word
-    else word + "s"
-
-let private formatDays days =
-    let weeks, remainingDays = Math.DivRem(days, 7)
-    let daysText = sprintf "%i %s" days (pluralize "day" days)
-    let weeksText = sprintf "(%i %s" weeks (pluralize "week" weeks)
-    let remainingWeekDaysText = sprintf " and %i %s)" remainingDays (pluralize "day" remainingDays)
-
-    if days < 7 then
-        daysText
-    else
-        if remainingDays = 0 then
-            sprintf "%s %s)" daysText weeksText
-        else
-            sprintf "%s %s %s" daysText weeksText remainingWeekDaysText
+let private formatDays totalDays =
+    let weeks, days = Math.DivRem(totalDays, 7)
+    let weeksText = if weeks = 1 then "1 week" else sprintf "%i weeks" weeks
+    let daysText = if days = 1 then "1 day" else sprintf "%i days" days
+    match weeks, days with
+    | 0, 0 -> "None"
+    | 0, _ -> daysText
+    | _, 0 -> weeksText
+    | _, _ -> weeksText + " and " + daysText
 
 let initDays () =
     let start = (inputFromId "start-day")
