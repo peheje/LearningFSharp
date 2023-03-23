@@ -30,9 +30,13 @@ let printTree tree =
     let rec printTree' tree =
         match tree with
         | Number n -> printf "%d" n
-        | Add (left, right) -> printf "("; printTree' left; printf " + "; printTree' right; printf ")"
-        | Subtract (left, right) -> printf "("; printTree' left; printf " - "; printTree' right; printf ")"
-        | Multiply (left, right) -> printf "("; printTree' left; printf " * "; printTree' right; printf ")"
+        | Add (left, right) -> printBinary left right "+"
+        | Subtract (left, right) -> printBinary left right "-"
+        | Multiply (left, right) -> printBinary left right "*"
+    and
+        printBinary left right symbol =
+            printf "("; printTree' left; printf "%s" symbol; printTree' right; printf ")"
+
     printTree' tree
     printfn ""
 
