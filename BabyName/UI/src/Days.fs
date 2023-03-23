@@ -10,11 +10,12 @@ let private formatDays totalDays =
     let weeks, days = Math.DivRem(totalDays, 7)
     let weeksText = if weeks = 1 then "1 week" else sprintf "%i weeks" weeks
     let daysText = if days = 1 then "1 day" else sprintf "%i days" days
+    
     match weeks, days with
     | 0, 0 -> "None"
     | 0, _ -> daysText
-    | _, 0 -> weeksText
-    | _, _ -> weeksText + " and " + daysText
+    | _, 0 -> sprintf "%i days (%s)" totalDays weeksText
+    | _, _ -> sprintf "%i days (%s and %s)" totalDays weeksText daysText
 
 let initDays () =
     let start = (inputFromId "start-day")
@@ -38,7 +39,7 @@ let initDays () =
 
     let calculate () =
         let errorEl = (fromId "error")
-        let totalDaysEl = (fromId "total-days")
+        let totalDaysEl = (fromId "total-duration")
         let weekendDaysEl = (fromId "weekend-days")
 
         if validate () then
