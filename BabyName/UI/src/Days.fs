@@ -24,6 +24,8 @@ let initDays () =
     let stop = (inputFromId "end-day")
     stop.valueAsDate <- DateTime.Now
 
+    let addDaysBtn = (inputFromId "add-days-btn")
+
     let rec collectDays (cursor: DateTime) stop out =
         if cursor <= stop then
             collectDays (cursor.AddDays(1)) stop (cursor :: out)
@@ -55,7 +57,14 @@ let initDays () =
             totalDaysEl.textContent <- "-"
             weekendDaysEl.textContent <- "-"
 
+    let addDays () =
+        let addDaysInput = (inputFromId "add-days-input")
+        let daysToAdd = addDaysInput.valueAsNumber
+        stop.valueAsDate <- stop.valueAsDate.AddDays (daysToAdd)
+        calculate ()
+
     start |> onChange calculate
     stop |> onChange calculate
+    addDaysBtn |> onClick addDays
 
     calculate ()
