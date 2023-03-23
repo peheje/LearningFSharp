@@ -5,6 +5,7 @@ type Expression =
 | Add of Expression * Expression
 | Subtract of Expression * Expression
 | Multiply of Expression * Expression
+| Divide of Expression * Expression
 
 let rec evaluate expression =
     match expression with
@@ -12,6 +13,7 @@ let rec evaluate expression =
     | Add (x, y) -> evaluate x + evaluate y
     | Subtract (x, y) -> evaluate x - evaluate y
     | Multiply (x, y) -> evaluate x * evaluate y
+    | Divide (x, y) -> evaluate x / evaluate y
 
 let random = System.Random()
 
@@ -25,6 +27,7 @@ let rec generateTree depth =
         | 0 -> Add (left, right)
         | 1 -> Subtract (left, right)
         | 2 -> Multiply (left, right)
+        | 3 -> Divide (left, right) // Divide intentionally disabled
 
 let printTree tree =
     let rec printTree' tree =
@@ -33,9 +36,10 @@ let printTree tree =
         | Add (left, right) -> printBinary left right "+"
         | Subtract (left, right) -> printBinary left right "-"
         | Multiply (left, right) -> printBinary left right "*"
+        | Divide (left, right) -> printBinary left right "/"
     and
         printBinary left right symbol =
-            printf "("; printTree' left; printf "%s" symbol; printTree' right; printf ")"
+            printf "("; printTree' left; printf " %s " symbol; printTree' right; printf ")"
 
     printTree' tree
     printfn ""
