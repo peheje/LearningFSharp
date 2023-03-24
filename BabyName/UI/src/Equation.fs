@@ -1,7 +1,5 @@
 module Equation
 
-open System.Text.RegularExpressions
-
 type Expression =
 | Number of int
 | Add of Expression * Expression
@@ -52,7 +50,7 @@ let printEquation tree =
     printEquation' tree
 
 let replaceRandomMatch input =
-    let matches = Regex.Matches(input, "\d")
+    let matches = System.Text.RegularExpressions.Regex.Matches(input, "\d")
     if matches.Count > 0 then
         let index = random 0 matches.Count
         let m = matches[index]
