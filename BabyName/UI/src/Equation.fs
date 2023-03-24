@@ -15,17 +15,19 @@ let rec evaluate expression =
     | Multiply (x, y) -> evaluate x * evaluate y
     | Abs x -> System.Math.Abs (evaluate x)
 
-let randomNumber min max =
+let initRandom () =
     let random = System.Random()
-    fun () -> random.Next(min, max + 1)
+    fun min max -> random.Next(min, max + 1)
+
+let random = initRandom ()
 
 let rec generateTree depth =
     if depth = 0 then
-        Number (randomNumber -10 10 ())
+        Number (random -10 10)
     else
         let left = generateTree (depth - 1)
         let right = generateTree (depth - 1)
-        match randomNumber 0 3 () with
+        match random 0 3 with
         | 0 -> Add (left, right)
         | 1 -> Subtract (left, right)
         | 2 -> Multiply (left, right)
