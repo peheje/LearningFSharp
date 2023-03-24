@@ -1,7 +1,7 @@
 module Equation
 
 type Expression =
-| Number of int
+| Number of bigint
 | Add of Expression * Expression
 | Subtract of Expression * Expression
 | Multiply of Expression * Expression
@@ -13,7 +13,7 @@ let rec evaluate expression =
     | Add (x, y) -> evaluate x + evaluate y
     | Subtract (x, y) -> evaluate x - evaluate y
     | Multiply (x, y) -> evaluate x * evaluate y
-    | Abs x -> System.Math.Abs (evaluate x)
+    | Abs x -> bigint.Abs (evaluate x)
 
 let initRandom () =
     let random = System.Random()
@@ -58,12 +58,14 @@ let replaceRandomMatch input =
     else
         input
 
-let tree = generateTree 5
-let expression = printEquation tree
+let tree = generateTree 10
 let answer = evaluate tree
+let expression = printEquation tree
 let equation = replaceRandomMatch expression
 
-printfn "%A" tree 
+System.IO.File.WriteAllText ("/Users/phj/Code/F-Sharp-Advent-of-Code-2021/BabyName/UI/src/out", expression)
+
+printfn "%A" tree
 printfn "%s" expression
-printfn "%i" answer
+printfn "%A" answer
 printfn "%s" equation
