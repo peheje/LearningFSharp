@@ -5,6 +5,7 @@ type Expression =
 | Add of Expression * Expression
 | Subtract of Expression * Expression
 | Multiply of Expression * Expression
+| Abs of Expression
 
 let rec evaluate expression =
     match expression with
@@ -12,34 +13,43 @@ let rec evaluate expression =
     | Add (x, y) -> evaluate x + evaluate y
     | Subtract (x, y) -> evaluate x - evaluate y
     | Multiply (x, y) -> evaluate x * evaluate y
+    | Abs x -> System.Math.Abs (evaluate x)
 
-let random = System.Random()
+let randomNumber min max =
+    let random = System.Random()
+    fun () -> random.Next(min, max + 1)
 
 let rec generateTree depth =
     if depth = 0 then
-        Number (random.Next(1, 10))
+        Number (randomNumber -10 10 ())
     else
         let left = generateTree (depth - 1)
         let right = generateTree (depth - 1)
-        match random.Next(0, 3) with
+        match randomNumber 0 3 () with
         | 0 -> Add (left, right)
         | 1 -> Subtract (left, right)
         | 2 -> Multiply (left, right)
+        | 3 -> Abs (left)
 
-let printTree tree =
-    let rec printTree' tree =
+let printEquation tree =
+    let rec printEquation' tree =
         match tree with
         | Number n -> printf "%d" n
         | Add (left, right) -> printBinary left right "+"
         | Subtract (left, right) -> printBinary left right "-"
         | Multiply (left, right) -> printBinary left right "*"
+        | Abs (left) -> printUnary left "abs"
     and
         printBinary left right symbol =
-            printf "("; printTree' left; printf "%s" symbol; printTree' right; printf ")"
+            printf "("; printEquation' left; printf "%s" symbol; printEquation' right; printf ")"
+    and
+        printUnary left symbol =
+            printf "%s(" symbol; printEquation' left; printf ")"
 
-    printTree' tree
+
+    printEquation' tree
     printfn ""
 
-let t0 = generateTree 3
-printTree t0
+let t0 = generateTree 5
+printEquation t0
 evaluate t0
