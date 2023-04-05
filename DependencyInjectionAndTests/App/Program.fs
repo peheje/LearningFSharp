@@ -15,6 +15,9 @@ module CacheRepository =
     let save id data =
         NastyDatabaseDifficultToMockOut.insert id data
 
+CacheRepository.save 1 "data1"
+let data = CacheRepository.get 1
+
 module Greeter =
     let greet getHour =
         let hour = getHour ()
