@@ -8,6 +8,7 @@ module NastyDatabaseDifficultToMockOut =
         // don't save, just return unit
         ()
 
+// This would be tested with integration test
 module CacheRepository =
     let get id =
         NastyDatabaseDifficultToMockOut.select id
@@ -22,7 +23,7 @@ module SomeService =
         | Some p -> p
 
 let getPersonWithDbCacheCheck =
-    SomeService.getPerson (fun id -> NastyDatabaseDifficultToMockOut.select id)
+    SomeService.getPerson (fun id -> CacheRepository.get id)
 
 getPersonWithDbCacheCheck 1 |> printfn "%A"
 
