@@ -2,8 +2,8 @@
 
 // I don't want to make a SQLite or Postgres or any real db, it's not necessary, instead this acts as something you can't really mock out, somewhere you have to call the selecting/saving, could be a SQL-client nuget package code
 module NastyDatabaseDifficultToMockOut =
-    let select id =
-        "some dummy data"
+    let select id = Some "data from db"
+
     let insert id data =
         // don't save, just return unit
         ()
@@ -15,8 +15,16 @@ module CacheRepository =
     let save id data =
         NastyDatabaseDifficultToMockOut.insert id data
 
-CacheRepository.save 1 "data1"
-let data = CacheRepository.get 1
+module SomeService =
+    let getPerson checkCache id =
+        match checkCache id with
+        | None -> "person not from cache"
+        | Some p -> p
+
+let getPersonWithDbCacheCheck =
+    SomeService.getPerson (fun id -> NastyDatabaseDifficultToMockOut.select id)
+
+getPersonWithDbCacheCheck 1 |> printfn "%A"
 
 module Greeter =
     let greet getHour =
