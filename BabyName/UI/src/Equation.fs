@@ -63,8 +63,6 @@ let answer = evaluate tree
 let expression = printEquation tree
 let equation = replaceRandomMatch expression
 
-System.IO.File.WriteAllText ("/Users/phj/Code/F-Sharp-Advent-of-Code-2021/BabyName/UI/src/out", expression)
-
 printfn "%A" tree
 printfn "%s" expression
 printfn "%A" answer
