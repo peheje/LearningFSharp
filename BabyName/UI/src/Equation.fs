@@ -1,7 +1,10 @@
 module Equation
+open Browser.Types
+open Html
+open Browser
 
 type Expression =
-| Number of bigint
+| Number of float
 | Add of Expression * Expression
 | Subtract of Expression * Expression
 | Multiply of Expression * Expression
@@ -13,7 +16,7 @@ let rec evaluate expression =
     | Add (x, y) -> evaluate x + evaluate y
     | Subtract (x, y) -> evaluate x - evaluate y
     | Multiply (x, y) -> evaluate x * evaluate y
-    | Abs x -> bigint.Abs (evaluate x)
+    | Abs x -> System.Math.Abs (evaluate x)
 
 let initRandom () =
     let random = System.Random()
@@ -58,12 +61,27 @@ let replaceRandomMatch input =
     else
         input
 
-let tree = generateTree 10
-let answer = evaluate tree
-let expression = printEquation tree
-let equation = replaceRandomMatch expression
+let private generateEquation () =
+    let depthInput = (fromId "depth") :?> HTMLInputElement
+    let depth = int depthInput.value
+    let tree = generateTree depth
+    let answer = evaluate tree
+    let expression = printEquation tree
+    let equation = replaceRandomMatch expression
+    window.localStorage.setItem("answer", string answer)
+    let equationSpan = fromId "equation"
+    equationSpan.innerText <- equation
 
-printfn "%A" tree
-printfn "%s" expression
-printfn "%A" answer
-printfn "%s" equation
+let private checkAnswer () =
+    let guessInput = fromId "guess" :?> HTMLInputElement
+    let guess = guessInput.value
+    let answer = localStorage.getItem("answer")
+    let resultDiv = fromId "result"
+    if guess = answer then
+        resultDiv.innerText <- "Correct! The answer is indeed " + string answer + "."
+    else
+        resultDiv.innerText <- "Incorrect. The correct answer was " + string answer + "."
+
+let initEquation () =
+    fromId "generate-btn" |> onClick generateEquation
+    fromId "check-btn" |> onClick checkAnswer

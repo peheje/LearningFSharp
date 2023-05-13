@@ -10,6 +10,7 @@ open Heartbeat
 open Unique
 open Memory
 open Days
+open Equation
 
 let urls =
     [
@@ -20,6 +21,7 @@ let urls =
         ("/memory.html", "Memory", initMemory)
         ("/babynames.html", "Babynames", initBabyNames)
         ("/days.html", "Days", initDays)
+        ("/equation.html", "Equation", initEquation)
         ("https://twitter.com/peheje", "Contact", id)
     ]
 
