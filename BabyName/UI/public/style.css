@@ -79,3 +79,8 @@ input[type="checkbox"] {
 .display-none {
     display: none;
 }
+
+.container {
+    text-align: center;
+    /* Additional styling for the container if needed */
+  }

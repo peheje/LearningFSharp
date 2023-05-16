@@ -30,13 +30,14 @@ let rec generateTree depth =
     else
         let left = generateTree (depth - 1)
         let right = generateTree (depth - 1)
-        match random 0 4 with
-        | 0 -> Add (left, right)
-        | 1 -> Subtract (left, right)
-        | 2 -> Multiply (left, right)
-        | 3 -> Abs (left)
+        match (random 0 4), (random 0 10) with
+        | 0,_ -> Add (left, right)
+        | 1,_ -> Subtract (left, right)
+        | 2,_ -> Multiply (left, right)
+        | 3,0 -> Abs (left)
+        | _ -> generateTree depth
 
-let printEquation tree =
+let getExpression tree =
     let rec printEquation' tree =
         match tree with
         | Number n -> string n
@@ -50,32 +51,34 @@ let printEquation tree =
     and
         printUnary left symbol =
             symbol + "(" + printEquation' left + ")"
-    printEquation' tree
+    printEquation' tree + "=" + (tree |> evaluate |> string)
 
-let replaceRandomMatch input =
-    let matches = System.Text.RegularExpressions.Regex.Matches(input, "\d")
+let replaceNumberWithX input =
+    let matches = System.Text.RegularExpressions.Regex.Matches(input, "\d+")
     if matches.Count > 0 then
         let index = random 0 matches.Count
         let m = matches[index]
-        input.Substring(0, m.Index) + "X" + input.Substring(m.Index + m.Length)
+        printfn "%A" m.Value
+        let equation = input.Substring(0, m.Index) + "X" + input.Substring(m.Index + m.Length)
+        (equation, m.Value)
     else
-        input
+        (input, "")
+
+let mutable private answer = ""
 
 let private generateEquation () =
     let depthInput = (fromId "depth") :?> HTMLInputElement
     let depth = int depthInput.value
     let tree = generateTree depth
-    let answer = evaluate tree
-    let expression = printEquation tree
-    let equation = replaceRandomMatch expression
-    window.localStorage.setItem("answer", string answer)
+    let expression = getExpression tree
+    //let equation, replacedValue = replaceNumberWithX expression
+    answer <- expression
     let equationSpan = fromId "equation"
-    equationSpan.innerText <- equation
+    equationSpan.innerText <- expression
 
 let private checkAnswer () =
     let guessInput = fromId "guess" :?> HTMLInputElement
     let guess = guessInput.value
-    let answer = localStorage.getItem("answer")
     let resultDiv = fromId "result"
     if guess = answer then
         resultDiv.innerText <- "Correct! The answer is indeed " + string answer + "."
