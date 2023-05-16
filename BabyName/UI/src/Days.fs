@@ -26,11 +26,18 @@ let initDays () =
 
     let addDaysBtn = (inputFromId "add-days-btn")
 
-    let rec collectDays (cursor: DateTime) stop out =
-        if cursor <= stop then
-            collectDays (cursor.AddDays(1)) stop (cursor :: out)
+
+    let collectDays (start: DateTime) stop out =
+        let rec collectDays' (cursor: DateTime) stop out =
+            if cursor <= stop then
+                collectDays' (cursor.AddDays(1)) stop (cursor :: out)
+            else
+                out
+        
+        if start > stop then
+            (collectDays' stop start out, true)
         else
-            out
+            (collectDays' start stop out, false)
 
     let validate () =
         try
@@ -46,11 +53,11 @@ let initDays () =
 
         if validate () then
             errorEl.textContent <- ""
-            let days = collectDays start.valueAsDate stop.valueAsDate List.empty
+            let days, reverse = collectDays start.valueAsDate stop.valueAsDate List.empty
             let daysCount = days |> List.length
             let weekendCount = days |> List.filter isWeekend |> List.length
 
-            totalDaysEl.textContent <- (formatDays daysCount)
+            totalDaysEl.textContent <- (if reverse then "-" else "") + (formatDays daysCount)
             weekendDaysEl.textContent <- (formatDays weekendCount)
         else
             errorEl.textContent <- "Error in date"
