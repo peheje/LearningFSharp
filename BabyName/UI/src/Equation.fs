@@ -1,7 +1,6 @@
 module Equation
 open Browser.Types
 open Html
-open Browser
 
 type Expression =
 | Number of float
@@ -58,7 +57,6 @@ let replaceNumberWithX input =
     if matches.Count > 0 then
         let index = random 0 matches.Count
         let m = matches[index]
-        printfn "%A" m.Value
         let equation = input.Substring(0, m.Index) + "X" + input.Substring(m.Index + m.Length)
         (equation, m.Value)
     else
