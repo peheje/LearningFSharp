@@ -71,10 +71,10 @@ let private generateEquation () =
     let depth = int depthInput.value
     let tree = generateTree depth
     let expression = getExpression tree
-    //let equation, replacedValue = replaceNumberWithX expression
-    answer <- expression
+    let equation, replacedValue = replaceNumberWithX expression
+    answer <- replacedValue
     let equationSpan = fromId "equation"
-    equationSpan.innerText <- expression
+    equationSpan.innerText <- equation
 
 let private checkAnswer () =
     let guessInput = fromId "guess" :?> HTMLInputElement
