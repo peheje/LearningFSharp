@@ -32,6 +32,9 @@ let inputFromId id = (fromId id) :?> HTMLInputElement
 let onChange action (el: HTMLElement) =
     el.onchange <- (fun _ -> action ())
 
+let onChangeElement action (el: HTMLElement) =
+    el.onchange <- (fun _ -> action el)
+
 let onClick action (el: HTMLElement) =
     el.onclick <- (fun _ -> action ())
 

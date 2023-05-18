@@ -83,6 +83,11 @@ let private checkAnswer () =
     else
         resultDiv.innerText <- "Incorrect. The correct answer was " + string answer + "."
 
+let private checkMaxDepth (element: HTMLElement) =
+    let input = element :?> HTMLInputElement
+    input.valueAsNumber <- System.Math.Clamp(input.valueAsNumber, 1, 10)
+
 let initEquation () =
+    fromId "depth" |> onChangeElement checkMaxDepth
     fromId "generate-btn" |> onClick generateEquation
     fromId "check-btn" |> onClick checkAnswer
