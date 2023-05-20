@@ -13,6 +13,7 @@
     <Compile Include="Memory.fs" />
     <Compile Include="Days.fs" />
     <Compile Include="Equation.fs" />
+    <Compile Include="Typing.fs" />
     <Compile Include="App.fs" />
   </ItemGroup>
   <ItemGroup>

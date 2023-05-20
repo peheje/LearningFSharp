@@ -32,6 +32,12 @@ let inputFromId id = (fromId id) :?> HTMLInputElement
 let onChange action (el: HTMLElement) =
     el.onchange <- (fun _ -> action ())
 
+let onKeyDown action (el: HTMLElement) =
+    el.onkeydown <- (fun _ -> action ())
+
+let onKeyUp action (el: HTMLElement) =
+    el.onkeyup <- (fun event -> action event)
+
 let onChangeElement action (el: HTMLElement) =
     el.onchange <- (fun _ -> action el)
 

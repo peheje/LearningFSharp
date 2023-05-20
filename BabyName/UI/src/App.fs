@@ -11,6 +11,7 @@ open Unique
 open Memory
 open Days
 open Equation
+open Typing
 
 let urls =
     [
@@ -22,6 +23,7 @@ let urls =
         ("/babynames.html", "Babynames", initBabyNames)
         ("/days.html", "Days", initDays)
         ("/equation.html", "Equation", initEquation)
+        ("/typing.html", "Typing", initTyping)
         ("https://twitter.com/peheje", "Contact", id)
     ]
 
