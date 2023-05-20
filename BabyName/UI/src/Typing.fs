@@ -11,8 +11,8 @@ let private input = inputFromId "input"
 let private timer = fromId "timer"
 let private target = "the quick brown fox jumps over the lazy dog"
 
-let mutable startTime: DateTime option = None
-let mutable timerId = -1
+let mutable private startTime: DateTime option = None
+let mutable private timerId = -1
 
 let private printElapsedTime () =
     let duration = (DateTime.UtcNow - startTime.Value)
