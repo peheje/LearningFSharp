@@ -19,15 +19,15 @@ type MyBenchmark() =
         seq { for i in x .. xxs[0].Length - 1 -> xxs[y][i] }
 
     let scenic treesInDirection x y =
-        let origin = xxs[y][x]
+        let viewHeight = xxs[y][x]
 
         treesInDirection x y
         |> Seq.skip 1
         |> Seq.scan
-            (fun (stop, count) tree ->
-                match (stop, tree) with
-                | true, _ -> (true, false)
-                | _, v when v >= origin -> (true, true)
+            (fun (viewBlocked, canSeeTree) tree ->
+                match viewBlocked with
+                | true -> (true, false)
+                | false when tree >= viewHeight -> (true, true)
                 | _ -> (false, true))
             (false, false)
         |> Seq.skip 1
