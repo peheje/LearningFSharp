@@ -28,34 +28,33 @@ let moveRight x y =
 
 let scenic treesInDirection x y =
     let origin = xxs[y][x]
-    let mutable stop = false
 
     treesInDirection x y
     |> Array.skip 1
-    |> Array.takeWhile (fun x ->
-        if stop then
-            false
-        elif x >= origin then
-            stop <- true
-            true
-        else
-            true)
-    |> Array.length
-
+    |> Array.fold
+        (fun (stop, count) tree ->
+            if stop then
+                (true, count)
+            elif tree >= origin then
+                (true, count + 1)
+            else
+                (false, count + 1))
+        (false, 0)
+    |> snd
 
 let scenicUp x y = scenic moveUp x y
 let scenicLeft x y = scenic moveLeft x y
 let scenicRight x y = scenic moveRight x y
 let scenicDown x y = scenic moveDown x y
 
+let score x y =
+    (scenicUp x y)
+    * (scenicDown x y)
+    * (scenicLeft x y)
+    * (scenicRight x y)
+
 let scores =
     xxs
-    |> Array.mapi (fun y vs ->
-        vs
-        |> Array.mapi (fun x _ ->
-            (scenicUp x y)
-            * (scenicDown x y)
-            * (scenicLeft x y)
-            * (scenicRight x y)))
+    |> Array.mapi (fun y vs -> vs |> Array.mapi (fun x _ -> score x y))
     |> Array.collect id
     |> Array.max
