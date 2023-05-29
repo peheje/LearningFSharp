@@ -24,12 +24,10 @@ let scenic treesInDirection x y =
     |> Array.skip 1
     |> Array.fold
         (fun (stop, count) tree ->
-            if stop then
-                (true, count)
-            elif tree >= origin then
-                (true, count + 1)
-            else
-                (false, count + 1))
+            match (stop, tree) with
+            | true, _ -> (true, count)
+            | _, v when v >= origin -> (true, count + 1)
+            | _ -> (false, count + 1))
         (false, 0)
     |> snd
 
