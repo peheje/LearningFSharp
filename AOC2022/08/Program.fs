@@ -1,27 +1,42 @@
-﻿let parseRow xs =
-    xs |> Seq.map (string >> System.Int32.Parse) |> Seq.toArray
+﻿let split (c: string) (x: string) = x.Split(c)
 
-let seen xs =
-    ((-1, Set.empty), xs)
-    ||> Array.fold (fun (max, coordinates) (value, coordinate) ->
-        match value > max with
-        | true -> (value, coordinates |> Set.add coordinate)
-        | false -> (max, coordinates))
-    |> snd
+let logs x = printfn "%A" x; x
 
-let path = "/Users/peterhelstrupjensen/repos/AOC2022_at_work/08/input"
+let path = "/Users/phj/Code/F-Sharp-Advent-of-Code-2021/AOC2022/08/data.txt"
+let inp = System.IO.File.ReadAllLines path
+let xxs =
+    inp
+    |> Array.map Array.ofSeq
+    |> Array.map (fun xs -> xs |> Array.map (fun x -> System.Char.GetNumericValue(x) |> int))
 
-let addIndices xxs =
-    xxs |> Array.mapi (fun i xs -> xs |> Array.mapi (fun j x -> (x, (i, j))))
+let moveUp x y =
+    [| for i in y .. -1 .. 0 -> xxs[i][x] |]
 
-let rows1 = System.IO.File.ReadAllLines(path) |> Array.map parseRow |> addIndices
-let rows2 = rows1 |> Array.map Array.rev
-let cols1 = rows1 |> Array.transpose
-let cols2 = cols1 |> Array.map Array.rev
+let moveDown x y =
+    [| for i in y .. xxs.Length - 1 -> xxs[i][x] |]
 
-let s1 = (rows1 |> Array.map seen) |> Set.unionMany
-let s2 = (rows2 |> Array.map seen) |> Set.unionMany
-let s3 = (cols1 |> Array.map seen) |> Set.unionMany
-let s4 = (cols2 |> Array.map seen) |> Set.unionMany
+let moveLeft x y =
+    [| for i in x .. -1 .. 0 -> xxs[y][i] |]
 
-let part1 = Set.unionMany [s1; s2; s3; s4] |> Set.count
+let moveRight x y =
+    [| for i in x .. xxs[0].Length - 1 -> xxs[y][i] |]
+
+let scenic moveFun x y =
+    let xs = moveFun x y |> Array.skip 1
+    let myPosition = xxs[y][x]
+    let mutable stop = false
+    let mutable count = 0
+    for x in xs do
+        if stop then
+            stop <- true
+        elif x >= myPosition then
+            count <- count + 1
+            stop <- true
+        else
+            count <- count + 1
+    count
+
+scenic moveUp 2 1 |> printfn "%A" // should be 1
+scenic moveLeft 2 1 |> printfn "%A" // should be 1
+scenic moveDown 2 1 |> printfn "%A" // should be 2
+scenic moveRight 2 1 |> printfn "%A" // should be 2
