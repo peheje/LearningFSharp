@@ -48,11 +48,6 @@ let scenicLeft x y = scenic moveLeft x y
 let scenicRight x y = scenic moveRight x y
 let scenicDown x y = scenic moveDown x y
 
-scenicUp 2 1 |> printfn "%A" // should be 1
-scenicLeft 2 1 |> printfn "%A" // should be 1
-scenicDown 2 1 |> printfn "%A" // should be 2
-scenicRight 2 1 |> printfn "%A" // should be 2
-
 let scores =
     xxs
     |> Array.mapi (fun y vs ->
