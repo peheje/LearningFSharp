@@ -25,10 +25,9 @@ type MyBenchmark() =
         |> Seq.skip 1
         |> Seq.scan
             (fun (viewBlocked, canSeeTree) tree ->
-                match viewBlocked with
-                | true -> (true, false)
-                | false when tree >= viewHeight -> (true, true)
-                | _ -> (false, true))
+                if viewBlocked then (true, false)
+                elif tree >= viewHeight then (true, true)
+                else (false, true))
             (false, false)
         |> Seq.skip 1
         |> Seq.takeWhile snd
