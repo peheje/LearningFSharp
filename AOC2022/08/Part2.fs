@@ -13,7 +13,9 @@ let xxs =
     inp
     |> split "\n"
     |> Array.map Array.ofSeq
-    |> Array.map (fun xs -> xs |> Array.map (fun x -> System.Char.GetNumericValue(x) |> int))
+    |> Array.map (fun xs ->
+        xs
+        |> Array.map (fun x -> System.Char.GetNumericValue(x) |> int))
 
 let moveUp x y =
     [| for i in y .. -1 .. 0 -> xxs[i][x] |]
@@ -30,10 +32,12 @@ let moveRight x y =
 let scenic moveFun x y =
     let tallest = xxs[y][x]
     let xs = moveFun x y
+
     let count =
         xs
-        |> Array.takeWhile (fun x -> x < tallest) 
+        |> Array.takeWhile (fun x -> x < tallest)
         |> Array.length
+
     count
 
 

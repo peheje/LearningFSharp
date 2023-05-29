@@ -26,32 +26,22 @@ let moveLeft x y =
 let moveRight x y =
     [| for i in x .. xxs[0].Length - 1 -> xxs[y][i] |]
 
-let scenic moveFun x y =
-    
-    let experiment () =
-        1
-    
-    let original () =
-        let xs = moveFun x y |> Array.skip 1
-        let origin = xxs[y][x]
-        let mutable stop = false
-        let mutable count = 0
+let scenic treesInDirection x y =
+    let origin = xxs[y][x]
+    let mutable stop = false
 
-        for x in xs do
-            if stop then
-                stop <- true
-            elif x >= origin then
-                count <- count + 1
-                stop <- true
-            else
-                count <- count + 1
+    treesInDirection x y
+    |> Array.skip 1
+    |> Array.takeWhile (fun x ->
+        if stop then
+            false
+        elif x >= origin then
+            stop <- true
+            true
+        else
+            true)
+    |> Array.length
 
-        count
-        
-    if original () <> experiment () then
-        printfn "Original not equal to experiment"
-    
-    original ()
 
 let scenicUp x y = scenic moveUp x y
 let scenicLeft x y = scenic moveLeft x y
