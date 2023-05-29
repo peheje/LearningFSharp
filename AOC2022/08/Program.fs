@@ -1,18 +1,9 @@
-﻿let split (c: string) (x: string) = x.Split(c)
-
-let logs x =
-    printfn "%A" x
-    x
-
-let path = "C:\Users\peter\Repos\LearningFSharp\AOC2022\08\data.txt"
-let inp = System.IO.File.ReadAllLines path
+﻿let path = "C:\Users\peter\Repos\LearningFSharp\AOC2022\08\data.txt"
 
 let xxs =
-    inp
+    System.IO.File.ReadAllLines path
     |> Array.map Array.ofSeq
-    |> Array.map (fun xs ->
-        xs
-        |> Array.map (fun x -> System.Char.GetNumericValue(x) |> int))
+    |> Array.map (Array.map (System.Char.GetNumericValue >> int))
 
 let moveUp x y =
     [| for i in y .. -1 .. 0 -> xxs[i][x] |]
@@ -42,16 +33,11 @@ let scenic treesInDirection x y =
         (false, 0)
     |> snd
 
-let scenicUp x y = scenic moveUp x y
-let scenicLeft x y = scenic moveLeft x y
-let scenicRight x y = scenic moveRight x y
-let scenicDown x y = scenic moveDown x y
-
 let score x y =
-    (scenicUp x y)
-    * (scenicDown x y)
-    * (scenicLeft x y)
-    * (scenicRight x y)
+    (scenic moveUp x y)
+    * (scenic moveDown x y)
+    * (scenic moveLeft x y)
+    * (scenic moveRight x y)
 
 let scores =
     xxs
