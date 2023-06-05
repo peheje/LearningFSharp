@@ -24,13 +24,13 @@ let newTailPosition head previousHead tail =
     else
         tail
 
-let rec move tailBeen tailAt headAt moves =
-    let x, y = headAt
+let rec move tailBeen tail head moves =
+    let x, y = head
 
     match moves with
     | [] -> tailBeen
     | nextMove :: remainingMoves ->
-        let newHeadAt =
+        let newHead =
             match nextMove with
             | "R" -> (x + 1, y)
             | "L" -> (x - 1, y)
@@ -38,8 +38,8 @@ let rec move tailBeen tailAt headAt moves =
             | "D" -> (x, y - 1)
             | _ -> failwith "unknown move"
 
-        let newTailAt = newTailPosition newHeadAt headAt tailAt
-        move (newTailAt :: tailBeen) newTailAt newHeadAt remainingMoves
+        let newTail = newTailPosition newHead head tail
+        move (newTail :: tailBeen) newTail newHead remainingMoves
 
 
 move List.empty (0, 0) (0, 0) moves
