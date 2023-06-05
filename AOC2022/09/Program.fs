@@ -1,17 +1,13 @@
 ﻿let path = "C:\Users\peter\Repos\LearningFSharp\AOC2022\09\input.txt"
-
 let log s v = printfn "%s %A" s v
 
-let raw = System.IO.File.ReadAllLines(path)
-
 let moves =
-    raw
+    System.IO.File.ReadAllLines(path)
     |> Array.map (fun row ->
         let s = row.Split(" ")
-        (s[0], (int s[1])))
-    |> Array.map (fun move ->
-        let (direction, count) = move
-        Array.init count (fun _ -> direction))
+        let dir = s[0]
+        let steps = int s[1]
+        Array.create steps dir)
     |> Array.collect id
     |> Array.toList
 
