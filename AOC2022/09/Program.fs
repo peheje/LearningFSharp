@@ -11,24 +11,24 @@ let moves =
     |> Array.collect id
     |> Array.toList
 
-let moveTail head tail =
+let shouldMoveTail head tail =
     let (hx, hy) = head
     let (tx, ty) = tail
     let deltax = abs (hx - tx)
     let deltay = abs (hy - ty)
     deltax > 1 || deltay > 1
 
-let newTailPosition head oldhead tail =
-    if moveTail head tail then
-        oldhead
+let newTailPosition head previousHead tail =
+    if shouldMoveTail head tail then
+        previousHead
     else
         tail
 
-let rec move been tailAt headAt moves =
+let rec move tailBeen tailAt headAt moves =
     let x, y = headAt
 
     match moves with
-    | [] -> been
+    | [] -> tailBeen
     | nextMove :: remainingMoves ->
         let newHeadAt =
             match nextMove with
@@ -39,7 +39,7 @@ let rec move been tailAt headAt moves =
             | _ -> failwith "unknown move"
 
         let newTailAt = newTailPosition newHeadAt headAt tailAt
-        move (newTailAt :: been) newTailAt newHeadAt remainingMoves
+        move (newTailAt :: tailBeen) newTailAt newHeadAt remainingMoves
 
 
 move List.empty (0, 0) (0, 0) moves
