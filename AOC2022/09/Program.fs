@@ -24,55 +24,42 @@ let printStep rope move =
 
 let rope = Array.init 10 (fun _ -> (0,0))
 
-let add (hx, hy) (tx, ty) = (hx + tx, hy + ty)
+let moveRight (x, y) = x + 1, y
+let moveLeft (x, y) = x - 1, y
+let moveUp (x, y) = x, y - 1
+let moveDown (x, y) = x, y + 1
 
-let catchupMove head tail move =
-    //printStep rope move
-
+let catchupMove head tail =
     let (hx, hy) = head
     let (tx, ty) = tail
-
     let xdif = hx - tx
     let ydif = hy - ty
 
     if abs xdif + abs ydif < 3 then
         // catch up in L, R, D, U
         if xdif > 1 then
-            // move right
-            (tx + 1, ty)
+            moveRight tail
         elif xdif < -1 then
-            // move left
-            (tx - 1, ty)
+            moveLeft tail
         elif ydif < -1 then
-            // move up
-            (tx, ty - 1)
+            moveUp tail
         elif ydif > 1 then
-            // move down
-            (tx, ty + 1)
+            moveDown tail
         else
             tail
     else
         // catch up diagonally
         if ydif < 0 then
-            // move up
             if xdif > 0 then
-                // move right
-                (tx + 1, ty - 1)
+                (moveUp >> moveRight) tail
             else
-                // move left
-                (tx - 1, ty - 1)
+                (moveUp >> moveLeft) tail
         else
-            // move down
             if xdif > 0 then
-                // move right
-                (tx + 1, ty + 1)
+                (moveDown >> moveRight) tail
             else
-                // move left
-                (tx - 1, ty + 1)
+                (moveDown >> moveLeft) tail
 
-
-
-printStep rope "initial state"
 let visited = System.Collections.Generic.HashSet<(int*int)>()
 for move in moves do
     let hx, hy = rope[0]
@@ -83,7 +70,7 @@ for move in moves do
     | "D" -> rope[0] <- hx, hy + 1
     
     for i in 0..rope.Length-2 do
-        rope[i+1] <- catchupMove rope[i] rope[i+1] move
+        rope[i+1] <- catchupMove rope[i] rope[i+1]
 
     visited.Add rope[9] |> ignore
 
