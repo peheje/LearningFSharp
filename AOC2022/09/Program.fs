@@ -35,17 +35,13 @@ let catchupMove head tail =
     let ydif = hy - ty
 
     if abs xdif + abs ydif < 3 then
-        // catch up in L, R, D, U
-        if xdif > 1 then
-            moveRight tail
-        elif xdif < -1 then
-            moveLeft tail
-        elif ydif < -1 then
-            moveUp tail
-        elif ydif > 1 then
-            moveDown tail
-        else
-            tail
+        // catch up in L, R, D, U or not
+        match xdif, ydif with
+        | x, _ when x > 1  -> moveRight tail
+        | x, _ when x < -1 -> moveLeft tail
+        | _, y when y < -1 -> moveUp tail
+        | _, y when y > 1  -> moveDown tail
+        | _, _             -> tail
     else
         // catch up diagonally
         let upOrDown = if ydif < 0 then moveUp else moveDown
