@@ -1,5 +1,4 @@
-﻿let path = "C:\Users\peter\Repos\LearningFSharp\AOC2022\09\input.txt"
-let log s v = printfn "%s %A" s v
+﻿let path = "/Users/phj/Code/F-Sharp-Advent-of-Code-2021/AOC2022/09/input.txt"
 
 let moves =
     System.IO.File.ReadAllLines(path)
@@ -49,16 +48,9 @@ let catchupMove head tail =
             tail
     else
         // catch up diagonally
-        if ydif < 0 then
-            if xdif > 0 then
-                (moveUp >> moveRight) tail
-            else
-                (moveUp >> moveLeft) tail
-        else
-            if xdif > 0 then
-                (moveDown >> moveRight) tail
-            else
-                (moveDown >> moveLeft) tail
+        let f = if ydif < 0 then moveUp else moveDown
+        let v = if xdif > 0 then moveRight else moveLeft
+        (f >> v) tail
 
 let visited = System.Collections.Generic.HashSet<(int*int)>()
 for move in moves do
