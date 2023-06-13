@@ -48,9 +48,9 @@ let catchupMove head tail =
             tail
     else
         // catch up diagonally
-        let f = if ydif < 0 then moveUp else moveDown
-        let v = if xdif > 0 then moveRight else moveLeft
-        (f >> v) tail
+        let upOrDown = if ydif < 0 then moveUp else moveDown
+        let leftOrRight = if xdif > 0 then moveRight else moveLeft
+        (upOrDown >> leftOrRight) tail
 
 let visited = System.Collections.Generic.HashSet<(int*int)>()
 for move in moves do
