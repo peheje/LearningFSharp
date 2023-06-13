@@ -21,8 +21,6 @@ let printStep rope move =
     printfn ""
     printfn ""
 
-let rope = Array.init 10 (fun _ -> (0,0))
-
 let moveRight (x, y) = x + 1, y
 let moveLeft (x, y) = x - 1, y
 let moveUp (x, y) = x, y - 1
@@ -48,18 +46,19 @@ let catchupMove head tail =
         let leftOrRight = if xdif > 0 then moveRight else moveLeft
         (upOrDown >> leftOrRight) tail
 
-let visited = System.Collections.Generic.HashSet<(int*int)>()
-for move in moves do
-    let hx, hy = rope[0]
-    match move with
-    | "R" -> rope[0] <- hx + 1, hy
-    | "L" -> rope[0] <- hx - 1, hy
-    | "U" -> rope[0] <- hx, hy - 1
-    | "D" -> rope[0] <- hx, hy + 1
-    
-    for i in 0..rope.Length-2 do
-        rope[i+1] <- catchupMove rope[i] rope[i+1]
 
-    visited.Add rope[9] |> ignore
+seq {
+    let rope = Array.init 10 (fun _ -> (0,0))
+    for move in moves do
+        let hx, hy = rope[0]
+        match move with
+        | "R" -> rope[0] <- hx + 1, hy
+        | "L" -> rope[0] <- hx - 1, hy
+        | "U" -> rope[0] <- hx, hy - 1
+        | "D" -> rope[0] <- hx, hy + 1
 
-printfn "%i" visited.Count
+        for i in 0..rope.Length-2 do
+            rope[i+1] <- catchupMove rope[i] rope[i+1]
+
+        rope[9]
+} |> Seq.distinct |> Seq.length |> printfn "%i"
