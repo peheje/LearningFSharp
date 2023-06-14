@@ -12,11 +12,10 @@ let cycles =
         | _ -> failwith "unexpected instruction"
     )
     |> List.collect id
-    |> List.indexed
 
 let mutable sum = 0
 let mutable x = 1
-for (index, value) in cycles do
+for (index, value) in cycles |> List.indexed do
     let cycle = index + 1
     if (cycle + 20) % 40 = 0 then
         printfn "%i: %i" cycle x
@@ -24,3 +23,5 @@ for (index, value) in cycles do
     x <- x + value
 
 printfn "sum %i" sum
+
+##..##..#..##...##.##..##..##..##..##...
