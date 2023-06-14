@@ -1,7 +1,8 @@
 import java.io.File
+import kotlin.math.abs
 
 private fun aoc10Part0(): List<Int> {
-    val path = "/Users/phj/Desktop/aoc_2022_10/untitled/src/main/kotlin/input.txt"
+    val path = "/Users/phj/Code/F-Sharp-Advent-of-Code-2021/AOC2022/10/input.txt"
     val cycles = File(path).readLines().map {
         val s = it.split(" ")
         when (s[0]) {

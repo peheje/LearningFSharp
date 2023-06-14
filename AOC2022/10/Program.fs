@@ -13,15 +13,38 @@ let cycles =
     )
     |> List.collect id
 
-let mutable sum = 0
-let mutable x = 1
-for (index, value) in cycles |> List.indexed do
-    let cycle = index + 1
-    if (cycle + 20) % 40 = 0 then
-        printfn "%i: %i" cycle x
-        sum <- sum + cycle * x
-    x <- x + value
+let part1 () =
+    let mutable sum = 0
+    let mutable x = 1
+    for (index, value) in cycles |> List.indexed do
+        let cycle = index + 1
+        if (cycle + 20) % 40 = 0 then
+            printfn "%i: %i" cycle x
+            sum <- sum + cycle * x
+        x <- x + value
 
-printfn "sum %i" sum
+    printfn "sum %i" sum
 
-##..##..#..##...##.##..##..##..##..##...
+part1 ()
+
+let inWindow centerOfWindow value =
+    let center = centerOfWindow % 40
+    (center - 1) = value || center = value || (center + 1) = value
+
+let part2 () =
+    let mutable x = 1
+    let sb = System.Text.StringBuilder()
+    for (i, value) in cycles |> List.indexed do
+        if inWindow i x then
+            sb.Append "#" |> ignore
+        else
+            sb.Append "." |> ignore
+        
+        x <- x + value
+        
+        if (i + 1) % 40 = 0 then
+            sb.Append "\n" |> ignore
+    
+    printfn "%s" (sb.ToString())
+
+part2()
