@@ -10,9 +10,7 @@ data class Monkey(
 
 fun main() {
     val path = "/Users/phj/Code/F-Sharp-Advent-of-Code-2021/AOC2022/kotlin/aoc2022/src/main/kotlin/input11.txt"
-    val file = File(path)
-    val rawInput = file.readText()
-    val monkeysRaw = rawInput.split("\n\n")
+    val monkeysRaw = File(path).readText().split("\n\n")
 
     val monkeys = monkeysRaw.map { monkeyRaw ->
         val monkeyRows = monkeyRaw.split("\n").map { it.trim() }
@@ -29,7 +27,6 @@ fun main() {
         val testDivisibleBy = monkeyRows[3].replace("Test: divisible by ", "").toInt()
         val ifTrue = monkeyRows[4].replace("If true: throw to monkey ", "").toInt()
         val ifFalse = monkeyRows[5].replace("If false: throw to monkey ", "").toInt()
-
         val throwToIndex = { a: Int -> if (a % testDivisibleBy == 0) ifTrue else ifFalse }
 
         Monkey(monkeyNumber, startingItems, op, throwToIndex)
@@ -39,7 +36,7 @@ fun main() {
     var round = 0
     while (round < roundsTotal) {
         for (monkey in monkeys) {
-            val thrownIndices = mutableListOf<Int>()
+            val thrownIndices = mutableSetOf<Int>()
             for (i in 0 until monkey.items.size) {
                 monkey.inspected++
                 monkey.items[i] = monkey.operation(monkey.items[i]) / 3
