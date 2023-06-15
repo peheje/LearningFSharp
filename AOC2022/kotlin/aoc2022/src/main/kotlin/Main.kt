@@ -21,8 +21,8 @@ fun main() {
 
         val op = when {
             operation[1] == "old" -> { a: Long -> a * a }
-            operation[0] == "*" -> { a: Long -> a * operation[1].toInt() }
-            operation[0] == "+" -> { a: Long -> a + operation[1].toInt() }
+            operation[0] == "*" -> { a: Long -> a * operation[1].toLong() }
+            operation[0] == "+" -> { a: Long -> a + operation[1].toLong() }
             else -> throw Exception("Unhandled operation")
         }
         val testDivisibleBy = rows[3].replace("Test: divisible by ", "").toLong()
