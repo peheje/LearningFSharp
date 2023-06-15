@@ -14,11 +14,10 @@ fun main() {
     val monkeysRaw = File(path).readText().split("\n\n")
 
     val monkeys = monkeysRaw.map { monkeyRaw ->
-        val monkeyRows = monkeyRaw.split("\n").map { it.trim() }
-        val monkeyNumber = monkeyRows[0].replace("Monkey ", "").replace(":", "").toInt()
-        val startingItems =
-            monkeyRows[1].replace("Starting items: ", "").split(", ").map { it.toLong() }.toMutableList()
-        val operation = monkeyRows[2].replace("Operation: new = old ", "").split(" ")
+        val rows = monkeyRaw.split("\n").map { it.trim() }
+        val monkeyNumber = rows[0].replace("Monkey ", "").replace(":", "").toInt()
+        val startingItems = rows[1].replace("Starting items: ", "").split(", ").map { it.toLong() }.toMutableList()
+        val operation = rows[2].replace("Operation: new = old ", "").split(" ")
 
         val op = when {
             operation[1] == "old" -> { a: Long -> a * a }
@@ -26,9 +25,9 @@ fun main() {
             operation[0] == "+" -> { a: Long -> a + operation[1].toInt() }
             else -> throw Exception("Unhandled operation")
         }
-        val testDivisibleBy = monkeyRows[3].replace("Test: divisible by ", "").toLong()
-        val ifTrue = monkeyRows[4].replace("If true: throw to monkey ", "").toInt()
-        val ifFalse = monkeyRows[5].replace("If false: throw to monkey ", "").toInt()
+        val testDivisibleBy = rows[3].replace("Test: divisible by ", "").toLong()
+        val ifTrue = rows[4].replace("If true: throw to monkey ", "").toInt()
+        val ifFalse = rows[5].replace("If false: throw to monkey ", "").toInt()
         val throwToIndex = { a: Long -> if (a % testDivisibleBy == 0L) ifTrue else ifFalse }
 
         Monkey(monkeyNumber, startingItems, op, throwToIndex, 0, testDivisibleBy)
