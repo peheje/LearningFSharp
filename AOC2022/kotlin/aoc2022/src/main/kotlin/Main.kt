@@ -1,67 +1,45 @@
-import java.io.File
-
-data class Monkey(
-    val number: Int,
-    val items: MutableList<Long>,
-    val operation: (Long) -> Long,
-    val toThrowIndex: (Long) -> Int,
-    var inspected: Long = 0,
-    val testDivisibleBy: Long
-)
+import java.util.PriorityQueue
 
 fun main() {
-    val path = "/Users/phj/Code/F-Sharp-Advent-of-Code-2021/AOC2022/kotlin/aoc2022/src/main/kotlin/input11.txt"
-    val monkeysRaw = File(path).readText().split("\n\n")
+    val graph = HashMap<String, List<Pair<String, Int>>>()
+    val distances = hashMapOf<String, Int>()
+    val previous = HashMap<String, String?>()
 
-    val monkeys = monkeysRaw.map { monkeyRaw ->
-        val rows = monkeyRaw.split("\n").map { it.trim() }
-        val monkeyNumber = rows[0].replace("Monkey ", "").replace(":", "").toInt()
-        val startingItems = rows[1].replace("Starting items: ", "").split(", ").map { it.toLong() }.toMutableList()
-        val operation = rows[2].replace("Operation: new = old ", "").split(" ")
+    val source = "a"
+    graph["a"] = listOf("c" to 5, "b" to 2)
+    graph["b"] = listOf("a" to 2, "c" to 3, "d" to 3)
+    graph["c"] = listOf("a" to 5, "b" to 3, "e" to 2)
+    graph["d"] = listOf("a" to 7, "b" to 3, "e" to 1)
+    graph["e"] = listOf("c" to 2, "d" to 1)
 
-        val op = when {
-            operation[1] == "old" -> { a: Long -> a * a }
-            operation[0] == "*" -> { a: Long -> a * operation[1].toLong() }
-            operation[0] == "+" -> { a: Long -> a + operation[1].toLong() }
-            else -> throw Exception("Unhandled operation")
-        }
-        val testDivisibleBy = rows[3].replace("Test: divisible by ", "").toLong()
-        val ifTrue = rows[4].replace("If true: throw to monkey ", "").toInt()
-        val ifFalse = rows[5].replace("If false: throw to monkey ", "").toInt()
-        val throwToIndex = { a: Long -> if (a % testDivisibleBy == 0L) ifTrue else ifFalse }
+    val queue = PriorityQueue<Pair<String, Int>>(compareBy { it.second })
+    val infinite = 1000
 
-        Monkey(monkeyNumber, startingItems, op, throwToIndex, 0, testDivisibleBy)
+    for (v in graph.keys) {
+        distances[v] = infinite
+        previous[v] = null
+        queue.add(v to infinite)
     }
+    distances[source] = 0
 
-    val commonDivisor = monkeys.map { it.testDivisibleBy }.reduce { acc, i -> acc * i }
+    while (queue.isNotEmpty()) {
+        val (edge, _) = queue.poll()
 
-    val roundsTotal = 10000
-    var round = 0
-    while (round < roundsTotal) {
-        for (monkey in monkeys) {
-            for (i in 0 until monkey.items.size) {
-                monkey.inspected++
-                // monkey.items[i] = monkey.operation(monkey.items[i]) / 3  // part 1
-                monkey.items[i] = monkey.operation(monkey.items[i]).mod(commonDivisor) // part 2
-                val throwTo = monkey.toThrowIndex(monkey.items[i])
-                monkeys[throwTo].items.add(monkey.items[i])
-            }
-            monkey.items.clear()
-        }
-
-        round++
-
-        if (round == 1 || round == 20 || round % 1000 == 0) {
-            println("== After round $round ==")
-            for (monkey in monkeys) {
-                println("Monkey ${monkey.number} inspected ${monkey.inspected} times.")
+        graph[edge]?.forEach { (neighbor, weight) ->
+            val totalDistance = distances.getValue(edge) + weight
+            if (totalDistance < distances.getValue(neighbor)) {
+                distances[neighbor] = totalDistance
+                previous[neighbor] = edge
+                queue.add(neighbor to totalDistance)
             }
         }
     }
 
-    val mostActive = monkeys
-        .map { it.inspected }
-        .sortedDescending()
-        .take(2)
-    println(mostActive[0] * mostActive[1])
+    assert(previous["e"] == "d")
+    assert(previous["d"] == "b")
+    assert(previous["b"] == "a")
+
+    println("Done")
 }
+
+
