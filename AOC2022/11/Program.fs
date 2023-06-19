@@ -37,7 +37,7 @@ let roundsTotal = 10000
 let mutable round = 0
 while round < roundsTotal do
     for monkey in monkeys do
-        for i in 0 .. monkey.Items.Length - 1 do
+        for (i, _) in monkey.Items |> Array.indexed do
             monkey.Inspected <- monkey.Inspected + 1L
             // monkey.Items[i] <-  monkey.Operation(monkey.Items[i]) / 3L // part 1
             monkey.Items[i] <- monkey.Operation(monkey.Items[i] % commonDivisor)
