@@ -1,10 +1,17 @@
 import java.io.File
 import java.util.PriorityQueue
+import kotlin.system.measureTimeMillis
 
 data class EdgeId(val v: Pair<Int, Int>)
 
 fun main() {
-    val path = "C:\\Users\\peter\\Repos\\LearningFSharp\\AOC2022\\kotlin\\aoc2022\\src\\main\\kotlin\\input12.txt"
+    measureTimeMillis {
+        aoc12()
+    }.let { println("${it}ms") }
+}
+
+private fun aoc12() {
+    val path = "/Users/phj/Code/F-Sharp-Advent-of-Code-2021/AOC2022/kotlin/aoc2022/src/main/kotlin/input12.txt"
     val rows = File(path).readLines()
 
     lateinit var destination: EdgeId
@@ -28,16 +35,16 @@ fun main() {
         }
     }
 
-    fun neighborIndices(x: Int, y: Int): List<Pair<Int, Int>> {
-        val indices = mutableListOf<Pair<Int, Int>>()
+    fun neighborIndices(x: Int, y: Int): List<EdgeId> {
+        val indices = mutableListOf<EdgeId>()
         if (x > 0)
-            indices.add(Pair(x - 1, y))
+            indices.add(EdgeId(Pair(x - 1, y)))
         if (x < map.first().lastIndex)
-            indices.add(Pair(x + 1, y))
+            indices.add(EdgeId(Pair(x + 1, y)))
         if (y > 0)
-            indices.add(Pair(x, y - 1))
+            indices.add(EdgeId(Pair(x, y - 1)))
         if (y < map.lastIndex)
-            indices.add(Pair(x, y + 1))
+            indices.add(EdgeId(Pair(x, y + 1)))
         return indices
     }
 
@@ -47,10 +54,10 @@ fun main() {
     map.forEachIndexed { y, row ->
         row.forEachIndexed { x, value ->
             val indices = neighborIndices(x, y).map { neighbor ->
-                val (nx, ny) = neighbor
+                val (nx, ny) = neighbor.v
                 val difference = map[ny][nx] - value
                 val cost = if (difference > 1) infinite else 1
-                Pair(EdgeId(neighbor), cost)
+                Pair(neighbor, cost)
             }
             graph[EdgeId(Pair(x, y))] = indices
         }
