@@ -10,10 +10,10 @@ let remove (target: string) (source: string) = source.Replace(target, "")
 let split (by: string) (source: string) = source.Split(by)
 
 let path = "/Users/phj/Code/F-Sharp-Advent-of-Code-2021/AOC2022/kotlin/aoc2022/src/main/kotlin/input11.txt"
-let monkeysRaw = System.IO.File.ReadAllText(path).Split("\n\n")
+let monkeysRaw = System.IO.File.ReadAllText(path) |> split "\n\n"
 
 let monkeys = monkeysRaw |> Array.map (fun monkeyRaw ->
-    let rows = monkeyRaw.Split("\n") |> Array.map (fun it -> it.Trim())
+    let rows = monkeyRaw |> split "\n" |> Array.map (fun it -> it.Trim())
     let monkeyNumber = rows[0] |> remove "Monkey " |> remove ":" |> int
     let startingItems = rows[1] |> remove "Starting items: " |> split ", " |> Array.map int64
     let operation = rows[2] |> remove "Operation: new = old " |> split " "
