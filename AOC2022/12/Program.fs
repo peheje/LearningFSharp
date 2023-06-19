@@ -2,11 +2,8 @@
 open System.IO
 
 let sw = System.Diagnostics.Stopwatch.StartNew()
-
 let path = "/Users/phj/Code/F-Sharp-Advent-of-Code-2021/AOC2022/kotlin/aoc2022/src/main/kotlin/input12.txt"
-
 let rows = File.ReadAllLines path
-
 type EdgeId = EdgeId of (int * int)
 
 let mutable destination: EdgeId option = None
@@ -64,7 +61,6 @@ distances[source.Value] <- 0
 
 while queue.Count > 0 do
     let edge = queue.Dequeue()
-
     graph[edge] |> Array.iter(fun (neighbor, weight) ->
         let totalDistance = distances[edge] + weight
         if totalDistance < distances[neighbor] then
@@ -74,14 +70,12 @@ while queue.Count > 0 do
     )
 
 let mutable cursor = destination.Value
-
 let shortestPath = [|
     while cursor <> source.Value do
         let step = previous[cursor]
         if step.IsSome then yield step.Value
         cursor <- step.Value
 |]
-
 
 printfn "Done with shortest path %i" (shortestPath |> Array.length)
 sw.Stop()
