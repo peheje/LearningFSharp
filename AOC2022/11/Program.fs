@@ -6,14 +6,17 @@
       mutable Inspected: int64
       TestDivisibleBy: int64 }
 
+let remove (target: string) (source: string) = source.Replace(target, "")
+let split (by: string) (source: string) = source.Split(by)
+
 let path = "/Users/phj/Code/F-Sharp-Advent-of-Code-2021/AOC2022/kotlin/aoc2022/src/main/kotlin/input11.txt"
 let monkeysRaw = System.IO.File.ReadAllText(path).Split("\n\n")
 
 let monkeys = monkeysRaw |> Array.map (fun monkeyRaw ->
     let rows = monkeyRaw.Split("\n") |> Array.map (fun it -> it.Trim())
-    let monkeyNumber = rows[0].Replace("Monkey ", "").Replace(":", "") |> int
-    let startingItems = rows[1].Replace("Starting items: ", "").Split(", ") |> Array.map int64
-    let operation = rows[2].Replace("Operation: new = old ", "").Split(" ")
+    let monkeyNumber = rows[0] |> remove "Monkey " |> remove ":" |> int
+    let startingItems = rows[1] |> remove "Starting items: " |> split ", " |> Array.map int64
+    let operation = rows[2] |> remove "Operation: new = old " |> split " "
 
     let op = match operation with
               | [|"*"; "old"|] -> (fun a -> a * a)
@@ -21,9 +24,9 @@ let monkeys = monkeysRaw |> Array.map (fun monkeyRaw ->
               | [|"+"; v|] -> (fun a -> a + int64 v)
               | _ -> failwith "Unhandled operation"
     
-    let testDivisibleBy = rows[3].Replace("Test: divisible by ", "") |> int64
-    let ifTrue = rows[4].Replace("If true: throw to monkey ", "") |> int
-    let ifFalse = rows[5].Replace("If false: throw to monkey ", "") |> int
+    let testDivisibleBy = rows[3] |> remove "Test: divisible by " |> int64
+    let ifTrue = rows[4] |> remove "If true: throw to monkey " |> int
+    let ifFalse = rows[5] |> remove "If false: throw to monkey " |> int
     let throwToIndex = fun a -> if (a % testDivisibleBy = 0L) then ifTrue else ifFalse
 
     { Number = monkeyNumber; Items = startingItems; Operation = op; ToThrowIndex = throwToIndex; Inspected = 0L; TestDivisibleBy = testDivisibleBy })
