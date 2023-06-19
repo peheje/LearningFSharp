@@ -14,8 +14,8 @@ let monkeysRaw = System.IO.File.ReadAllText(path) |> split "\n\n"
 
 let monkeys = monkeysRaw |> Array.map (fun monkeyRaw ->
     let rows = monkeyRaw |> split "\n" |> Array.map (fun it -> it.Trim())
-    let monkeyNumber = rows[0] |> remove "Monkey " |> remove ":" |> int
-    let startingItems = rows[1] |> remove "Starting items: " |> split ", " |> Array.map int64
+    let number = rows[0] |> remove "Monkey " |> remove ":" |> int
+    let items = rows[1] |> remove "Starting items: " |> split ", " |> Array.map int64
     let operation = rows[2] |> remove "Operation: new = old " |> split " "
 
     let op = match operation with
@@ -29,7 +29,7 @@ let monkeys = monkeysRaw |> Array.map (fun monkeyRaw ->
     let ifFalse = rows[5] |> remove "If false: throw to monkey " |> int
     let throwToIndex = fun a -> if (a % testDivisibleBy = 0L) then ifTrue else ifFalse
 
-    { Number = monkeyNumber; Items = startingItems; Operation = op; ToThrowIndex = throwToIndex; Inspected = 0L; TestDivisibleBy = testDivisibleBy })
+    { Number = number; Items = items; Operation = op; ToThrowIndex = throwToIndex; Inspected = 0L; TestDivisibleBy = testDivisibleBy })
 
 let commonDivisor = monkeys |> Array.map (fun it -> it.TestDivisibleBy) |> Array.reduce (fun acc i -> acc * i)
 
