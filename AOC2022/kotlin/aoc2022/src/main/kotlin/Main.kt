@@ -6,7 +6,7 @@ data class EdgeId(val v: Pair<Int, Int>)
 
 fun main() {
     measureTimeMillis {
-        aoc12()
+        aoc11()
     }.let { println("${it}ms") }
 }
 
