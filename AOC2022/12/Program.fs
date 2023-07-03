@@ -6,23 +6,28 @@ let path = "/Users/phj/Code/F-Sharp-Advent-of-Code-2021/AOC2022/kotlin/aoc2022/s
 let rows = File.ReadAllLines path
 type EdgeId = EdgeId of (int * int)
 
-let mutable destination: EdgeId option = None
-let mutable source: EdgeId option = None
+let readMap rows =
+    let mutable destination = None
+    let mutable source = None
 
-let map = rows |> Array.mapi (fun y row ->
-    row |> Seq.toArray |> Array.mapi (fun x char ->
-        let code =
-            match char with
-            | 'S' ->
-                source <- Some (EdgeId (x, y))
-                int 'a'
-            | 'E' ->
-                destination <- Some (EdgeId (x, y))
-                int 'z'
-            | _ -> int char
-        code - 97
+    let map = rows |> Array.mapi (fun y row ->
+        row |> Seq.toArray |> Array.mapi (fun x char ->
+            let code =
+                match char with
+                | 'S' ->
+                    source <- Some (EdgeId (x, y))
+                    int 'a'
+                | 'E' ->
+                    destination <- Some (EdgeId (x, y))
+                    int 'z'
+                | _ -> int char
+            code - 97
+        )
     )
-)
+
+    (map, destination.Value, source.Value)
+
+let map, destination, source = readMap rows
 
 let neighborIndices x y =
     let lastRowIndex = (map |> Array.length) - 1
@@ -57,7 +62,7 @@ for v in graph.Keys do
     distances[v] <- infinite
     previous[v] <- None
     queue.Enqueue(v, infinite)
-distances[source.Value] <- 0
+distances[source] <- 0
 
 while queue.Count > 0 do
     let edge = queue.Dequeue()
@@ -69,9 +74,9 @@ while queue.Count > 0 do
             queue.Enqueue(neighbor, totalDistance)
     )
 
-let mutable cursor = destination.Value
+let mutable cursor = destination
 let shortestPath = [|
-    while cursor <> source.Value do
+    while cursor <> source do
         let step = previous[cursor]
         if step.IsSome then yield step.Value
         cursor <- step.Value
