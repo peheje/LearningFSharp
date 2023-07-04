@@ -5,9 +5,7 @@ import kotlin.system.measureTimeMillis
 data class EdgeId(val v: Pair<Int, Int>)
 
 fun main() {
-    measureTimeMillis {
-        aoc11()
-    }.let { println("${it}ms") }
+    aoc12()
 }
 
 private fun aoc12() {

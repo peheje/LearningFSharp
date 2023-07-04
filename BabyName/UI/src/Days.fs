@@ -26,6 +26,9 @@ let initDays () =
 
     let addDaysBtn = (inputFromId "add-days-btn")
 
+    let errorEl = (fromId "error")
+    let totalDaysEl = (fromId "total-duration")
+    let weekendDaysEl = (fromId "weekend-days")
 
     let collectDays (start: DateTime) stop out =
         let rec collectDays' (cursor: DateTime) stop out =
@@ -47,10 +50,7 @@ let initDays () =
             false
 
     let calculate () =
-        let errorEl = (fromId "error")
-        let totalDaysEl = (fromId "total-duration")
-        let weekendDaysEl = (fromId "weekend-days")
-
+        
         if validate () then
             errorEl.textContent <- ""
             let days, reverse = collectDays start.valueAsDate stop.valueAsDate List.empty
@@ -70,8 +70,8 @@ let initDays () =
         stop.valueAsDate <- stop.valueAsDate.AddDays (daysToAdd)
         calculate ()
 
-    start |> onChange calculate
-    stop |> onChange calculate
+    start |> onChangeDebouncer 200 calculate
+    stop |> onChangeDebouncer 200 calculate
     addDaysBtn |> onClick addDays
 
     calculate ()

@@ -1,4 +1,5 @@
 module Html
+
 open Browser.Types
 open Browser
 open System
@@ -14,8 +15,7 @@ let getLocalStorageOrEmpty key =
     | null -> ""
     | x -> x
 
-let setLocalStorage key value =
-    localStorage.setItem (key, value)
+let setLocalStorage key value = localStorage.setItem (key, value)
 
 let appendToLocalStorageList key name =
     let current = getLocalStorageOrEmpty key
@@ -29,17 +29,21 @@ let fromId id = document.getElementById id
 let areaFromId id = (fromId id) :?> HTMLTextAreaElement
 let inputFromId id = (fromId id) :?> HTMLInputElement
 
-let onChange action (el: HTMLElement) =
-    el.onchange <- (fun _ -> action ())
+let onChangeDebouncer milliseconds action (el: HTMLElement) =
+    let mutable debounceTimer = 0.0
 
-let onChangeElement action (el: HTMLElement) =
-    el.onchange <- (fun _ -> action el)
+    el.onchange <-
+        fun _ ->
+            window.clearInterval debounceTimer
+            debounceTimer <- window.setTimeout (action, milliseconds)
 
-let onClick action (el: HTMLElement) =
-    el.onclick <- (fun _ -> action ())
+let onChange action (el: HTMLElement) = el.onchange <- fun _ -> action ()
 
-let onClickEvent action (el: HTMLElement) =
-    el.onclick <- (fun event -> action event)
+let onChangeElement action (el: HTMLElement) = el.onchange <- fun _ -> action el
+
+let onClick action (el: HTMLElement) = el.onclick <- fun _ -> action ()
+
+let onClickEvent action (el: HTMLElement) = el.onclick <- fun event -> action event
 
 [<Emit("navigator.clipboard.writeText($0)")>]
 let private writeToClipboard _text : JS.Promise<unit> = jsNative
