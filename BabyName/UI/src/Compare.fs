@@ -56,7 +56,7 @@ let private download (event: Event) =
         [| "|"; ";"; "," |]
         |> Array.tryFind (fun separator -> source |> contains separator |> not)
 
-    let takeOrEmpty source index =
+    let takeOrEmpty index source =
         match source |> Array.tryItem index with
         | None -> ""
         | Some v -> v
@@ -69,28 +69,22 @@ let private download (event: Event) =
         let (a, b, both, onlyA, onlyB) = compareData ()
         let compareData = [| a; b; both; onlyA; onlyB |]
 
-        let data =
-            StringBuilder(
-                "Left"
-                + separator
-                + "Right"
-                + separator
-                + "In both"
-                + separator
-                + "Only in left"
-                + separator
-                + "Only in right\n"
-            )
+        let header =
+            sprintf "Left%sRight%sIn both%sOnly in left%sOnly in right\n" separator separator separator separator
 
-        let size = max (a |> Array.length) (b |> Array.length)
-        for i in 0 .. size - 1 do
-            for item in compareData do
-                data.Append((takeOrEmpty item i) + separator) |> ignore
+        let csv = StringBuilder(header)
 
-            data.AppendLine() |> ignore
+        let rows = max a.Length b.Length
+
+        for rowIndex in 0 .. rows - 1 do
+            for (colIndex, columns) in Seq.indexed compareData do
+                let s = if colIndex < 4 then separator else ""
+                csv.Append((takeOrEmpty rowIndex columns) + s) |> ignore
+
+            csv.AppendLine() |> ignore
 
         let downloadBtn = (fromId "download-btn") :?> HTMLLinkElement
-        downloadBtn.href <- "data:text/plain;charset=UTF-8," + window.encodeURIComponent (data.ToString())
+        downloadBtn.href <- "data:text/plain;charset=UTF-8," + window.encodeURIComponent (csv.ToString())
 
 let initCompare () =
     fromId "compare-btn" |> onClick compare
