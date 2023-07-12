@@ -85,7 +85,7 @@ let private download (event: Event) =
         let size = max (a |> Array.length) (b |> Array.length)
         for i in 0 .. size - 1 do
             for item in compareData do
-                data.Append(takeOrEmpty item i + separator) |> ignore
+                data.Append((takeOrEmpty item i) + separator) |> ignore
 
             data.AppendLine() |> ignore
 
