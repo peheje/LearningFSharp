@@ -27,10 +27,7 @@ let private getDuplicates xs =
 let private getDuplicates1 xs =
     xs
     |> Array.countBy id
-    |> Array.filter (fun (_, count) -> count > 1)
-    |> Array.map (fun (x, count) ->
-        Array.init (count-1) (fun _ -> x)
-    )
+    |> Array.map (fun (x, count) -> Array.init (count - 1) (fun _ -> x))
     |> Array.collect id
 
 let private findDuplicates () =
