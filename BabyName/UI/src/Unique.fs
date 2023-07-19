@@ -12,19 +12,6 @@ let private readInput id ignoreCase =
     areaValue |> split newline |> Array.filter (fun x -> x.Trim() <> "")
 
 let private getDuplicates xs =
-    let o = System.Collections.Generic.HashSet<string>()
-
-    xs
-    |> Array.choose (fun x ->
-        if o.Contains x then
-            o.Add x |> ignore
-            Some x
-        else
-            o.Add x |> ignore
-            None)
-
-// Unsure if this functional one is better than the mutating one?
-let private getDuplicates1 xs =
     xs
     |> Array.countBy id
     |> Array.map (fun (x, count) -> Array.init (count - 1) (fun _ -> x))
