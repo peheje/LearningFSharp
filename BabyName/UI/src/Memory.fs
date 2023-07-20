@@ -2,6 +2,7 @@ module Memory
 
 open Browser
 open Html
+open Fetch
 
 let private show id =
     let element = fromId id
@@ -14,6 +15,25 @@ let private hide id =
     element.classList.add "display-none"
 
 type private State = Peek | Guess | Stopped
+
+let getExample () =
+    promise {
+
+        let url = "https://stackoverflow.com/questions/69774563/f-fable-fetch-correctly-unwrap-promise-to-another-promise-type"
+
+        let! result = tryFetch url []
+
+        printfn "%A" result
+
+        match result with
+        | Ok response ->
+            let! data = response.text()
+            printfn "%A" data
+        | Error error -> printfn "%A" error
+
+    }
+
+getExample ()
 
 let initMemory () =
 
