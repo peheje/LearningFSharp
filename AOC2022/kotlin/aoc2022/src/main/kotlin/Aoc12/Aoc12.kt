@@ -42,18 +42,23 @@ fun aoc12() {
 
     val infinite = 1000
 
-    val graph = mutableMapOf<EdgeId, List<Pair<EdgeId, Int>>>()
-    map.forEachIndexed { y, row ->
-        row.forEachIndexed { x, value ->
-            val indices = neighborIndices(x, y).map { neighbor ->
-                val (nx, ny) = neighbor.v
-                val difference = map[ny][nx] - value
-                val cost = if (difference > 1) infinite else 1
-                Pair(neighbor, cost)
+    fun createGraph(): Map<EdgeId, List<Pair<EdgeId, Int>>> {
+        val graph = mutableMapOf<EdgeId, List<Pair<EdgeId, Int>>>()
+        map.forEachIndexed { y, row ->
+            row.forEachIndexed { x, value ->
+                val indices = neighborIndices(x, y).map { neighbor ->
+                    val (nx, ny) = neighbor.v
+                    val difference = map[ny][nx] - value
+                    val cost = if (difference > 1) infinite else 1
+                    Pair(neighbor, cost)
+                }
+                graph[EdgeId(Pair(x, y))] = indices
             }
-            graph[EdgeId(Pair(x, y))] = indices
         }
+        return graph
     }
+
+    val graph = createGraph()
 
     fun dijkstra(source: EdgeId): Map<EdgeId, EdgeId?> {
         val distances = mutableMapOf<EdgeId, Int>()

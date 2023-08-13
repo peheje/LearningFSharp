@@ -1,8 +1,11 @@
 import Aoc12.aoc12
+import kotlin.system.measureTimeMillis
 
 fun main() {
 
-    aoc12()
+    measureTimeMillis {
+        aoc12()
+    }.let { println("Elapsed time $it ms") }
 
 }
 
