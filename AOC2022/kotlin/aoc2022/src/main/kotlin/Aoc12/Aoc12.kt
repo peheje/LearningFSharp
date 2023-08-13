@@ -55,7 +55,7 @@ fun aoc12() {
         }
     }
 
-    fun dijkstra(source: EdgeId): MutableMap<EdgeId, EdgeId?> {
+    fun dijkstra(source: EdgeId): Map<EdgeId, EdgeId?> {
         val distances = mutableMapOf<EdgeId, Int>()
         val previous = mutableMapOf<EdgeId, EdgeId?>()
         val queue = java.util.PriorityQueue<Pair<EdgeId, Int>>(compareBy { it.second })
@@ -80,7 +80,7 @@ fun aoc12() {
             }
         }
 
-        return previous
+        return previous.toMap()
     }
 
     fun shortestPath(source: EdgeId, goal: EdgeId): List<EdgeId>? {
