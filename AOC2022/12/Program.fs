@@ -2,7 +2,7 @@
 open System.IO
 
 let sw = System.Diagnostics.Stopwatch.StartNew()
-let path = "/Users/phj/Code/F-Sharp-Advent-of-Code-2021/AOC2022/kotlin/aoc2022/src/main/kotlin/input12.txt"
+let path = "input12.txt"
 let rows = File.ReadAllLines path
 type EdgeId = EdgeId of (int * int)
 
@@ -74,15 +74,24 @@ while queue.Count > 0 do
             queue.Enqueue(neighbor, totalDistance)
     )
 
-let mutable cursor = destination
-let shortestPath = [|
-    while cursor <> source do
-        let step = previous[cursor]
-        if step.IsSome then yield step.Value
-        cursor <- step.Value
-|]
+let steps destination =
+    let mutable cursor = destination
+    [|
+        while cursor <> source do
+            let step = previous[cursor]
+            if step.IsSome then yield step.Value
+            cursor <- step.Value
+    |] |> Array.length
 
-printfn "Done with shortest path %i" (shortestPath |> Array.length)
+let destinations = List<(int * int)>()
+for i in 0 .. rows.Length-1 do
+    for j in 0 .. rows[i].Length-1 do
+        if rows[i][j] = 'a' then destinations.Add(i, j)
+
+
+printfn "%A" destinations
+
+printfn "Done with shortest path %i" (steps destination)
 sw.Stop()
 
 printfn "Elapsed time %ims" sw.ElapsedMilliseconds

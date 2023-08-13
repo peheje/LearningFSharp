@@ -6,11 +6,10 @@ import kotlin.collections.HashMap
 
 data class EdgeId(val v: Pair<Int, Int>)
 
-private fun aoc12() {
-    val path = "/Users/phj/Code/F-Sharp-Advent-of-Code-2021/AOC2022/kotlin/aoc2022/src/main/kotlin/input12.txt"
-    val rows = File(path).readLines()
+fun aoc12() {
+    val filepath = "/Users/phj/Code/F-Sharp-Advent-of-Code-2021/AOC2022/12/input12.txt"
+    val rows = File(filepath).readLines()
 
-    lateinit var destination: EdgeId
     lateinit var source: EdgeId
 
     val map = rows.mapIndexed { y, row ->
@@ -20,12 +19,9 @@ private fun aoc12() {
                     source = EdgeId(Pair(x, y))
                     'a'.code
                 }
-
                 'E' -> {
-                    destination = EdgeId(Pair(x, y))
                     'z'.code
                 }
-
                 else -> char.code
             } - 97
         }
@@ -83,18 +79,36 @@ private fun aoc12() {
         }
     }
 
-    var cursor = destination
-    val shortestPath = mutableListOf<EdgeId?>()
-    do {
-        val step = previous.getValue(cursor) ?: continue
-        shortestPath.add(step)
-        cursor = step
+    fun shortestPath(destination: EdgeId): MutableList<EdgeId?> {
+        var cursor = destination
+        val shortestPath = mutableListOf<EdgeId?>()
+        do {
+            val step = previous.getValue(cursor) ?: continue
+            shortestPath.add(step)
+            cursor = step
 
-    } while (cursor != source)
+        } while (cursor != source)
 
-    shortestPath.reversed().forEach {
-        println(it)
+        return shortestPath
     }
 
-    println("Done with shortest path ${shortestPath.size}")
+    val destinations = mutableListOf<EdgeId>()
+    for (i in rows.indices) {
+        for (j in rows[i].indices) {
+            if (rows[i][j] == 'a' || rows[i][j] == 'S')
+                destinations.add(EdgeId(Pair(i, j)))
+        }
+    }
+
+    val min = destinations.minOf { shortestPath(it).size }
+    println("min is $min")
+
+    for (destination in destinations) {
+        val path = shortestPath(destination)
+        path.reversed().forEach {
+            println(it)
+        }
+        // println("Done with shortest path ${path.size}")
+    }
+
 }
