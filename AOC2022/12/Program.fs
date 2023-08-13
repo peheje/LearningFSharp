@@ -30,7 +30,7 @@ let readMap rows =
 
     (map, destination.Value, source.Value)
 
-let map, destination, source = readMap rows
+let map, destination, origSource = readMap rows
 
 let neighborIndices x y =
     let lastRowIndex = (map |> Array.length) - 1
@@ -91,30 +91,30 @@ let steps source =
 
     let (previous, distances) = dijkstra source
 
-    if distances[source] >= infinite then
-        None
-    else
-        let mutable cursor = destination
+    let mutable l = 0
+    let mutable noPath = false
 
-        [| while cursor <> source do
-               let step = previous[cursor]
-
-               if step |> Option.isSome then
-                   yield step.Value
-                   cursor <- step.Value |]
-        |> Array.length
-        |> Some
+    let mutable cursor = destination
+    while noPath = false && cursor <> source do
+        let step = previous[cursor]
+        if step.IsSome then
+            l <- l + 1
+            cursor <- step.Value
+        else
+            noPath <- true
+    
+    if noPath then None
+    else Some l
 
 let sources = List<EdgeId>()
-
 for i in 0 .. rows.Length - 1 do
     for j in 0 .. rows[i].Length - 1 do
         if rows[i][j] = 'a' then
             sources.Add(EdgeId(j, i))
 
-let shortestPathFromLowestPoint = sources |> Seq.map steps |> Seq.min
+let shortestPathFromLowestPoint = sources |> Seq.map steps |> Seq.choose id |> Seq.min
 
-printfn "Part1: Done with shortest path %i" (steps source).Value
+printfn "Part1: Done with shortest path %i" (steps origSource).Value
 printfn "Part2: shortest path from lowest point %A" shortestPathFromLowestPoint
 
 sw.Stop()
