@@ -1,5 +1,7 @@
 ﻿let path = "/Users/phj/Code/F-Sharp-Advent-of-Code-2021/AOC2022/09/input.txt"
 
+let sw = System.Diagnostics.Stopwatch.StartNew()
+
 let moves =
     System.IO.File.ReadAllLines(path)
     |> Array.map (fun row ->
@@ -70,3 +72,7 @@ seq {
 |> Seq.distinct
 |> Seq.length
 |> printfn "%i"
+
+sw.Stop()
+
+printfn "Elapsed time %ims" sw.ElapsedMilliseconds

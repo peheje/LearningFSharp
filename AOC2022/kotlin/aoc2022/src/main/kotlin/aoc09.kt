@@ -40,8 +40,8 @@ fun aoc09() {
         }
     }
 
-    sequence {
-        val rope = MutableList(10) { Coord(0, 0) }
+    buildList {
+        val rope = Array(10) { Coord(0, 0) }
 
         for (move in moves) {
             val (hx, hy) = rope[0]
@@ -57,7 +57,7 @@ fun aoc09() {
                 rope[i + 1] = catchUpMove(rope[i], rope[i + 1])
             }
 
-            yield(rope[9])
+            add(rope[9])
         }
     }.distinct().count().let { println("$it") }
 
