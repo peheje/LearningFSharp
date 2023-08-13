@@ -27,17 +27,17 @@ fun aoc09() {
         val xd = hx - tx
         val yd = hy - ty
 
-        return if (abs(xd) + abs(yd) < 3) {
-            if (xd > 1) moveRight(tail)
-            else if (xd < -1) moveLeft(tail)
-            else if (yd < -1) moveUp(tail)
-            else if (yd > 1) moveDown(tail)
-            else tail
-        } else {
-            val upOrDown = if (yd < 0) ::moveUp else ::moveDown
-            val leftOrRight = if (xd > 0) ::moveRight else ::moveLeft
-            leftOrRight(upOrDown(tail))
+        if (abs(xd) + abs(yd) < 3) return when {
+            xd > 1 -> moveRight(tail)
+            xd < -1 -> moveLeft(tail)
+            yd < -1 -> moveUp(tail)
+            yd > 1 -> moveDown(tail)
+            else -> tail
         }
+
+        val moveVertical = if (yd < 0) ::moveUp else ::moveDown
+        val moveHorizontal = if (xd > 0) ::moveRight else ::moveLeft
+        return moveHorizontal(moveVertical(tail))
     }
 
     buildList {
