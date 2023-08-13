@@ -3,7 +3,7 @@ import kotlin.system.measureTimeMillis
 fun main() {
 
     measureTimeMillis {
-        aoc12()
+        aoc09()
     }.let { println("Elapsed time $it ms") }
 
 }
