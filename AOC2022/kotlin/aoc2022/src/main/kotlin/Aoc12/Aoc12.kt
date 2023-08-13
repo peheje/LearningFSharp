@@ -58,7 +58,7 @@ fun aoc12() {
         return graph
     }
 
-    val graph = createGraph()
+    val graph: Map<EdgeId, List<Pair<EdgeId, Int>>> = createGraph()
 
     fun dijkstra(source: EdgeId): Map<EdgeId, EdgeId?> {
         val distances = mutableMapOf<EdgeId, Int>()
