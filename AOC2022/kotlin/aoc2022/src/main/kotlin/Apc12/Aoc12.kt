@@ -89,9 +89,7 @@ fun aoc12() {
 
 
     fun shortestPath(source: EdgeId): List<EdgeId>? {
-
         val previous = dijkstra(source)
-
         var cursor = destination
         val shortestPath = mutableListOf<EdgeId>()
         do {
@@ -101,16 +99,10 @@ fun aoc12() {
 
         } while (cursor != source)
 
-        return shortestPath.toList()
+        return shortestPath.reversed().toList()
     }
 
-    val destinations = mutableListOf<EdgeId>()
-    for (i in rows.indices) {
-        for (j in rows[i].indices) {
-            if (rows[i][j] == 'a' || rows[i][j] == 'S')
-                destinations.add(EdgeId(Pair(j, i)))
-        }
-    }
+    val destinations = findAllDestinations(rows)
 
     println("part 1 shortest path: ${shortestPath(origSource)?.size}")
 
@@ -119,4 +111,15 @@ fun aoc12() {
             .mapNotNull { shortestPath(it) }
             .minOf { it.size }
     println("part 2 shortestPathFromLowestPoint $shortestPathFromLowestPoint")
+}
+
+private fun findAllDestinations(rows: List<String>): List<EdgeId> {
+    val destinations = mutableListOf<EdgeId>()
+    for (i in rows.indices) {
+        for (j in rows[i].indices) {
+            if (rows[i][j] == 'a' || rows[i][j] == 'S')
+                destinations.add(EdgeId(Pair(j, i)))
+        }
+    }
+    return destinations
 }
