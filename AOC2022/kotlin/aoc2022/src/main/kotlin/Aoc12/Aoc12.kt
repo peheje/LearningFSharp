@@ -1,14 +1,10 @@
-package Apc12
-
-import java.io.File
-import java.util.*
-import kotlin.collections.HashMap
+package Aoc12
 
 data class EdgeId(val v: Pair<Int, Int>)
 
 fun aoc12() {
     val filepath = "C:\\Users\\peter\\Repos\\LearningFSharp\\AOC2022\\12\\input12.txt"
-    val rows = File(filepath).readLines()
+    val rows = java.io.File(filepath).readLines()
 
     lateinit var origSource: EdgeId
     lateinit var destination: EdgeId
@@ -46,7 +42,7 @@ fun aoc12() {
 
     val infinite = 1000
 
-    val graph = HashMap<EdgeId, List<Pair<EdgeId, Int>>>()
+    val graph = mutableMapOf<EdgeId, List<Pair<EdgeId, Int>>>()
     map.forEachIndexed { y, row ->
         row.forEachIndexed { x, value ->
             val indices = neighborIndices(x, y).map { neighbor ->
@@ -59,10 +55,10 @@ fun aoc12() {
         }
     }
 
-    fun dijkstra(source: EdgeId): HashMap<EdgeId, EdgeId?> {
-        val distances = hashMapOf<EdgeId, Int>()
-        val previous = HashMap<EdgeId, EdgeId?>()
-        val queue = PriorityQueue<Pair<EdgeId, Int>>(compareBy { it.second })
+    fun dijkstra(source: EdgeId): MutableMap<EdgeId, EdgeId?> {
+        val distances = mutableMapOf<EdgeId, Int>()
+        val previous = mutableMapOf<EdgeId, EdgeId?>()
+        val queue = java.util.PriorityQueue<Pair<EdgeId, Int>>(compareBy { it.second })
 
         for (v in graph.keys) {
             distances[v] = infinite
@@ -87,10 +83,9 @@ fun aoc12() {
         return previous
     }
 
-
-    fun shortestPath(source: EdgeId): List<EdgeId>? {
+    fun shortestPath(source: EdgeId, goal: EdgeId): List<EdgeId>? {
         val previous = dijkstra(source)
-        var cursor = destination
+        var cursor = goal
         val shortestPath = mutableListOf<EdgeId>()
         do {
             val step = previous.getValue(cursor) ?: return null
@@ -102,18 +97,18 @@ fun aoc12() {
         return shortestPath.reversed().toList()
     }
 
-    val destinations = findAllDestinations(rows)
+    val startingPoints = findAllStartingPoints(rows)
 
-    println("part 1 shortest path: ${shortestPath(origSource)?.size}")
+    println("part 1 shortest path: ${shortestPath(origSource, destination)?.size}")
 
     val shortestPathFromLowestPoint =
-        destinations
-            .mapNotNull { shortestPath(it) }
+        startingPoints
+            .mapNotNull { shortestPath(it, destination) }
             .minOf { it.size }
     println("part 2 shortestPathFromLowestPoint $shortestPathFromLowestPoint")
 }
 
-private fun findAllDestinations(rows: List<String>): List<EdgeId> {
+private fun findAllStartingPoints(rows: List<String>): List<EdgeId> {
     val destinations = mutableListOf<EdgeId>()
     for (i in rows.indices) {
         for (j in rows[i].indices) {

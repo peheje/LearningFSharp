@@ -1,4 +1,4 @@
-import Apc12.aoc12
+import Aoc12.aoc12
 
 fun main() {
 
