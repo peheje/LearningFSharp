@@ -1,5 +1,3 @@
-package Aoc12
-
 data class EdgeId(val v: Pair<Int, Int>)
 
 fun aoc12() {

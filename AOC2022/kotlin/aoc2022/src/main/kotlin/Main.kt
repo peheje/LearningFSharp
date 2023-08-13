@@ -1,4 +1,3 @@
-import Aoc12.aoc12
 import kotlin.system.measureTimeMillis
 
 fun main() {
