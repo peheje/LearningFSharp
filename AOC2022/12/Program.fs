@@ -85,19 +85,25 @@ let dijkstra source =
                 previous[neighbor] <- Some edge
                 queue.Enqueue(neighbor, totalDistance))
 
-    previous
+    (previous, distances)
 
 let steps source =
 
-    let previous = dijkstra source
+    let (previous, distances) = dijkstra source
 
-    let mutable cursor = destination
+    if distances[source] >= infinite then
+        None
+    else
+        let mutable cursor = destination
 
-    [| while cursor <> source do
-           let step = previous[cursor]
-           if step.IsSome then yield step.Value
-           cursor <- step.Value |]
-    |> Array.length
+        [| while cursor <> source do
+               let step = previous[cursor]
+
+               if step |> Option.isSome then
+                   yield step.Value
+                   cursor <- step.Value |]
+        |> Array.length
+        |> Some
 
 let sources = List<EdgeId>()
 
@@ -108,7 +114,7 @@ for i in 0 .. rows.Length - 1 do
 
 let shortestPathFromLowestPoint = sources |> Seq.map steps |> Seq.min
 
-printfn "Part1: Done with shortest path %i" (steps source)
+printfn "Part1: Done with shortest path %i" (steps source).Value
 printfn "Part2: shortest path from lowest point %A" shortestPathFromLowestPoint
 
 sw.Stop()
