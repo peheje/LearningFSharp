@@ -44,13 +44,11 @@ fun aoc09() {
         val rope = Array(10) { Coord(0, 0) }
 
         for (move in moves) {
-            val (hx, hy) = rope[0]
-
             when (move) {
-                "R" -> rope[0] = Coord(hx + 1, hy)
-                "L" -> rope[0] = Coord(hx - 1, hy)
-                "U" -> rope[0] = Coord(hx, hy - 1)
-                "D" -> rope[0] = Coord(hx, hy + 1)
+                "R" -> rope[0] = moveRight(rope[0])
+                "L" -> rope[0] = moveLeft(rope[0])
+                "U" -> rope[0] = moveUp(rope[0])
+                "D" -> rope[0] = moveDown(rope[0])
             }
 
             for (i in 0 until rope.size - 1) {

@@ -56,13 +56,11 @@ seq {
     let rope = Array.init 10 (fun _ -> (0, 0))
 
     for move in moves do
-        let hx, hy = rope[0]
-
         match move with
-        | "R" -> rope[0] <- hx + 1, hy
-        | "L" -> rope[0] <- hx - 1, hy
-        | "U" -> rope[0] <- hx, hy - 1
-        | "D" -> rope[0] <- hx, hy + 1
+        | "R" -> rope[0] <- moveRight rope[0]
+        | "L" -> rope[0] <- moveLeft rope[0]
+        | "U" -> rope[0] <- moveUp rope[0]
+        | "D" -> rope[0] <- moveDown rope[0]
 
         for i in 0 .. rope.Length - 2 do
             rope[i + 1] <- catchupMove rope[i] rope[i + 1]
