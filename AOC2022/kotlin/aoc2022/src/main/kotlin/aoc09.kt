@@ -16,10 +16,10 @@ fun aoc09() {
         }
     }
 
-    fun moveRight(c: Coord) = Coord(c.x + 1, c.y)
-    fun moveLeft(c: Coord) = Coord(c.x - 1, c.y)
-    fun moveUp(c: Coord) = Coord(c.x, c.y - 1)
-    fun moveDown(c: Coord) = Coord(c.x, c.y + 1)
+    fun moveRight(c: Coord) = c.copy(x = c.x + 1)
+    fun moveLeft(c: Coord) = c.copy(x = c.x - 1)
+    fun moveUp(c: Coord) = c.copy(y = c.y - 1)
+    fun moveDown(c: Coord) = c.copy(y = c.y + 1)
 
     fun catchUpMove(head: Coord, tail: Coord): Coord {
         val (hx, hy) = head
