@@ -3,7 +3,7 @@ import kotlin.math.abs
 data class Coord(val x: Int, val y: Int)
 
 fun aoc09() {
-    val path = "/Users/phj/Code/F-Sharp-Advent-of-Code-2021/AOC2022/09/input.txt"
+    val path = "C:\\Users\\peter\\Repos\\LearningFSharp\\AOC2022\\kotlin\\aoc2022\\src\\main\\kotlin\\input09.txt"
 
     val moves = buildList {
         java.io.File(path).readLines().forEach {
