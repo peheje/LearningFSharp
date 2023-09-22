@@ -5,7 +5,7 @@ open System.Threading.Tasks
 
 let private readTheFile () =
     task {
-        let path = "/Users/phj/Desktop/AS/data.txt"
+        let path = "C:\Users\peter\Repos\LearningFSharp\Async\urls.txt"
         do! Task.Delay 2000
         return! File.ReadAllTextAsync path
     }

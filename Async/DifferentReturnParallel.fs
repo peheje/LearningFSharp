@@ -4,7 +4,7 @@ open System.IO
 
 let private readTheFile () =
     async {
-        let path = "/Users/phj/Desktop/AS/data.txt"
+        let path = "C:\Users\peter\Repos\LearningFSharp\Async\urls.txt"
         do! Async.Sleep 2000
         return! File.ReadAllTextAsync path |> Async.AwaitTask
     }
