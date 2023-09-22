@@ -1,1 +1,1 @@
-Learning.DifferentTypeParallelResult.run ()
+Learning.DifferentTypeParallelTask.run ()

@@ -1,9 +1,12 @@
 module Learning.DifferentTypeParallelResult
 
+open System
 open System.IO
+open System.Net.Http
 
 type Result =
     | FileContent of string
+    | WebResult of string
     | WorkResult of int
 
 let private readTheFile () =
@@ -20,15 +23,27 @@ let private doSomeWork () =
         return WorkResult 42
     }
 
+let private readTheUrl () =
+    let client =
+        new HttpClient (new SocketsHttpHandler (PooledConnectionLifetime = TimeSpan.FromMinutes (2)))
+
+    async {
+        let! result = client.GetAsync ("https://www.google.com/") |> Async.AwaitTask
+        let! content = result.Content.ReadAsStringAsync () |> Async.AwaitTask
+        return WebResult (content.Substring(0, 100))
+    }
+
 let run () =
     printfn "started"
-    
-    let tasks = [ readTheFile (); doSomeWork () ]
-    
+
+    let tasks = [ readTheFile (); doSomeWork (); readTheUrl () ]
+
     let results = Async.RunSynchronously (Async.Parallel tasks)
-    
-    results |> Array.iter (function
+
+    results
+    |> Array.iter (function
         | FileContent file -> printfn "%s" file
-        | WorkResult answer -> printfn "%i" answer)
+        | WorkResult answer -> printfn "%i" answer
+        | WebResult result -> printfn "%s" result)
 
     printfn "ended"
