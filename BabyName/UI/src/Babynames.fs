@@ -8,9 +8,12 @@ let private initGenderSelector () =
     let girl = inputFromId "girl"
     let boy = inputFromId "boy"
 
-    [|girl; boy|] |> Array.iter (fun el -> el |> onClick (fun _ ->
-        setLocalStorage "gender" el.value
-        window.location.reload ()))
+    [| girl; boy |]
+    |> Array.iter (fun el ->
+        el
+        |> onClick (fun _ ->
+            setLocalStorage "gender" el.value
+            window.location.reload ()))
 
     if getLocalStorageOrEmpty "gender" = "boy" then
         boy.checked <- true
@@ -44,9 +47,10 @@ let initBabyNames () =
         nameElement.textContent <- sprintf "Do you like %s?" (unprocessedNames[index])
 
     let confirmClear () =
-        let prompt = "delete all liked and disliked names"
+        let prompt = "delete all names"
+
         if window.prompt $"Type '{prompt}' to continue." = prompt then
-            localStorage.clear()
+            localStorage.clear ()
             window.location.reload ()
 
     liked |> Array.rev |> join newline |> appendLiked
@@ -55,4 +59,4 @@ let initBabyNames () =
     fromId "clear" |> onClick confirmClear
     fromId "copy" |> onClick (fun _ -> toClipboard likedElement.textContent)
 
-    askNext()
+    askNext ()
