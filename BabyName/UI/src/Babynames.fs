@@ -44,7 +44,7 @@ let initBabyNames () =
         nameElement.textContent <- sprintf "Do you like %s?" (unprocessedNames[index])
 
     let confirmClear () =
-        let prompt = "delete all liked and disliked names"
+        let prompt = "delete all"
         if window.prompt $"Type '{prompt}' to continue." = prompt then
             localStorage.clear()
             window.location.reload ()
