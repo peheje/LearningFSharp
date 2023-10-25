@@ -27,19 +27,19 @@ let initDays () =
     let stop = inputFromId "end-day"
     stop.valueAsDate <- DateTime.Now
 
-    let collectDays (start: DateTime) stop days =
-        let rec collectDays' (cursor: DateTime) stop collectedDays collectedMonthRatio =
+    let collectDays (start: DateTime) stop =
+        let rec collectDays' (cursor: DateTime) stop collectedDays collectedMonths =
             if cursor <= stop then
                 let daysInMonth = DateTime.DaysInMonth(cursor.Year, cursor.Month) |> float
-                let monthRatioAddition = 1.0 / daysInMonth
-                collectDays' (cursor.AddDays 1) stop (cursor :: collectedDays) (collectedMonthRatio + monthRatioAddition)
+                let monthAddition = 1.0 / daysInMonth
+                collectDays' (cursor.AddDays 1) stop (cursor :: collectedDays) (collectedMonths + monthAddition)
             else
-                (collectedDays, collectedMonthRatio)
+                (collectedDays, collectedMonths)
         
         if start > stop then
-            (collectDays' stop start days 0.0, true)
+            (collectDays' stop start List.empty 0.0, true)
         else
-            (collectDays' start stop days 0.0, false)
+            (collectDays' start stop List.empty 0.0, false)
 
     let validate () =
         try
@@ -56,7 +56,7 @@ let initDays () =
 
         if validate () then
             errorEl.textContent <- ""
-            let (days, monthRatio), reverse = collectDays start.valueAsDate stop.valueAsDate List.empty
+            let (days, monthRatio), reverse = collectDays start.valueAsDate stop.valueAsDate
             let daysCount = days |> List.length
             let weekendCount = days |> List.filter isWeekend |> List.length
 
