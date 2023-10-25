@@ -2,14 +2,14 @@ module Equation
 open Browser.Types
 open Html
 
-type Expression =
+type private Expression =
 | Number of float
 | Add of Expression * Expression
 | Subtract of Expression * Expression
 | Multiply of Expression * Expression
 | Abs of Expression
 
-let rec evaluate expression =
+let rec private evaluate expression =
     match expression with
     | Number n -> n
     | Add (x, y) -> evaluate x + evaluate y
@@ -17,13 +17,13 @@ let rec evaluate expression =
     | Multiply (x, y) -> evaluate x * evaluate y
     | Abs x -> System.Math.Abs (evaluate x)
 
-let initRandom () =
+let private initRandom () =
     let random = System.Random()
     fun min max -> random.Next(min, max)
 
-let random = initRandom ()
+let private random = initRandom ()
 
-let rec generateTree depth =
+let rec private generateTree depth =
     if depth = 0 then
         Number (random -10 11)
     else
@@ -36,7 +36,7 @@ let rec generateTree depth =
         | 3,0 -> Abs (left)
         | _ -> generateTree depth
 
-let getExpression tree =
+let private getExpression tree =
     let rec printEquation' tree =
         match tree with
         | Number n -> string n
@@ -52,7 +52,7 @@ let getExpression tree =
             symbol + "(" + printEquation' left + ")"
     printEquation' tree + "=" + (tree |> evaluate |> string)
 
-let replaceNumberWithX input =
+let private replaceNumberWithX input =
     let matches = System.Text.RegularExpressions.Regex.Matches(input, "\d+")
     if matches.Count > 0 then
         let index = random 0 matches.Count
