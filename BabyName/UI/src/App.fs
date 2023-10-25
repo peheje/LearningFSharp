@@ -3,6 +3,7 @@ module App.Main
 open Browser
 open Feliz.ViewEngine
 
+open Html
 open BabyNames
 open Compare
 open Alcohol
@@ -50,4 +51,4 @@ let site = urls |> List.tryFind (fun (url, _, _) -> url = window.location.pathna
 match site with
 | Some (_, _, init) -> init ()
 | None -> failwith "unknown site!"
-(document.getElementById "menu").innerHTML <- nav
+(fromId "menu").innerHTML <- nav
