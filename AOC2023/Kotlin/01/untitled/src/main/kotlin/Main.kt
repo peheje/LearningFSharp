@@ -45,6 +45,12 @@ fun main(args: Array<String>) {
 }
 
 fun findFirstDigit(row: String, letters: Map<String, Int>): String {
+    val match = letters.keys.firstOrNull { key -> row.startsWith(key) }
+    return if (match == null) findFirstDigit(row.substring(1), letters)
+    else letters[match].toString()
+}
+
+fun findFirstDigit2(row: String, letters: Map<String, Int>): String {
     var left = row
 
     while (left.isNotEmpty()) {
