@@ -5,6 +5,7 @@
   <ItemGroup>
     <Compile Include="Names.fs" />
     <Compile Include="Html.fs" />
+    <Compile Include="Kahut.fs" />
     <Compile Include="Babynames.fs" />
     <Compile Include="Compare.fs" />
     <Compile Include="Unique.fs" />
