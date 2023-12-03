@@ -32,6 +32,16 @@ let inputFromId id = (fromId id) :?> HTMLInputElement
 let onChange action (el: HTMLElement) =
     el.onchange <- (fun _ -> action ())
 
+[<Measure>] type ms
+
+let onChangeWithCooldown (cooldown: int<ms>) action (el: HTMLElement) =
+    let mutable timerHandle = -0.0
+
+    el.onchange <- (fun _ ->
+        window.clearTimeout timerHandle
+        timerHandle <- window.setTimeout((fun _ -> action()), cooldown |> int)
+    )
+
 let onChangeElement action (el: HTMLElement) =
     el.onchange <- (fun _ -> action el)
 

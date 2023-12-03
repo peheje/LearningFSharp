@@ -43,8 +43,7 @@ let initDays () =
 
     let validate () =
         try
-            let _, _ = start.valueAsDate.Date, stop.valueAsDate.Date
-            true
+            start.valueAsDate.Year <= 9000 && stop.valueAsDate.Year <= 9000
         with _ ->
             false
 
@@ -75,8 +74,8 @@ let initDays () =
         stop.valueAsDate <- stop.valueAsDate.AddDays (daysToAdd)
         calculate ()
 
-    start |> onChange calculate
-    stop |> onChange calculate
+    start |> onChangeWithCooldown 1000<ms> calculate
+    stop |> onChangeWithCooldown 1000<ms> calculate
     (inputFromId "add-days-btn") |> onClick addDays
 
     calculate ()
