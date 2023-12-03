@@ -9,6 +9,11 @@ let private isWeekend (time: DateTime) =
 let private formatMonth (monthRatio: float) =
     sprintf "%.2f months" monthRatio
 
+let private formatYear (monthRatio: float) =
+    let years = monthRatio / 12.0
+    if years <= 1 then years |> sprintf "%.2f year"
+    else years |> sprintf "%.2f years"
+
 let private formatDays totalDays =
     let weeks, days = Math.DivRem(totalDays, 7)
     let weeksText = if weeks = 1 then "1 week" else sprintf "%i weeks" weeks
@@ -52,6 +57,7 @@ let initDays () =
         let totalDaysEl = fromId "total-duration"
         let weekendDaysEl = fromId "weekend-days"
         let monthsEl = fromId "months"
+        let yearsEl = fromId "years"
 
         if validate () then
             errorEl.textContent <- ""
@@ -62,11 +68,13 @@ let initDays () =
             totalDaysEl.textContent <- (if reverse then "-" else "") + (formatDays daysCount)
             weekendDaysEl.textContent <- formatDays weekendCount
             monthsEl.textContent <- formatMonth monthRatio
+            yearsEl.textContent <- (if reverse then "-" else "") + formatYear monthRatio
         else
             errorEl.textContent <- "Error in date"
             totalDaysEl.textContent <- "-"
             weekendDaysEl.textContent <- "-"
             monthsEl.textContent <- "-"
+            yearsEl.textContent <- "-"
 
     let addDays () =
         let addDaysInput = inputFromId "add-days-input"
