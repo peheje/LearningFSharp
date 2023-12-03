@@ -41,7 +41,7 @@ let reverseString input =
 
 letters |> Map.map (fun k v -> (v, k))
 
-let lettersReversedMap =
+let lettersReversed =
     letters
     |> Map.toSeq
     |> Seq.map (fun (k, v) -> (k |> reverseString, v))
@@ -54,6 +54,6 @@ let rec firstDigit (letters: Map<string, int>) (row: string) =
 
 let part2 = rows |> Seq.sumBy (fun row ->
     let first = firstDigit letters row
-    let last = firstDigit lettersReversedMap (row |> reverseString)
+    let last = firstDigit lettersReversed (row |> reverseString)
     (first + last) |> int
 )
