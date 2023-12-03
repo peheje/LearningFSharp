@@ -19,11 +19,11 @@ fun main(args: Array<String>) {
 data class Game(val sets: List<Set>, val gameId: Int)
 data class Set(val red: Int, val green: Int, val blue: Int)
 
-fun toGame(gameRow: String): Game {
-    val numberStartIndex = gameRow.indexOf(" ")
-    val startIndex = gameRow.indexOf(":")
-    val gameNumber = gameRow.substring(numberStartIndex + 1, startIndex).toInt()
-    val game = gameRow.substring(startIndex + 2)
+fun toGame(row: String): Game {
+    val numberStartIndex = row.indexOf(" ")
+    val startIndex = row.indexOf(":")
+    val gameNumber = row.substring(numberStartIndex + 1, startIndex).toInt()
+    val game = row.substring(startIndex + 2)
     val rawSets = game.split("; ")
     val sets = rawSets.map { rawSet ->
         val cubes = rawSet.split(", ")

@@ -11,8 +11,8 @@ let private formatMonth (monthRatio: float) =
 
 let private formatYear (monthRatio: float) =
     let years = monthRatio / 12.0
-    if years <= 1 then years |> sprintf "%.2f year"
-    else years |> sprintf "%.2f years"
+    if years <= 1 then years |> sprintf "%.3f year"
+    else years |> sprintf "%.3f years"
 
 let private formatDays totalDays =
     let weeks, days = Math.DivRem(totalDays, 7)
