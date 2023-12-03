@@ -1,17 +1,10 @@
 ﻿let rows = System.IO.File.ReadAllLines "C:\Users\peter\Repos\LearningFSharp\AOC2023\03\data"
 
-type Value =
-    | PartNumber of int
-    | Symbol of char
-    | Empty
-
-type Cell = { x: int; y: int; value: Value }
-
 let log x = printfn "%A" x
 
 let map =
     rows
-    |> Array.map (fun row -> row |> Seq.toArray |> Array.map (fun c -> c))
+    |> Array.map (fun row -> row |> Seq.toArray |> Array.map id)
 
 let isSymbol symbol =
     symbol |> System.Char.IsDigit |> not
