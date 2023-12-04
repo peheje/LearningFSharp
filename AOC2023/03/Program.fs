@@ -12,7 +12,7 @@ let isSymbol symbol =
     && symbol <> '.'
 
 type Coordinate = { x: int; y: int }
-type Gear = { coordinate: Coordinate; symbol: char }
+type Symbol = { coordinate: Coordinate; symbol: char }
 type Number =
     { value: int
       coordinates: Coordinate seq }
