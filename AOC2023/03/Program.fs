@@ -70,13 +70,14 @@ printfn "Part 1 %i" part1
 let gears = symbols |> Seq.filter (fun s -> s.symbol = '*')
 
 let part2 = gears |> Seq.sumBy (fun gear ->
-    let (countNextToGear, partNumbers) = 
-        numbers |> Seq.fold (fun (countNextToGear, partNumbers) number ->
-            if number.coordinates |> Seq.exists (fun coord -> coord |> isNeighbor gear.coordinate) then
-                (countNextToGear + 1, number.value :: partNumbers)
-            else
-                (countNextToGear, partNumbers)
-        ) (0, [])
+    let mutable partNumbers = ResizeArray<int>()
+    let mutable countNextToGear = 0
+    for number in numbers do
+        if number.coordinates |> Seq.exists (fun coord ->
+            coord |> isNeighbor gear.coordinate
+        ) then
+            countNextToGear <- countNextToGear + 1
+            partNumbers.Add number.value
     
     if countNextToGear = 2 then
         partNumbers[0] * partNumbers[1]
