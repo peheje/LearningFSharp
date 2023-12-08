@@ -6,7 +6,7 @@ let rows =
 let map =
     rows
     |> Array.map (fun row -> row |> Seq.toArray |> Array.map id)
-
+    
 let isSymbol symbol =
     symbol |> System.Char.IsDigit |> not
     && symbol <> '.'
