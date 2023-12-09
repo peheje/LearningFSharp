@@ -1,19 +1,12 @@
-﻿let logs x =
-    printfn "%A" x
-    x
-
-let rowToMatches (row: string) =
+﻿let rowToMatches (row: string) =
     let cardNumberIndex = row.IndexOf(": ")
     let numbers = row.Substring(cardNumberIndex + 2)
     let split = numbers.Split('|')
 
-    let notEmpty (x: string) =
-        System.String.IsNullOrWhiteSpace x |> not
-
     let parseNumbers (numbers: string) =
         numbers.Trim().Split(' ')
         |> Array.map _.Trim()
-        |> Array.filter notEmpty
+        |> Array.filter (System.String.IsNullOrWhiteSpace >> not)
         |> Array.map int
 
     let winning = parseNumbers split[0] |> Set.ofArray
@@ -43,10 +36,12 @@ let cardsMap = cardsSeq |> Map.ofSeq
 let rec followCards cardNumber =
     match cardsMap[cardNumber] with
     | 0 -> 0
-    | v ->
-        v + ([cardNumber + 1 .. cardNumber + v] |> Seq.sumBy (fun wonCardNumber ->
-            followCards wonCardNumber
-        ))
-        
-let part2 = (cardsSeq |> Seq.map (fst >> followCards) |> Seq.sum) + (cardsSeq |> Seq.length)
+    | won ->
+        won
+        + ([ cardNumber + 1 .. cardNumber + won ]
+           |> Seq.sumBy (fun wonCardNumber -> followCards wonCardNumber))
+
+let part2 =
+    (cardsSeq |> Seq.map (fst >> followCards) |> Seq.sum) + (cardsSeq |> Seq.length)
+
 printfn "Part 2 %i" part2
