@@ -39,7 +39,7 @@ let rec followCards cardNumber =
     | won ->
         won
         + ([ cardNumber + 1 .. cardNumber + won ]
-           |> Seq.sumBy (fun wonCardNumber -> followCards wonCardNumber))
+           |> Seq.sumBy followCards)
 
 let part2 =
     (cardsSeq |> Seq.map (fst >> followCards) |> Seq.sum) + (cardsSeq |> Seq.length)
