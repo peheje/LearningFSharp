@@ -2,6 +2,7 @@ module Days
 
 open System
 open Html
+open Browser.Types
 
 let private isWeekend (time: DateTime) =
     time.DayOfWeek = DayOfWeek.Saturday || time.DayOfWeek = DayOfWeek.Sunday
@@ -25,12 +26,22 @@ let private formatDays totalDays =
     | _, 0 -> sprintf "%i days (%s)" totalDays weeksText
     | _, _ -> sprintf "%i days (%s and %s)" totalDays weeksText daysText
 
+let private saveDate key (date: DateTime) =
+    setLocalStorage key (date.ToString("O"))
+
+let private loadDate key (el: HTMLInputElement) =
+    match getLocalStorageOrEmpty key with
+    | "" -> el.valueAsDate <- DateTime.Now
+    | x ->
+        let saved = DateTime.Parse(x)
+        el.valueAsDate <- saved.ToLocalTime()
+
 let initDays () =
     let start = inputFromId "start-day"
-    start.valueAsDate <- DateTime.Now
-
     let stop = inputFromId "end-day"
-    stop.valueAsDate <- DateTime.Now
+
+    loadDate "start-day" start
+    loadDate "end-day" stop
 
     let collectDays (start: DateTime) stop =
         let rec collectDays' (cursor: DateTime) stop collectedDays collectedMonths =
@@ -60,6 +71,9 @@ let initDays () =
         let yearsEl = fromId "years"
 
         if validate () then
+            saveDate "start-day" start.valueAsDate
+            saveDate "end-day" stop.valueAsDate
+            
             errorEl.textContent <- ""
             let (days, monthRatio), reverse = collectDays start.valueAsDate stop.valueAsDate
             let daysCount = days |> List.length
