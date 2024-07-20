@@ -101,3 +101,5 @@ let initDays () =
     (inputFromId "add-days-btn") |> onClick addDays
 
     calculate ()
+
+let aboutDays = "Calculate total days, months, years, and weekend days between two dates (inclusive) with this tool. Will take leap days into account. Just input start and end dates for a quick time interval breakdown. Bonus: add extra days to the end date for extended planning."

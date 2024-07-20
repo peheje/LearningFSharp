@@ -91,6 +91,8 @@ let initCompare () =
     fromId "random-btn" |> onClick randomize
     fromId "download-btn" |> onClickEvent download
 
+let aboutCompare = "Compare text line-by-line between two inputs Left and Right, to identify lines unique to either, and lines that are common between them. Optionally enable case-insensitive comparison by lowercasing the input."
+
 let handleCompareRedirect () =
     if window.location.pathname = "/compare/compare.html" then
         window.setTimeout ((fun _ -> window.location.pathname <- "/compare.html"), 6000)

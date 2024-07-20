@@ -60,3 +60,5 @@ let initHeartbeat () =
     document.addEventListener("mouseup", beatKeyNotPressed)
     document.addEventListener("keydown", beatKeyPressed)
     heartbeatBtn |> onClick (fun _ -> beat " ")
+
+let aboutHeartbeat = "Keep track of your heartbeat"

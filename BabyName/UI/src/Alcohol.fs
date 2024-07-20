@@ -33,3 +33,5 @@ let initAlcohol () =
     )
 
     calculateAndShowUnits ()
+
+let aboutAlcohol = "Tool to calculate alcohol units based on milliliters and alcohol percentage. Input the volume and alcohol content, and let the tool do the rest."

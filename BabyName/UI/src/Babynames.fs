@@ -59,3 +59,5 @@ let initBabyNames () =
     fromId "copy" |> onClick (fun _ -> toClipboard likedElement.textContent)
 
     askNext ()
+
+let aboutBabyNames = "New baby on the way and undecided on a name? Use the tool to create and compare name lists with your partner! Choose from 1000 names for each gender, sorted by popularity. Your lists are saved locally for easy access anytime"

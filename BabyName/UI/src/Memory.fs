@@ -67,3 +67,5 @@ let initMemory () =
         if keyboardEvent.key = "Enter" && state = Guess && ioInput.value.Length <> 0 then
             submitBtn.click ()
     ))
+
+let aboutMemory = "At the beginning, a number will appear for a set duration. Memorize it, input it again, and either click 'guess' or press 'enter' to submit."

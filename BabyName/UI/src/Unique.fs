@@ -28,3 +28,5 @@ let private findDuplicates () =
 
 let initUnique () =
     fromId "find-duplicates-btn" |> onClick findDuplicates
+
+let aboutUnique = "Tool to analyze a list of strings, identifying both unique entries and duplicates. Input your list, and receive output displaying unique items and repeated ones. For example, inputting 'a' 3 times will show 'a' as a unique entry, while also listing it twice under duplicates."

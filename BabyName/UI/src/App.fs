@@ -16,20 +16,20 @@ open Kahut
 
 let urls =
     [
-        ("/compare.html", "Compare", initCompare)
-        ("/unique.html", "Unique", initUnique)
-        ("/alcohol.html", "Alcohol", initAlcohol)
-        ("/heartbeat.html", "Heartbeat", initHeartbeat)
-        ("/memory.html", "Memory", initMemory)
-        ("/babynames.html", "Babynames", initBabyNames)
-        ("/days.html", "Days", initDays)
-        ("/equation.html", "Equation", initEquation)
-        ("https://twitter.com/peheje", "Contact", id)
+        ("/compare.html", "Compare", initCompare, aboutCompare)
+        ("/unique.html", "Unique", initUnique, aboutUnique)
+        ("/alcohol.html", "Alcohol", initAlcohol, aboutAlcohol)
+        ("/heartbeat.html", "Heartbeat", initHeartbeat, aboutHeartbeat)
+        ("/memory.html", "Memory", initMemory, aboutMemory)
+        ("/babynames.html", "Babynames", initBabyNames, aboutBabyNames)
+        ("/days.html", "Days", initDays, aboutDays)
+        ("/equation.html", "Equation", initEquation, aboutEquation)
+        ("https://twitter.com/peheje", "Contact", id, "")
     ]
 
 let nav =
     urls
-    |> List.mapi (fun i (url, name, _) ->
+    |> List.mapi (fun i (url, name, _, about) ->
         let active = if window.location.pathname = url then "active" else ""
         let notLast = i < (urls |> List.length) - 1
         [
@@ -38,6 +38,7 @@ let nav =
                     prop.href url
                     prop.text name
                     prop.classes [ active ]
+                    prop.title about
                 ]
             if notLast then Html.span [ Html.text " | " ]
         ]
@@ -48,8 +49,8 @@ let nav =
 
 handleCompareRedirect ()
 
-let site = urls |> List.tryFind (fun (url, _, _) -> url = window.location.pathname)
+let site = urls |> List.tryFind (fun (url, _, _, _) -> url = window.location.pathname)
 match site with
-| Some (_, _, init) -> init ()
+| Some (_, _, init, _) -> init ()
 | None -> failwith "unknown site!"
 (fromId "menu").innerHTML <- nav

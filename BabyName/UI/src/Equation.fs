@@ -99,3 +99,5 @@ let initEquation () =
     fromId "depth" |> onChangeElement checkMaxDepth
     fromId "generate-btn" |> onClick generateEquation
     fromId "check-btn" |> onClick checkAnswer
+
+let aboutEquation = "Create equations and try to solve them."
