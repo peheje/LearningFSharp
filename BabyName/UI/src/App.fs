@@ -13,6 +13,7 @@ open Memory
 open Days
 open Equation
 open Kahut
+open Healing
 
 let urls =
     [
@@ -23,6 +24,7 @@ let urls =
         ("/memory.html", "Memory", initMemory, aboutMemory)
         ("/babynames.html", "Babynames", initBabyNames, aboutBabyNames)
         ("/days.html", "Days", initDays, aboutDays)
+        ("/healing.html", "HealingSim", initHealing, aboutHealing)
         ("/equation.html", "Equation", initEquation, aboutEquation)
         ("https://twitter.com/peheje", "Contact", id, "")
     ]

@@ -1,0 +1,66 @@
+<!doctype html>
+
+<html lang="en">
+
+<head>
+    <link rel="stylesheet" href="style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="/hamster.png" type="image/png">
+</head>
+
+<body>
+    <div id="menu"></div>
+
+    <p>healing</p>
+
+    <div class="ab margin-bottom-10">
+        <div class="inline-block">
+            <label class="selected-label" for="player1">Player 1:</label>
+            <progress class="selected-progress" id="player1" max="100" value="100">100%</progress>
+
+            <label for="player2">Player 2:</label>
+            <progress id="player2" max="100" value="100">100%</progress>
+
+            <label for="player3">Player 3:</label>
+            <progress id="player3" max="100" value="100">100%</progress>
+
+            <label for="player4">Player 4:</label>
+            <progress id="player4" max="100" value="100">100%</progress>
+
+            <label for="player5">Player 5:</label>
+            <progress id="player5" max="100" value="100">100%</progress>
+        </div>
+    </div>
+
+    <div id="heal-cast-container" class="hidden">
+        <label for="heal-cast-bar">Heal Cast Time:</label>
+        <progress id="heal-cast-bar" max="100" value="0">0%</progress>
+    </div>
+
+    <script src="bundle.js"></script>
+</body>
+
+</html>
+
+<style>
+    .selected-label {
+        font-weight: bolder;
+        color: #1d70b8;
+        padding: 2px 4px;
+        border-radius: 3px;
+    }
+
+    .selected-progress {
+        box-shadow: 0 0 5px rgba(29, 112, 184, 0.5);
+        transition: box-shadow 0.3s ease, background-color 0.3s ease;
+    }
+
+    .hidden {
+        display: none;
+    }
+
+    #heal-cast-container {
+        margin-top: 10px;
+        font-size: 14px;
+    }
+</style>

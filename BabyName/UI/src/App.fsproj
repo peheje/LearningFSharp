@@ -14,6 +14,7 @@
     <Compile Include="Memory.fs" />
     <Compile Include="Days.fs" />
     <Compile Include="Equation.fs" />
+    <Compile Include="Healing.fs" />
     <Compile Include="App.fs" />
   </ItemGroup>
   <ItemGroup>
