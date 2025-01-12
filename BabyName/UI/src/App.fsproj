@@ -18,7 +18,7 @@
     <Compile Include="App.fs" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Fable.Browser.Dom" Version="2.16.0" />
+    <PackageReference Include="Fable.Browser.Dom" Version="2.18.0" />
     <PackageReference Include="Fable.Core" Version="4.3.0" />
     <PackageReference Include="Feliz.ViewEngine" Version="0.24.0" />
   </ItemGroup>
