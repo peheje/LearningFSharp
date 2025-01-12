@@ -30,7 +30,7 @@ let private reduceProgress () =
         let progress = el :?> HTMLProgressElement
         let currentValue = progress.value
         let randomReduction = random.Next(2, 6)
-        progress.value <- max 0 (currentValue - float randomReduction) // Ensure value doesn't go below 0
+        progress.value <- max 0 (currentValue - float randomReduction)
     )
 
 let private showCastBar (castTime: int) =
@@ -41,7 +41,7 @@ let private showCastBar (castTime: int) =
     castBar.value <- 0.0
 
     let interval = 50.0
-    let totalTime = float castTime // Total cast time in ms
+    let totalTime = float castTime
     let steps = int (totalTime / interval)
 
     let mutable step = 0
@@ -50,20 +50,20 @@ let private showCastBar (castTime: int) =
         step <- step + 1
         castBar.value <- (step |> float) / (steps |> float) * 100.0
         if step >= steps then
-            castBarContainer.classList.add("hidden") // Hide the cast bar after casting
+            castBarContainer.classList.add("hidden")
             window.clearInterval(intervalId)
     intervalId <- window.setInterval(updateBar, int interval)
 
 let private healSelected () =
     if not isHealingInProgress then
         isHealingInProgress <- true
-        showCastBar 2000 // 2 seconds for single heal
+        showCastBar 2000
         let selectedProgress = document.querySelector("progress.selected-progress") :?> HTMLProgressElement
         if not (isNull selectedProgress) then
             window.setTimeout((fun _ ->
                 let currentValue = selectedProgress.value
                 let maxValue = selectedProgress.max
-                selectedProgress.value <- min maxValue (currentValue + 40.0) // Ensure value doesn't exceed max
+                selectedProgress.value <- min maxValue (currentValue + 40.0)
                 isHealingInProgress <- false
             ), 2000) |> ignore
         else
@@ -72,7 +72,7 @@ let private healSelected () =
 let private groupHeal () =
     if not isHealingInProgress then
         isHealingInProgress <- true
-        showCastBar 3000 // 3 seconds for group heal
+        showCastBar 3000
         let allProgressBars = document.querySelectorAll("progress") |> toSeq
         window.setTimeout((fun _ ->
             allProgressBars
