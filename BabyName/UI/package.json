@@ -6,9 +6,9 @@
     "build": "dotnet fable src && webpack"
   },
   "devDependencies": {
-    "webpack": "^5.97.1",
+    "webpack": "^5.100.2",
     "webpack-cli": "^6.0.1",
-    "webpack-dev-server": "^5.2.0"
+    "webpack-dev-server": "^5.2.2"
   },
   "version": "1.0.0",
   "dependencies": {
