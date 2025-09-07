@@ -1,3 +1,4 @@
+// Run with dotnet fsi tests/DaysTests.fsx
 #load "../src/DaysCore.fs"
 
 open System
