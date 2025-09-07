@@ -4,6 +4,12 @@ open System
 open Html
 open Browser.Types
 
+let private show id =
+    (fromId id).classList.remove "display-none"
+
+let private hide id =
+    (fromId id).classList.add "display-none"
+
 let private isWeekend (time: DateTime) =
     time.DayOfWeek = DayOfWeek.Saturday || time.DayOfWeek = DayOfWeek.Sunday
 
@@ -36,12 +42,75 @@ let private loadDate key (el: HTMLInputElement) =
         let saved = DateTime.Parse(x)
         el.valueAsDate <- saved.ToLocalTime()
 
+let private saveTime key (time: string) =
+    setLocalStorage key time
+
+let private loadTime key (el: HTMLInputElement) =
+    match getLocalStorageOrEmpty key with
+    | "" -> el.value <- "00:00"
+    | x -> el.value <- x
+
+let private formatDuration totalDays =
+    let totalMinutes = Math.Round(totalDays * 24.0 * 60.0) |> int
+    let days, minutesAfterDays = Math.DivRem(totalMinutes, 24 * 60)
+    let hours, minutes = Math.DivRem(minutesAfterDays, 60)
+    let daysText = formatDays days
+    let timeText =
+        match hours, minutes with
+        | 0, 0 -> ""
+        | 0, _ -> sprintf "%i minutes" minutes
+        | _, 0 -> sprintf "%i hours" hours
+        | _, _ -> sprintf "%i hours %i minutes" hours minutes
+    match daysText, timeText with
+    | "None", "" -> "None"
+    | "None", t -> t
+    | d, "" -> d
+    | d, t -> d + " " + t
+
+let private collectTime (start: DateTime) stop =
+    let start, stop, reverse =
+        if start > stop then stop, start, true else start, stop, false
+
+    let mutable cursor = DateTime(start.Year, start.Month, start.Day)
+    let mutable totalDays = 0.0
+    let mutable weekendDays = 0.0
+    let mutable monthRatio = 0.0
+
+    while cursor <= stop.Date do
+        let dayEnd = cursor.AddDays(1.0)
+        let overlapStart = if cursor < start then start else cursor
+        let overlapEnd = if dayEnd > stop then stop else dayEnd
+        let fraction = (overlapEnd - overlapStart).TotalDays
+        if fraction > 0.0 then
+            totalDays <- totalDays + fraction
+            if isWeekend cursor then weekendDays <- weekendDays + fraction
+            let daysInMonth = DateTime.DaysInMonth(cursor.Year, cursor.Month) |> float
+            monthRatio <- monthRatio + fraction / daysInMonth
+        cursor <- cursor.AddDays 1.0
+
+    (totalDays, weekendDays, monthRatio, reverse)
+
 let initDays () =
     let start = inputFromId "start-day"
     let stop = inputFromId "end-day"
+    let startTime = inputFromId "start-time"
+    let stopTime = inputFromId "end-time"
+    let enableTime = inputFromId "enable-time"
 
     loadDate "start-day" start
     loadDate "end-day" stop
+    loadTime "start-time" startTime
+    loadTime "end-time" stopTime
+
+    match getLocalStorageOrEmpty "enable-time" with
+    | "true" ->
+        enableTime.checked <- true
+        show "start-time-wrapper"
+        show "end-time-wrapper"
+    | _ ->
+        enableTime.checked <- false
+        hide "start-time-wrapper"
+        hide "end-time-wrapper"
 
     let collectDays (start: DateTime) stop =
         let rec collectDays' (cursor: DateTime) stop collectedDays collectedMonths =
@@ -73,16 +142,27 @@ let initDays () =
         if validate () then
             saveDate "start-day" start.valueAsDate
             saveDate "end-day" stop.valueAsDate
-            
-            errorEl.textContent <- ""
-            let (days, monthRatio), reverse = collectDays start.valueAsDate stop.valueAsDate
-            let daysCount = days |> List.length
-            let weekendCount = days |> List.filter isWeekend |> List.length
+            saveTime "start-time" startTime.value
+            saveTime "end-time" stopTime.value
 
-            totalDaysEl.textContent <- (if reverse then "-" else "") + (formatDays daysCount)
-            weekendDaysEl.textContent <- formatDays weekendCount
-            monthsEl.textContent <- formatMonth monthRatio
-            yearsEl.textContent <- (if reverse then "-" else "") + formatYear monthRatio
+            errorEl.textContent <- ""
+            setLocalStorage "enable-time" (if enableTime.checked then "true" else "false")
+            if enableTime.checked then
+                let startDateTime = start.valueAsDate.Date.Add(TimeSpan.Parse(startTime.value))
+                let stopDateTime = stop.valueAsDate.Date.Add(TimeSpan.Parse(stopTime.value))
+                let total, weekend, monthRatio, reverse = collectTime startDateTime stopDateTime
+                totalDaysEl.textContent <- (if reverse then "-" else "") + formatDuration total
+                weekendDaysEl.textContent <- formatDuration weekend
+                monthsEl.textContent <- formatMonth monthRatio
+                yearsEl.textContent <- (if reverse then "-" else "") + formatYear monthRatio
+            else
+                let (days, monthRatio), reverse = collectDays start.valueAsDate stop.valueAsDate
+                let daysCount = days |> List.length
+                let weekendCount = days |> List.filter isWeekend |> List.length
+                totalDaysEl.textContent <- (if reverse then "-" else "") + (formatDays daysCount)
+                weekendDaysEl.textContent <- formatDays weekendCount
+                monthsEl.textContent <- formatMonth monthRatio
+                yearsEl.textContent <- (if reverse then "-" else "") + formatYear monthRatio
         else
             errorEl.textContent <- "Error in date"
             totalDaysEl.textContent <- "-"
@@ -98,6 +178,16 @@ let initDays () =
 
     start |> onChangeWithCooldown 1000<ms> calculate
     stop |> onChangeWithCooldown 1000<ms> calculate
+    startTime |> onChangeWithCooldown 1000<ms> calculate
+    stopTime |> onChangeWithCooldown 1000<ms> calculate
+    enableTime |> onChange (fun _ ->
+        if enableTime.checked then
+            show "start-time-wrapper"
+            show "end-time-wrapper"
+        else
+            hide "start-time-wrapper"
+            hide "end-time-wrapper"
+        calculate ())
     (inputFromId "add-days-btn") |> onClick addDays
 
     calculate ()
