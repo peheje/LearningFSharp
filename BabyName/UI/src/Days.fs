@@ -4,12 +4,6 @@ open System
 open Html
 open Browser.Types
 
-let private show id =
-    (fromId id).classList.remove "display-none"
-
-let private hide id =
-    (fromId id).classList.add "display-none"
-
 let private isWeekend (time: DateTime) =
     time.DayOfWeek = DayOfWeek.Saturday || time.DayOfWeek = DayOfWeek.Sunday
 

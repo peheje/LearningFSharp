@@ -29,6 +29,12 @@ let fromId id = document.getElementById id
 let areaFromId id = (fromId id) :?> HTMLTextAreaElement
 let inputFromId id = (fromId id) :?> HTMLInputElement
 
+let show id =
+    (fromId id).classList.remove "display-none"
+
+let hide id =
+    (fromId id).classList.add "display-none"
+
 let onChange action (el: HTMLElement) =
     el.onchange <- (fun _ -> action ())
 
