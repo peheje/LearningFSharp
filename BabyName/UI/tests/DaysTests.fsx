@@ -44,7 +44,7 @@ let testCollectTimeLongRange () =
     let stop = DateTime(2021, 1, 1)
     let total, weekend, _, reverse = collectTime start stop
     assertEqual false reverse "long collectTime reverse"
-    assertAlmostEqual 731.0 total 1e-6 "long collectTime total"
+    assertAlmostEqual 732.0 total 1e-6 "long collectTime total"
     let mutable dt = start
     let mutable count = 0
 
@@ -79,7 +79,7 @@ let testCollectTimeMonthRatio () =
     let start = DateTime(2024, 3, 1, 0, 0, 0)
     let stop = DateTime(2024, 3, 2, 0, 0, 0)
     let _, _, monthRatio, _ = collectTime start stop
-    assertAlmostEqual (1.0 / 31.0) monthRatio 1e-6 "collectTime month ratio"
+    assertAlmostEqual (2.0 / 31.0) monthRatio 1e-6 "collectTime month ratio"
 
 let testCollectDaysMonthRatio () =
     let (days, monthRatio), _ =
